@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Garden Journal Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>🌱 My Garden Journal</h1>
+        <ul class="nav-links">
+            <li><a href="index.html" class="active">Dashboard</a></li>
+            <li><a href="plants.html">My Plants</a></li>
+            <li><a href="care-log.html">Care Log</a></li>
+            <li><a href="timeline.html">Timeline</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <header class="welcome">
+            <h2>Welcome to Your Garden Tracker</h2>
+            <p id="current-date"></p>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Quick Stats -->
+            <div class="card stats">
+                <h3>📊 Quick Stats</h3>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-plants">0</span>
+                        <span class="stat-label">Total Plants</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="indoor-plants">3</span>
+                        <span class="stat-label">Indoors</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="outdoor-plants">0</span>
+                        <span class="stat-label">Outdoor Ready</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transplant Countdown -->
+            <div class="card transplant-alert">
+                <h3>🌡️ Transplant Countdown</h3>
+                <div id="countdown-container">
+                    <div class="countdown-item">
+                        <strong>Zucchini (Jackpot)</strong>
+                        <p>Planted: <span id="zucchini-plant-date">Today</span></p>
+                        <p>Ready to transplant: <span id="zucchini-transplant-date">May 11-18</span></p>
+                        <div class="progress-bar">
+                            <div class="progress" id="zucchini-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="countdown-item">
+                        <strong>Cucumbers (Lebanese)</strong>
+                        <p>Planted: <span id="cucumber-plant-date">Today</span></p>
+                        <p>Ready to transplant: <span id="cucumber-transplant-date">May 11-18</span></p>
+                        <div class="progress-bar">
+                            <div class="progress" id="cucumber-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="countdown-item">
+                        <strong>Squash (Sunburst)</strong>
+                        <p>Planted: <span id="squash-plant-date">Today</span></p>
+                        <p>Ready to transplant: <span id="squash-transplant-date">May 11-18</span></p>
+                        <div class="progress-bar">
+                            <div class="progress" id="squash-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Tasks -->
+            <div class="card tasks">
+                <h3>✅ Today's Tasks</h3>
+                <ul id="today-tasks" class="task-list">
+                    <li class="task-item">
+                        <input type="checkbox" id="task1">
+                        <label for="task1">Check seedling moisture - Indoor pots</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" id="task2">
+                        <label for="task2">Ensure 6-8 hours of light for seedlings</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" id="task3">
+                        <label for="task3">Monitor temperature (70-85°F ideal)</label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card recent-activity">
+                <h3>📝 Recent Activity</h3>
+                <div id="recent-logs">
+                    <p class="no-activity">No recent activity. Start logging!</p>
+                </div>
+                <button onclick="location.href='care-log.html'" class="btn-primary">+ Add Log Entry</button>
+            </div>
+        </div>
+
+        <!-- Growth Stage Reference -->
+        <div class="card growth-reference">
+            <h3>📈 What to Expect: Weekly Growth Timeline</h3>
+            <div class="timeline-grid">
+                <div class="timeline-item">
+                    <h4>Week 1-2: Germination & Seedling</h4>
+                    <ul>
+                        <li>Seeds sprout in 3-10 days</li>
+                        <li>First cotyledon (seed) leaves appear</li>
+                        <li>Keep soil moist, not soggy</li>
+                        <li>Provide 14-16 hours of light</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Week 3: True Leaves Develop</h4>
+                    <ul>
+                        <li>First true leaves form (look like mini versions of adult leaves)</li>
+                        <li>Seedlings grow stronger stems</li>
+                        <li>Begin weak fertilizer solution (1/4 strength)</li>
+                        <li>Hardening off prep: reduce watering slightly</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Week 4: Transplant Ready</h4>
+                    <ul>
+                        <li>2-3 true leaves visible</li>
+                        <li>Strong, stocky stems</li>
+                        <li>Roots established but not root-bound</li>
+                        <li><strong>TRANSPLANT WEEK!</strong> (if temps allow)</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Week 5-6: Establishment</h4>
+                    <ul>
+                        <li>Plants adapt to outdoor conditions</li>
+                        <li>Rapid vine growth begins</li>
+                        <li>Increase watering as plants grow</li>
+                        <li>Apply balanced fertilizer</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Week 7-8: Flowering</h4>
+                    <ul>
+                        <li>First flower buds appear</li>
+                        <li>Male flowers open first</li>
+                        <li>Pollinators visit garden</li>
+                        <li>Maintain consistent watering</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Week 9-10: First Harvest!</h4>
+                    <ul>
+                        <li><strong>Cucumbers:</strong> 50-70 days from seed</li>
+                        <li><strong>Zucchini:</strong> 50-60 days from seed</li>
+                        <li>Harvest when small for best flavor</li>
+                        <li>Pick regularly to encourage more production</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

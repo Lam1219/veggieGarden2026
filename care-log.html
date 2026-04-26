@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Care Log - Garden Journal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>🌱 My Garden Journal</h1>
+        <ul class="nav-links">
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="plants.html">My Plants</a></li>
+            <li><a href="care-log.html" class="active">Care Log</a></li>
+            <li><a href="timeline.html">Timeline</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h2>Care Log</h2>
+            <button class="btn-primary" onclick="showAddLogModal()">+ Add Log Entry</button>
+        </header>
+
+        <!-- Add Log Form (Inline) -->
+        <div id="add-log-form" class="card log-form">
+            <h3>New Care Entry</h3>
+            <form onsubmit="saveCareLog(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="log-plant">Plant *</label>
+                        <select id="log-plant" required>
+                            <option value="">Select plant...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="log-date">Date *</label>
+                        <input type="date" id="log-date" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="log-type">Activity Type *</label>
+                        <select id="log-type" required onchange="toggleFields()">
+                            <option value="">Select...</option>
+                            <option value="watering">💧 Watering</option>
+                            <option value="fertilizer">🌿 Fertilizer</option>
+                            <option value="pest">🐛 Pest/Disease Check</option>
+                            <option value="maintenance">🔧 Maintenance</option>
+                            <option value="observation">👁️ Observation</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="fertilizer-type-group" style="display:none;">
+                        <label for="fertilizer-type">Fertilizer Type</label>
+                        <select id="fertilizer-type">
+                            <option value="">Select...</option>
+                            <option value="balanced">Balanced (10-10-10)</option>
+                            <option value="nitrogen">High Nitrogen</option>
+                            <option value="bloom">Bloom Booster</option>
+                            <option value="compost">Compost Tea</option>
+                            <option value="organic">Organic Mix</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="log-notes">Notes</label>
+                    <textarea id="log-notes" rows="3" placeholder="Describe what you did or observed..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="log-photo">Upload Photo (for disease/pest issues)</label>
+                    <input type="file" id="log-photo" accept="image/*" onchange="previewImage(this)">
+                    <div id="photo-preview" class="photo-preview"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Log Entry</button>
+                    <button type="button" class="btn-secondary" onclick="clearForm()">Clear</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Care Log History -->
+        <div class="card">
+            <h3>Log History</h3>
+            <div id="log-history" class="log-history">
+                <!-- Logs will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

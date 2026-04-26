@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Plants - Garden Journal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>🌱 My Garden Journal</h1>
+        <ul class="nav-links">
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="plants.html" class="active">My Plants</a></li>
+            <li><a href="care-log.html">Care Log</a></li>
+            <li><a href="timeline.html">Timeline</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h2>My Plants</h2>
+            <button class="btn-primary" onclick="showAddPlantModal()">+ Add New Plant</button>
+        </header>
+
+        <!-- Filter Buttons -->
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterPlants('all')">All Plants</button>
+            <button class="filter-btn" onclick="filterPlants('indoor')">Indoors</button>
+            <button class="filter-btn" onclick="filterPlants('outdoor')">Outdoors</button>
+            <button class="filter-btn" onclick="filterPlants('ready')">Ready to Transplant</button>
+        </div>
+
+        <!-- Plants Grid -->
+        <div id="plants-grid" class="plants-grid">
+            <!-- Plants will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <!-- Add Plant Modal -->
+    <div id="add-plant-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add New Plant</h2>
+            <form id="add-plant-form">
+                <div class="form-group">
+                    <label for="plant-name">Plant Name *</label>
+                    <input type="text" id="plant-name" required placeholder="e.g., Zucchini - Jackpot">
+                </div>
+                
+                <div class="form-group">
+                    <label for="plant-variety">Variety</label>
+                    <input type="text" id="plant-variety" placeholder="e.g., Jackpot Zucchini">
+                </div>
+
+                <div class="form-group">
+                    <label for="plant-type">Type *</label>
+                    <select id="plant-type" required>
+                        <option value="">Select...</option>
+                        <option value="zucchini">Zucchini</option>
+                        <option value="cucumber">Cucumber</option>
+                        <option value="squash">Squash</option>
+                        <option value="tomato">Tomato</option>
+                        <option value="lettuce">Lettuce</option>
+                        <option value="carrot">Carrot</option>
+                        <option value="spinach">Spinach</option>
+                        <option value="arugula">Arugula</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="plant-date">Planting Date *</label>
+                    <input type="date" id="plant-date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location *</label>
+                    <select id="location" required>
+                        <option value="indoor">Indoors (Seed Starting)</option>
+                        <option value="outdoor">Outdoor Garden</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" rows="3" placeholder="Any special notes..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">Add Plant</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
