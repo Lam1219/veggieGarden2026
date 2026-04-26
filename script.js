@@ -1,234 +1,156 @@
-// Garden Journal Tracker - Main JavaScript
+// script.js - Garden Journal Tracker
 
-// Initialize on page load
+// --- Plant Care Database ---
+// This data is used to populate the detailed modal cards
+const PLANT_CARE_DB = {
+    cucumber: { 
+        water: "High (Consistently Moist)", 
+        waterLevel: 4, 
+        sun: "Full Sun (6-8 hours)", 
+        sunLevel: 5, 
+        tips: "Needs lots of water for juicy fruit. Avoid wetting leaves to prevent disease." 
+    },
+    zucchini: { 
+        water: "Moderate to High", 
+        waterLevel: 4, 
+        sun: "Full Sun (6-8 hours)", 
+        sunLevel: 5, 
+        tips: "Water deeply at the base to prevent powdery mildew. Harvest frequently." 
+    },
+    squash: { 
+        water: "Moderate", 
+        waterLevel: 3, 
+        sun: "Full Sun (6-8 hours)", 
+        sunLevel: 5, 
+        tips: "Allow soil to dry slightly between waterings. Watch for vine borers." 
+    },
+    tomato: { 
+        water: "Consistent", 
+        waterLevel: 4, 
+        sun: "Full Sun (8+ hours)", 
+        sunLevel: 5, 
+        tips: "Avoid wetting foliage. Consistent watering prevents blossom end rot." 
+    },
+    carrot: { 
+        water: "Moderate", 
+        waterLevel: 3, 
+        sun: "Full Sun to Part Shade", 
+        sunLevel: 4, 
+        tips: "Keep soil loose. Inconsistent water causes roots to split." 
+    },
+    lettuce: { 
+        water: "High", 
+        waterLevel: 4, 
+        sun: "Partial Sun", 
+        sunLevel: 3, 
+        tips: "Keep cool. Bolt (go to seed) quickly in hot sun." 
+    },
+    spinach: { 
+        water: "Moderate", 
+        waterLevel: 3, 
+        sun: "Partial Sun", 
+        sunLevel: 3, 
+        tips: "Prefers cooler weather. Mulch to keep roots cool." 
+    },
+    arugula: { 
+        water: "Moderate", 
+        waterLevel: 3, 
+        sun: "Partial Sun", 
+        sunLevel: 3, 
+        tips: "Fast growing. Harvest outer leaves to encourage more growth." 
+    }
+};
+
+// --- Default Initial Data (Your Indoor Plants) ---
+const DEFAULT_PLANTS = [
+    // 5 Cucumbers
+    { id: 1, name: 'Cucumber 1', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    { id: 2, name: 'Cucumber 2', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    { id: 3, name: 'Cucumber 3', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    { id: 4, name: 'Cucumber 4', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    { id: 5, name: 'Cucumber 5', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    // 4 Squash
+    { id: 6, name: 'Squash 1', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    { id: 7, name: 'Squash 2', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    { id: 8, name: 'Squash 3', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    { id: 9, name: 'Squash 4', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    // 4 Zucchini
+    { id: 10, name: 'Zucchini 1', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    { id: 11, name: 'Zucchini 2', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    { id: 12, name: 'Zucchini 3', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() },
+    { id: 13, name: 'Zucchini 4', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Started in small pot indoors', createdAt: new Date().toISOString() }
+];
+
+let cachedPlants = [];
+let cachedLogs = [];
+
+// --- Initialization ---
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
 });
 
-function initializeApp() {
-    // Set current date
-    const dateElement = document.getElementById('current-date');
-    if (dateElement) {
-        dateElement.textContent = new Date().toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    }
-
-    // Load saved data or initialize with current plants
-    loadPlants();
-    loadCareLogs();
+async function initializeApp() {
+    // Load data from Netlify Server
+    await loadPlantsFromServer();
+    await loadCareLogsFromServer();
+    
+    // Populate dropdowns
+    populatePlantDropdown();
+    
+    // Dashboard specific functions
     updateTransplantProgress();
-    
-    // Set today's date in log form
-    const logDateInput = document.getElementById('log-date');
-    if (logDateInput) {
-        logDateInput.valueAsDate = new Date();
+    updateTimelineStatus();
+}
+
+// --- Server Communication Functions ---
+async function fetchFromServer(endpoint) {
+    try {
+        const response = await fetch(`/api/${endpoint}`);
+        if (!response.ok) throw new Error('Network error');
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching ${endpoint}:`, error);
+        return [];
     }
 }
 
-// Data Storage Functions
-function getPlants() {
-    const plants = localStorage.getItem('gardenPlants');
-    if (plants) {
-        return JSON.parse(plants);
+async function saveToServer(endpoint, data) {
+    try {
+        const response = await fetch(`/api/${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error('Save failed');
+        return true;
+    } catch (error) {
+        console.error(`Error saving ${endpoint}:`, error);
+        alert('Failed to save to server.');
+        return false;
     }
-    // Initialize with current indoor plants
-    return [
-        {
-            id: 1,
-            name: 'Cucumber 1',
-            variety: 'Lebanese Beit Alpha',
-            type: 'cucumber',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 2,
-            name: 'Cucumber 2',
-            variety: 'Lebanese Beit Alpha',
-            type: 'cucumber',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 3,
-            name: 'Cucumber 3',
-            variety: 'Lebanese Beit Alpha',
-            type: 'cucumber',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 4,
-            name: 'Cucumber 4',
-            variety: 'Lebanese Beit Alpha',
-            type: 'cucumber',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 5,
-            name: 'Cucumber 5',
-            variety: 'Lebanese Beit Alpha',
-            type: 'cucumber',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 6,
-            name: 'Squash 1',
-            variety: 'Sunburst',
-            type: 'squash',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 7,
-            name: 'Squash 2',
-            variety: 'Sunburst',
-            type: 'squash',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 8,
-            name: 'Squash 3',
-            variety: 'Sunburst',
-            type: 'squash',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 9,
-            name: 'Squash 4',
-            variety: 'Sunburst',
-            type: 'squash',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 10,
-            name: 'Zucchini 1',
-            variety: 'Jackpot',
-            type: 'zucchini',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 11,
-            name: 'Zucchini 2',
-            variety: 'Jackpot',
-            type: 'zucchini',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 12,
-            name: 'Zucchini 3',
-            variety: 'Jackpot',
-            type: 'zucchini',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        },
-        {
-            id: 13,
-            name: 'Zucchini 4',
-            variety: 'Jackpot',
-            type: 'zucchini',
-            plantDate: new Date().toISOString().split('T')[0],
-            location: 'indoor',
-            notes: 'Started in small pot indoors',
-            createdAt: new Date().toISOString()
-        }
-    ];
 }
 
-function savePlants(plants) {
-    localStorage.setItem('gardenPlants', JSON.stringify(plants));
-}
+// --- Plant Management ---
 
-function getCareLogs() {
-    const logs = localStorage.getItem('gardenCareLogs');
-    return logs ? JSON.parse(logs) : [];
-}
-
-function saveCareLogs(logs) {
-    localStorage.setItem('gardenCareLogs', JSON.stringify(logs));
-}
-
-// Plant Management
-function showAddPlantModal() {
-    document.getElementById('add-plant-modal').style.display = 'block';
-}
-
-function closeModal() {
-    document.getElementById('add-plant-modal').style.display = 'none';
-}
-
-document.getElementById('add-plant-form')?.addEventListener('submit', function(e) {
-    e.preventDefault();
+async function loadPlantsFromServer() {
+    let plants = await fetchFromServer('plants');
     
-    const plant = {
-        id: Date.now(),
-        name: document.getElementById('plant-name').value,
-        variety: document.getElementById('plant-variety').value,
-        type: document.getElementById('plant-type').value,
-        plantDate: document.getElementById('plant-date').value,
-        location: document.getElementById('location').value,
-        notes: document.getElementById('notes').value,
-        createdAt: new Date().toISOString()
-    };
+    // If server is empty, initialize with default plants and save them
+    if (!plants || plants.length === 0) {
+        plants = DEFAULT_PLANTS;
+        await saveToServer('plants', plants);
+    }
     
-    const plants = getPlants();
-    plants.push(plant);
-    savePlants(plants);
-    
-    // Reset form and close modal
-    this.reset();
-    closeModal();
-    
-    // Reload plants
-    loadPlants();
-    
-    // Show success message
-    alert('Plant added successfully!');
-});
+    cachedPlants = plants;
+    renderPlants(plants);
+}
 
-function loadPlants() {
-    const plants = getPlants();
+function renderPlants(plants) {
     const plantsGrid = document.getElementById('plants-grid');
-    
     if (!plantsGrid) return;
     
     if (plants.length === 0) {
-        plantsGrid.innerHTML = '<p class="no-plants">No plants added yet. Click "Add New Plant" to get started!</p>';
+        plantsGrid.innerHTML = '<p class="no-plants">No plants added yet.</p>';
         return;
     }
     
@@ -237,49 +159,41 @@ function loadPlants() {
         const readyToTransplant = daysSincePlanting >= 21 && plant.location === 'indoor';
         
         return `
-            <div class="plant-card ${plant.location} ${readyToTransplant ? 'ready' : ''}" data-location="${plant.location}">
-                <div class="plant-header">
-                    <div class="plant-name">${plant.name}</div>
+            <div class="plant-card ${plant.location} ${readyToTransplant ? 'ready' : ''}" 
+                 onclick="showPlantDetails(${plant.id})" 
+                 data-location="${plant.location}">
+                <div class="plant-card-header">
+                    <div class="plant-card-name">${plant.name}</div>
                     <span class="plant-badge ${readyToTransplant ? 'ready' : ''}">
                         ${plant.location === 'indoor' ? (readyToTransplant ? '✓ Ready' : '🏠 Indoor') : '🌱 Outdoor'}
                     </span>
                 </div>
-                <div class="plant-info">
+                <div class="plant-card-info">
                     <p><strong>Variety:</strong> ${plant.variety || 'N/A'}</p>
                     <p><strong>Type:</strong> ${plant.type}</p>
                     <p><strong>Planted:</strong> ${new Date(plant.plantDate).toLocaleDateString()}</p>
                     <p><strong>Days Growing:</strong> ${daysSincePlanting} days</p>
-                    ${plant.notes ? `<p><strong>Notes:</strong> ${plant.notes}</p>` : ''}
-                </div>
-                <div class="plant-actions">
-                    <button onclick="viewPlantDetails(${plant.id})">View</button>
-                    <button onclick="editPlant(${plant.id})">Edit</button>
-                    <button onclick="deletePlant(${plant.id})" style="background: #CB7A5C; color: #E9E2D8;">Delete</button>
                 </div>
             </div>
         `;
     }).join('');
-    
-    // Update stats
-    updateStats(plants);
 }
 
-function updateStats(plants) {
-    const totalPlants = document.getElementById('total-plants');
-    const indoorPlants = document.getElementById('indoor-plants');
-    const outdoorPlants = document.getElementById('outdoor-plants');
-    
-    if (totalPlants) totalPlants.textContent = plants.length;
-    if (indoorPlants) indoorPlants.textContent = plants.filter(p => p.location === 'indoor').length;
-    if (outdoorPlants) outdoorPlants.textContent = plants.filter(p => p.location === 'outdoor').length;
+async function addPlant(plant) {
+    if (!cachedPlants) cachedPlants = [];
+    cachedPlants.push(plant);
+    await saveToServer('plants', cachedPlants);
+    renderPlants(cachedPlants);
+    populatePlantDropdown(); // Update dropdown in care log
 }
 
-function deletePlant(id) {
+async function deletePlant(id) {
+    event.stopPropagation(); // Stop click event from opening details
     if (confirm('Are you sure you want to delete this plant?')) {
-        let plants = getPlants();
-        plants = plants.filter(p => p.id !== id);
-        savePlants(plants);
-        loadPlants();
+        cachedPlants = cachedPlants.filter(p => p.id !== id);
+        await saveToServer('plants', cachedPlants);
+        renderPlants(cachedPlants);
+        populatePlantDropdown();
     }
 }
 
@@ -290,59 +204,78 @@ function filterPlants(filter) {
     
     const cards = document.querySelectorAll('.plant-card');
     cards.forEach(card => {
-        if (filter === 'all') {
-            card.style.display = 'block';
-        } else if (filter === 'ready') {
-            const isReady = card.classList.contains('ready');
-            card.style.display = isReady ? 'block' : 'none';
-        } else {
-            const location = card.getAttribute('data-location');
-            card.style.display = location === filter ? 'block' : 'none';
-        }
+        if (filter === 'all') card.style.display = 'block';
+        else if (filter === 'ready') card.style.display = card.classList.contains('ready') ? 'block' : 'none';
+        else card.style.display = card.getAttribute('data-location') === filter ? 'block' : 'none';
     });
 }
 
-// Care Log Functions
-function showAddLogModal() {
-    document.getElementById('add-log-form').scrollIntoView({ behavior: 'smooth' });
-    populatePlantDropdown();
+// --- Plant Details Modal ---
+
+function showPlantDetails(id) {
+    const plant = cachedPlants.find(p => p.id === id);
+    if (!plant) return;
+
+    const modal = document.getElementById('plant-details-modal');
+    const careInfo = PLANT_CARE_DB[plant.type] || PLANT_CARE_DB['cucumber']; // Default to cucumber if unknown
+    
+    // Populate Text
+    document.getElementById('detail-name').textContent = plant.name;
+    document.getElementById('detail-variety').textContent = plant.variety;
+    document.getElementById('detail-planted').textContent = new Date(plant.plantDate).toLocaleDateString();
+    document.getElementById('detail-days').textContent = Math.floor((new Date() - new Date(plant.plantDate)) / (1000 * 60 * 60 * 24));
+    document.getElementById('detail-location').textContent = plant.location.charAt(0).toUpperCase() + plant.location.slice(1);
+    document.getElementById('detail-notes').textContent = plant.notes || "No notes added";
+    document.getElementById('detail-water').textContent = careInfo.water;
+    document.getElementById('detail-sun').textContent = careInfo.sun;
+    document.getElementById('detail-tips').textContent = careInfo.tips;
+
+    // Populate Indicators
+    renderIndicator('detail-water-indicator', careInfo.waterLevel);
+    renderIndicator('detail-sun-indicator', careInfo.sunLevel);
+
+    // Store current ID for editing
+    modal.dataset.currentId = id;
+    
+    // Show Modal
+    modal.style.display = 'block';
 }
+
+function renderIndicator(elementId, level) {
+    const container = document.getElementById(elementId);
+    container.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+        const dot = document.createElement('div');
+        dot.className = i < level ? 'indicator-dot active' : 'indicator-dot';
+        container.appendChild(dot);
+    }
+}
+
+function closePlantDetailsModal() {
+    document.getElementById('plant-details-modal').style.display = 'none';
+}
+
+// --- Care Log Management ---
 
 function populatePlantDropdown() {
-    const plants = getPlants();
     const select = document.getElementById('log-plant');
-    
     if (!select) return;
+
+    // Keep the first option (placeholder)
+    select.innerHTML = '<option value="">Select a plant...</option>';
     
-    select.innerHTML = '<option value="">Select plant...</option>' +
-        plants.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+    // Add plants sorted by name
+    const sortedPlants = [...cachedPlants].sort((a, b) => a.name.localeCompare(b.name));
+    
+    sortedPlants.forEach(plant => {
+        const option = document.createElement('option');
+        option.value = plant.name;
+        option.textContent = `${plant.name} (${plant.variety})`;
+        select.appendChild(option);
+    });
 }
 
-function toggleFields() {
-    const type = document.getElementById('log-type').value;
-    const fertilizerGroup = document.getElementById('fertilizer-type-group');
-    
-    if (fertilizerGroup) {
-        fertilizerGroup.style.display = type === 'fertilizer' ? 'block' : 'none';
-    }
-}
-
-function previewImage(input) {
-    const preview = document.getElementById('photo-preview');
-    preview.innerHTML = '';
-    
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            preview.appendChild(img);
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function saveCareLog(event) {
+async function saveCareLog(event) {
     event.preventDefault();
     
     const logEntry = {
@@ -352,40 +285,31 @@ function saveCareLog(event) {
         type: document.getElementById('log-type').value,
         fertilizerType: document.getElementById('fertilizer-type')?.value || '',
         notes: document.getElementById('log-notes').value,
-        photo: document.getElementById('log-photo').files[0]?.name || '',
         createdAt: new Date().toISOString()
     };
     
-    const logs = getCareLogs();
-    logs.unshift(logEntry); // Add to beginning
-    saveCareLogs(logs);
+    if (!cachedLogs) cachedLogs = [];
+    cachedLogs.unshift(logEntry); // Add new logs to the top
+    await saveToServer('logs', cachedLogs);
+    renderLogs(cachedLogs);
     
-    // Clear form
-    clearForm();
-    
-    // Reload logs
-    loadCareLogs();
-    
-    // Update recent activity on dashboard
-    updateRecentActivity();
-    
-    alert('Care log entry saved!');
+    // Reset form
+    document.getElementById('log-notes').value = '';
+    document.getElementById('fertilizer-type-group').style.display = 'none';
+    alert('Log entry saved!');
 }
 
-function clearForm() {
-    document.querySelector('form').reset();
-    document.getElementById('photo-preview').innerHTML = '';
-    document.getElementById('log-date').valueAsDate = new Date();
+async function loadCareLogsFromServer() {
+    cachedLogs = await fetchFromServer('logs');
+    renderLogs(cachedLogs);
 }
 
-function loadCareLogs() {
-    const logs = getCareLogs();
+function renderLogs(logs) {
     const logHistory = document.getElementById('log-history');
-    
     if (!logHistory) return;
     
-    if (logs.length === 0) {
-        logHistory.innerHTML = '<p class="no-activity">No care logs yet. Add your first entry above!</p>';
+    if (!logs || logs.length === 0) {
+        logHistory.innerHTML = '<p class="no-activity">No care logs yet.</p>';
         return;
     }
     
@@ -398,7 +322,6 @@ function loadCareLogs() {
             <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
             ${log.fertilizerType ? `<p><strong>Fertilizer:</strong> ${log.fertilizerType}</p>` : ''}
             <p>${log.notes || 'No notes'}</p>
-            ${log.photo ? `<p><em>📷 Photo attached: ${log.photo}</em></p>` : ''}
         </div>
     `).join('');
 }
@@ -414,116 +337,103 @@ function getLogTypeLabel(type) {
     return labels[type] || type;
 }
 
-function updateRecentActivity() {
-    const recentLogs = document.getElementById('recent-logs');
-    if (!recentLogs) return;
-    
-    const logs = getCareLogs();
-    if (logs.length === 0) {
-        recentLogs.innerHTML = '<p class="no-activity">No recent activity. Start logging!</p>';
-        return;
+function toggleFields() {
+    const type = document.getElementById('log-type').value;
+    const fertilizerGroup = document.getElementById('fertilizer-type-group');
+    if (fertilizerGroup) {
+        fertilizerGroup.style.display = type === 'fertilizer' ? 'block' : 'none';
     }
-    
-    recentLogs.innerHTML = logs.slice(0, 5).map(log => `
-        <div class="log-entry ${log.type}" style="margin-bottom: 0.5rem;">
-            <div class="log-header">
-                <span class="log-plant-name">${log.plant}</span>
-                <span class="log-date">${new Date(log.date).toLocaleDateString()}</span>
-            </div>
-            <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
-            <p style="margin-top: 0.5rem; font-size: 0.9rem;">${log.notes || 'No notes'}</p>
-        </div>
-    `).join('');
 }
 
-// Transplant Progress
+function clearForm() {
+    document.querySelector('form').reset();
+    document.getElementById('fertilizer-type-group').style.display = 'none';
+}
+
+// --- Dashboard Visuals ---
+
 function updateTransplantProgress() {
-    // Get planting dates from localStorage or use default
+    // Hardcoded start date based on your request
+    const plantingDate = new Date('2026-04-26');
     const today = new Date();
-    const plantingDate = new Date(); // Assume planted today
+    const daysSince = Math.max(0, Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24)));
+    const totalDays = 28; // Standard transplant time for these crops
     
-    const plants = [
-        { name: 'zucchini', label: 'Zucchini (Jackpot)', days: 28 },
-        { name: 'cucumber', label: 'Cucumbers (Lebanese)', days: 28 },
-        { name: 'squash', label: 'Squash (Sunburst)', days: 28 }
-    ];
+    const progress = Math.min((daysSince / totalDays) * 100, 100);
+    const daysRemaining = Math.max(0, totalDays - daysSince);
     
-    plants.forEach(plant => {
-        const progressEl = document.getElementById(`${plant.name}-progress`);
-        const transplantDateEl = document.getElementById(`${plant.name}-transplant-date`);
-        
-        if (progressEl && transplantDateEl) {
-            const daysSincePlanting = Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24));
-            const progress = Math.min((daysSincePlanting / plant.days) * 100, 100);
-            
-            progressEl.style.width = `${progress}%`;
-            
-            const transplantDate = new Date(plantingDate);
-            transplantDate.setDate(transplantDate.getDate() + plant.days);
-            transplantDateEl.textContent = transplantDate.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric'
-            });
-        }
+    // Update UI elements
+    document.querySelectorAll('.time-value').forEach(el => el.textContent = daysRemaining);
+    document.querySelectorAll('.progress').forEach(el => el.style.width = `${progress}%`);
+    
+    // Calculate target date
+    const transplantDate = new Date(plantingDate);
+    transplantDate.setDate(transplantDate.getDate() + totalDays);
+    document.querySelectorAll('.transplant-date').forEach(el => {
+        el.textContent = `Ready: ${transplantDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
     });
 }
 
-function calculateTransplant() {
-    const plantDateInput = document.getElementById('calc-plant-date');
-    const resultsDiv = document.getElementById('transplant-results');
+function updateTimelineStatus() {
+    const plantingDate = new Date('2026-04-26');
+    const today = new Date();
+    const daysSince = Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24));
     
-    if (!plantDateInput || !resultsDiv || !plantDateInput.value) return;
+    // Logic to highlight current phase
+    // Week 1-2 (0-14 days), Week 3 (14-21), etc.
+    const timelineSteps = document.querySelectorAll('.timeline-step');
     
-    const plantDate = new Date(plantDateInput.value);
-    
-    // Calculate key dates
-    const trueLeavesDate = new Date(plantDate);
-    trueLeavesDate.setDate(trueLeavesDate.getDate() + 14);
-    
-    const hardeningStartDate = new Date(plantDate);
-    hardeningStartDate.setDate(hardeningStartDate.getDate() + 21);
-    
-    const transplantDate = new Date(plantDate);
-    transplantDate.setDate(transplantDate.getDate() + 28);
-    
-    resultsDiv.innerHTML = `
-        <div class="calculation-results">
-            <div class="result-item">
-                <strong>🌱 True Leaves Expected:</strong>
-                <p>${trueLeavesDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-            </div>
-            <div class="result-item">
-                <strong>🌤️ Start Hardening Off:</strong>
-                <p>${hardeningStartDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-            </div>
-            <div class="result-item">
-                <strong>✅ Ready to Transplant:</strong>
-                <p>${transplantDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-                <small>Make sure nighttime temps are above 50°F!</small>
-            </div>
-        </div>
-    `;
+    if (timelineSteps.length >= 6) {
+        // Reset all
+        timelineSteps.forEach(step => step.classList.remove('active'));
+        
+        // Determine current step
+        let currentStepIndex = 0;
+        if (daysSince > 21) currentStepIndex = 2; // Week 4
+        else if (daysSince > 14) currentStepIndex = 1; // Week 3
+        else if (daysSince > 7) currentStepIndex = 0; // Week 1-2
+        
+        // Activate current and previous steps
+        for (let i = 0; i <= currentStepIndex; i++) {
+            if (timelineSteps[i]) timelineSteps[i].classList.add('active');
+        }
+    }
 }
+
+// --- Modal Controls ---
+
+function showAddPlantModal() {
+    document.getElementById('add-plant-modal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('add-plant-modal').style.display = 'none';
+}
+
+// Handle Add Plant Form
+document.getElementById('add-plant-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const plant = {
+        id: Date.now(),
+        name: document.getElementById('plant-name').value,
+        variety: document.getElementById('plant-variety').value,
+        type: document.getElementById('plant-type').value,
+        plantDate: document.getElementById('plant-date').value,
+        location: document.getElementById('location').value,
+        notes: document.getElementById('notes').value,
+        createdAt: new Date().toISOString()
+    };
+    
+    await addPlant(plant);
+    this.reset();
+    closeModal();
+});
 
 // Close modal when clicking outside
 window.onclick = function(event) {
-    const modal = document.getElementById('add-plant-modal');
-    if (event.target === modal) {
-        closeModal();
-    }
-}
-
-// View plant details
-function viewPlantDetails(id) {
-    const plants = getPlants();
-    const plant = plants.find(p => p.id === id);
-    
-    if (plant) {
-        alert(`Plant Details:\n\nName: ${plant.name}\nVariety: ${plant.variety}\nType: ${plant.type}\nPlanted: ${plant.plantDate}\nLocation: ${plant.location}\nNotes: ${plant.notes || 'None'}`);
-    }
-}
-
-// Edit plant (placeholder)
-function editPlant(id) {
-    alert('Edit functionality coming soon! For now, delete and re-add the plant.');
+    const plantModal = document.getElementById('plant-details-modal');
+    const addModal = document.getElementById('add-plant-modal');
+    if (event.target === plantModal) closePlantDetailsModal();
+    if (event.target === addModal) closeModal();
 }
