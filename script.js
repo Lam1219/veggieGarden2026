@@ -118,10 +118,10 @@ async function initializeApp() {
     updateCurrentDate(); 
 }
 
-// --- Live Weather Fetch (Netlify Function Proxy) ---
+// --- Live Weather Fetch (Cloudflare Function Proxy) ---
 async function fetchHamiltonWeather() {
     try {
-        const response = await fetch('/.netlify/functions/weather');
+        const response = await fetch('/functions/weather');
         
         if (!response.ok) throw new Error('Weather fetch failed');
         
