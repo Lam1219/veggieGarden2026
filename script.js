@@ -117,30 +117,30 @@ async function initializeApp() {
 
 // --- Server Communication ---
 async function fetchFromServer(endpoint) {
-    try {
-        const response = await fetch(`/api/${endpoint}`);
-        if (!response.ok) throw new Error('Network error');
-        return await response.json();
-    } catch (error) {
-        console.error(`Error fetching ${endpoint}:`, error);
-        return [];
-    }
+  try {
+    const response = await fetch(`/api/${endpoint}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.warn(`⚠️ Server fetch failed for ${endpoint}. Using local fallback.`);
+    return []; // Returns empty array so UI still loads
+  }
 }
 
 async function saveToServer(endpoint, data) {
-    try {
-        const response = await fetch(`/api/${endpoint}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        if (!response.ok) throw new Error('Save failed');
-        return true;
-    } catch (error) {
-        console.error(`Error saving ${endpoint}:`, error);
-        alert('Failed to save to server.');
-        return false;
-    }
+  try {
+    const response = await fetch(`/api/${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return true;
+  } catch (error) {
+    console.error(`❌ Failed to save ${endpoint}:`, error);
+    // Silently fail instead of blocking UI
+    return false;
+  }
 }
 
 // --- Plant Management ---
