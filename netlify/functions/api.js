@@ -4,21 +4,13 @@ const { getStore } = require('@netlify/blobs');
 exports.handler = async (event, context) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Content-Type': 'application/json'
   };
 
-  // Handle preflight
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
-  }
-
   try {
-    // ✅ FIX: Pass 'context' to getStore for authentication
-    const store = getStore({ name: 'garden-db', context });
+    // ✅ Create store automatically on first use
+    const store = getStore({ name: 'garden-db' });
 
-    // Extract key from URL
     const match = event.path.match(/\/api\/([^\/\?]+)/);
     const key = match ? match[1] : null;
 
@@ -26,7 +18,6 @@ exports.handler = async (event, context) => {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing key' }) };
     }
 
-    // GET
     if (event.httpMethod === 'GET') {
       const data = await store.get(key, { type: 'json' });
       if (!data && key === 'plants') {
@@ -35,7 +26,6 @@ exports.handler = async (event, context) => {
       return { statusCode: 200, headers, body: JSON.stringify(data || []) };
     }
 
-    // POST
     if (event.httpMethod === 'POST') {
       const data = event.body ? JSON.parse(event.body) : [];
       await store.setJSON(key, data);
@@ -45,12 +35,8 @@ exports.handler = async (event, context) => {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
   } catch (error) {
-    console.error('❌ Function error:', error);
-    return { 
-      statusCode: 500, 
-      headers, 
-      body: JSON.stringify({ error: error.message }) 
-    };
+    console.error('❌ Error:', error);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   }
 };
 
