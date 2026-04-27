@@ -113,12 +113,9 @@ async function initializeApp() {
     populatePlantDropdown();
     updateTransplantProgress();
     updateTimelineStatus();
-    
-    // ✅ Fetch live weather from Netlify Function
     fetchHamiltonWeather();
-    
-    // ✅ Update tasks based on plant status
     updateTodaysTasks();
+    updateCurrentDate(); 
 }
 
 // --- Live Weather Fetch (Netlify Function Proxy) ---
@@ -543,31 +540,40 @@ function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.querySelector('.sidebar-overlay');
     
-    if (sidebar && overlay) {
-        sidebar.classList.toggle('active');
+    if (!sidebar) return;
+    
+    sidebar.classList.toggle('active');
+    
+    if (overlay) {
         overlay.classList.toggle('active');
-        
-        // Prevent body scroll when sidebar is open
+    }
+    
+    // Prevent body scroll when sidebar is open (mobile only)
+    if (window.innerWidth <= 768) {
         document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
     }
 }
 
-// Close sidebar when clicking overlay
+// Initialize mobile menu on DOM load
 document.addEventListener('DOMContentLoaded', function() {
-    // Create overlay element
-    const overlay = document.createElement('div');
-    overlay.className = 'sidebar-overlay';
-    overlay.onclick = toggleSidebar;
-    document.body.appendChild(overlay);
+    // Create overlay element (only once)
+    if (!document.querySelector('.sidebar-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        overlay.setAttribute('aria-hidden', 'true');
+        overlay.onclick = toggleSidebar;
+        document.body.appendChild(overlay);
+    }
     
-    // Close sidebar when clicking a nav link on mobile
+    // Close sidebar when clicking a nav link (mobile only)
     document.querySelectorAll('.nav-item').forEach(link => {
         link.addEventListener('click', () => {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
             if (window.innerWidth <= 768) {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                
+                if (sidebar) sidebar.classList.remove('active');
+                if (overlay) overlay.classList.remove('active');
                 document.body.style.overflow = '';
             }
         });
@@ -578,12 +584,38 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Escape') {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.querySelector('.sidebar-overlay');
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
+            
+            if (sidebar) sidebar.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Handle window resize: close sidebar if switching to desktop
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            if (sidebar) sidebar.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
             document.body.style.overflow = '';
         }
     });
 });
+
+// --- Dynamic Date Updater ---
+function updateCurrentDate() {
+    // Format: "Monday, April 26, 2026"
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const today = new Date().toLocaleDateString('en-US', options);
+    
+    const headerDate = document.getElementById('header-date');
+    const currentDatespan = document.getElementById('current-date');
+    
+    if (headerDate) headerDate.textContent = today;
+    if (currentDatespan) currentDatespan.textContent = today;
+}
 
 // --- Visual Updates ---
 function updateTransplantProgress() {
