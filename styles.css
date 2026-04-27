@@ -1115,3 +1115,119 @@ optgroup {
     font-style: italic;
 }
 .mt-xs { margin-top: 0.25rem; }
+
+/* Mobile Menu Toggle Button */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: var(--color-text);
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.25rem;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: var(--transition);
+}
+
+.mobile-menu-toggle:hover {
+    background: var(--color-accent);
+}
+
+/* Overlay for mobile sidebar */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Mobile Responsive Updates */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 999;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 80px 1rem 1rem; /* Account for fixed menu button */
+    }
+    
+    .weather-banner {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .weather-details {
+        display: none; /* Hide extra details on small screens */
+    }
+    
+    .countdown-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tasks-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .plants-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .boxes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .herb-pots-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .plant-details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-group {
+        flex-wrap: wrap;
+    }
+    
+    .timeline {
+        flex-direction: column;
+    }
+    
+    .timeline-step {
+        flex: 1;
+        min-width: 100%;
+    }
+}
