@@ -9,45 +9,58 @@ const getStore = () => {
 
 exports.handler = async (event, context) => {
   const { httpMethod, path, body } = event;
-  const key = path.replace('/api/', '');
   
+  // --- FIX: Robustly extract the key ---
+  // Path comes in as /.netlify/functions/api/plants
+  // We just want 'plants'
+  const pathSegments = path.split('/');
+  const key = pathSegments[pathSegments.length - 1];
+  
+  // Basic validation
+  if (!key || key.includes('.')) {
+     return { statusCode: 400, body: 'Invalid key' };
+  }
+
   const blobs = getStore();
   const store = blobs ? blobs.getStore({ name: 'garden-db', consistency: 'strong' }) : null;
 
-  // GET request - Load data
-  if (httpMethod === 'GET') {
-    try {
+  try {
+    // GET request - Load data
+    if (httpMethod === 'GET') {
       const value = store ? await store.get(key, { type: 'json' }) : null;
-      // Return default plants if empty
+      
+      // If no data exists and it's the plants endpoint, return defaults
       if (!value && key === 'plants') {
         return {
           statusCode: 200,
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(getDefaultPlants())
         };
       }
+
       return {
         statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(value || [])
       };
-    } catch (error) {
-      return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
     }
-  }
 
-  // POST request - Save data
-  if (httpMethod === 'POST') {
-    try {
+    // POST request - Save data
+    if (httpMethod === 'POST') {
+      if (!body) return { statusCode: 400, body: 'Missing body' };
+      
       const data = JSON.parse(body);
       if (store) {
         await store.setJSON(key, data);
       }
       return { statusCode: 200, body: 'Saved' };
-    } catch (error) {
-      return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
     }
-  }
 
-  return { statusCode: 404, body: 'Not Found' };
+    return { statusCode: 405, body: 'Method Not Allowed' };
+  } catch (error) {
+    console.error("Server Error:", error);
+    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+  }
 };
 
 function getDefaultPlants() {
