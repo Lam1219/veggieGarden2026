@@ -39,145 +39,97 @@
         <main class="main-content">
             <header class="header">
                 <h1>My Plants</h1>
-                <p class="header-subtitle">Manage your garden inventory</p>
+                <p class="header-subtitle">Manage your garden inventory & layouts</p>
                 <button class="btn btn-primary mt-sm" onclick="showAddPlantModal()">
                     <i class="fas fa-plus"></i> Add Plant
                 </button>
             </header>
 
-            <!-- Filter -->
+            <!-- Filters -->
             <div class="filter-group">
                 <button class="filter-btn active" onclick="filterPlants('all')">All</button>
                 <button class="filter-btn" onclick="filterPlants('indoor')">Indoor</button>
                 <button class="filter-btn" onclick="filterPlants('outdoor')">Outdoor</button>
-                <button class="filter-btn" onclick="filterPlants('ready')">Ready</button>
+                <button class="filter-btn" onclick="filterPlants('ready')">Ready to Transplant</button>
             </div>
 
             <!-- Seed Inventory -->
             <div class="card">
-                <h2 class="card-title">
-                    <i class="fas fa-seedling"></i>
-                    Your Seed Inventory
-                </h2>
+                <h2 class="card-title"><i class="fas fa-seedling"></i> Seed Inventory</h2>
                 <div class="inventory-grid">
+                    <!-- Tomatoes -->
                     <div class="inventory-category">
                         <h3>🍅 Tomatoes</h3>
-                        <div class="inventory-item">
-                            <strong>Pink Bumble Bee</strong>
-                            <span class="text-muted">Heirloom</span>
-                        </div>
-                        <div class="inventory-item">
-                            <strong>Indigo Rose</strong>
-                            <span class="text-muted">Organic</span>
-                        </div>
+                        <div class="inventory-item"><strong>Pink Bumble Bee</strong><span class="text-muted">2 Plants (Indoor)</span></div>
+                        <div class="inventory-item"><strong>Indigo Rose</strong><span class="text-muted">🍅 To Save Seeds</span></div>
                     </div>
+                    <!-- Cucurbits -->
                     <div class="inventory-category">
                         <h3>🥒 Cucurbits</h3>
-                        <div class="inventory-item">
-                            <strong>Lebanese Beit Alpha</strong>
-                            <span class="text-muted">Cucumber × 5</span>
-                        </div>
-                        <div class="inventory-item">
-                            <strong>Jackpot</strong>
-                            <span class="text-muted">Zucchini × 4</span>
-                        </div>
-                        <div class="inventory-item">
-                            <strong>Sunburst</strong>
-                            <span class="text-muted">Squash × 4</span>
-                        </div>
+                        <div class="inventory-item"><strong>Lebanese Beit Alpha</strong><span class="text-muted">5 Plants (Indoor)</span></div>
+                        <div class="inventory-item"><strong>Jackpot</strong><span class="text-muted">Zucchini × 4 (Indoor)</span></div>
+                        <div class="inventory-item"><strong>Sunburst</strong><span class="text-muted">Squash × 4 (Indoor)</span></div>
                     </div>
+                    <!-- Greens (Outdoor Planned) -->
                     <div class="inventory-category">
-                        <h3>🥬 Greens</h3>
-                        <div class="inventory-item">
-                            <strong>Super Gourmet</strong>
-                            <span class="text-muted">Lettuce</span>
-                        </div>
-                        <div class="inventory-item">
-                            <strong>Renegade</strong>
-                            <span class="text-muted">Spinach</span>
-                        </div>
-                        <div class="inventory-item">
-                            <strong>Astro</strong>
-                            <span class="text-muted">Arugula</span>
-                        </div>
-                    </div>
-                    <div class="inventory-category">
-                        <h3>🥕 Roots</h3>
-                        <div class="inventory-item">
-                            <strong>Rainbow Blend</strong>
-                            <span class="text-muted">Carrots</span>
-                        </div>
+                        <h3>🥬 Greens (Outdoor)</h3>
+                        <div class="inventory-item"><strong>Super Gourmet</strong><span class="text-muted">Lettuce</span></div>
+                        <div class="inventory-item"><strong>Renegade</strong><span class="text-muted">Spinach</span></div>
+                        <div class="inventory-item"><strong>Astro</strong><span class="text-muted">Arugula</span></div>
+                        <div class="inventory-item"><strong>Rainbow Blend</strong><span class="text-muted">Carrots</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Garden Boxes -->
+            <!-- Garden Box Layouts -->
             <div class="card">
-                <h2 class="card-title">
-                    <i class="fas fa-th-large"></i>
-                    Garden Box Layouts
-                </h2>
+                <h2 class="card-title"><i class="fas fa-th-large"></i> Garden Box Layouts</h2>
                 <div class="boxes-grid">
+                    <!-- Box 1 -->
                     <div class="box-card">
-                        <h3>Box 1: The Vertical Box</h3>
+                        <h3>📦 Box 1: The Vertical Box</h3>
                         <p class="text-muted">6ft × 7ft = 42 sq ft</p>
-                        <ul class="plant-list">
-                            <li><strong>Tomatoes:</strong> 4-6 plants with cages</li>
-                            <li><strong>Cucumbers:</strong> 4-6 plants on trellis</li>
-                            <li><strong>Carrots:</strong> Sow 100+, thin to 50-100</li>
-                            <li><strong>Arugula:</strong> Scatter in gaps</li>
-                        </ul>
-                        <div class="box-diagram">
-                            <pre>┌─────────────────┐
-│ ═ ═ ═  ═ ═ ═  ═ │ ← Trellis
-│  C   T   T   C  │
-│   c   c   c   c │ ← Carrots
-│   a       a    │ ← Arugula
-└─────────────────┘</pre>
+                        <div class="emoji-layout">
+                            <div class="layout-row">🌿🍅🌿</div>
+                            <div class="layout-label">Trellis: Tomatoes & Cucumbers climbing</div>
+                            <div class="layout-row">🥕🥕🥕🥕</div>
+                            <div class="layout-label">Rows of Carrots</div>
+                            <div class="layout-row" style="margin-top: 8px;">🌱 &nbsp;&nbsp; 🌱 &nbsp;&nbsp; 🌱</div>
+                            <div class="layout-label">Arugula (scattered in gaps)</div>
                         </div>
+                        <ul class="plant-list mt-sm">
+                            <li>🍅 <strong>Tomatoes:</strong> 4-6 plants with cages</li>
+                            <li>🌿 <strong>Cucumbers:</strong> 4-6 plants on trellis</li>
+                            <li>🥕 <strong>Carrots:</strong> Sow 100+, thin to 50-100</li>
+                            <li>🌱 <strong>Arugula:</strong> Scatter in gaps; harvest before shade</li>
+                        </ul>
                     </div>
+
+                    <!-- Box 2 -->
                     <div class="box-card">
-                        <h3>Box 2: The Succession Box</h3>
+                        <h3>📦 Box 2: The Succession Box</h3>
                         <p class="text-muted">6ft × 7ft = 42 sq ft</p>
-                        <ul class="plant-list">
-                            <li><strong>Lettuce/Spinach:</strong> Plant NOW</li>
-                            <li><strong>Zucchini:</strong> 1-2 plants center</li>
-                            <li><strong>Sunburst:</strong> 2 plants</li>
-                            <li><em>Harvest greens first, then squash spreads</em></li>
-                        </ul>
-                        <div class="box-diagram">
-                            <pre>┌─────────────────┐
-│ l   l   l   l  │ ← Lettuce
-│ s   s   s   s  │ ← Spinach
-│      Z         │ ← Zucchini
-│   S       S    │ ← Sunburst
-└─────────────────┘</pre>
+                        <div class="emoji-layout">
+                            <div class="layout-row">🥬🥬🥬</div>
+                            <div class="layout-row">🌿🌿🌿</div>
+                            <div class="layout-label">Lettuce & Spinach rows (Plant next week)</div>
+                            <div class="layout-row" style="margin-top: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;🎃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                            <div class="layout-row">🎃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;🎃</div>
+                            <div class="layout-label">Zucchini & Squash (Transplant Mid-May)</div>
                         </div>
+                        <ul class="plant-list mt-sm">
+                            <li>🥬 <strong>Lettuce/Spinach:</strong> Fill empty space next week</li>
+                            <li>🎃 <strong>Zucchini:</strong> 1-2 plants center (Transplant mid-May)</li>
+                            <li>🎃 <strong>Sunburst Squash:</strong> 2 plants (Transplant mid-May)</li>
+                            <li><em>💡 Strategy: Harvest greens in 30-45 days, then squash spreads</em></li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- Herb Pots -->
+            <!-- Active Plants List -->
             <div class="card">
-                <h2 class="card-title">
-                    <i class="fas fa-mug-hot"></i>
-                    Herb Pot Organization
-                </h2>
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <strong>Critical:</strong> Mojito Mint MUST have its own pot!
-                </div>
-                <div class="herb-grid" id="herb-grid">
-                    <!-- Populated by JavaScript -->
-                </div>
-            </div>
-
-            <!-- Plants Grid -->
-            <div class="card">
-                <h2 class="card-title">
-                    <i class="fas fa-list"></i>
-                    Active Plants
-                </h2>
+                <h2 class="card-title"><i class="fas fa-list"></i> Active Plants</h2>
                 <div id="plants-grid" class="plants-grid">
                     <!-- Populated by JavaScript -->
                 </div>
@@ -185,7 +137,7 @@
         </main>
     </div>
 
-    <!-- Plant Details Modal -->
+    <!-- Modals (Same as before) -->
     <div id="plant-details-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -222,7 +174,6 @@
         </div>
     </div>
 
-    <!-- Add Plant Modal -->
     <div id="add-plant-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">

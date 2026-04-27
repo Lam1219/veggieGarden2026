@@ -1,169 +1,404 @@
-// Plant Care Database - Based on your seed inventory
+// script.js - Garden Journal Tracker
+
+// --- Plant Care Database ---
 const PLANT_CARE_DB = {
-    // Your Tomatoes
-    'pink-bumble-bee': { 
+    tomato: { 
         water: "Consistent", waterLevel: 4, 
         sun: "Full Sun (8+ hours)", sunLevel: 5,
         start: "Start indoors 6-8 weeks before transplant",
         spacing: "24-36 inches apart",
         tips: "Use cages. Ferment seeds for best saving results."
     },
-    'indigo-rose': { 
-        water: "Consistent", waterLevel: 4, 
-        sun: "Full Sun (8+ hours)", sunLevel: 5,
-        start: "Start indoors 6-8 weeks before transplant",
-        spacing: "24-36 inches apart",
-        tips: "Heirloom variety. Save seeds using fermentation method."
-    },
-    // Your Cucumbers
-    'lebanese-beit-alpha': { 
+    cucumber: { 
         water: "High (Consistently Moist)", waterLevel: 5, 
         sun: "Full Sun (6-8 hours)", sunLevel: 5,
-        start: "Start indoors in biodegradable pots late April",
+        start: "Start indoors in biodegradable pots",
         spacing: "12 inches apart on trellis",
         tips: "Train on trellis. Harvest when small for best flavor."
     },
-    // Your Squash/Zucchini
-    'jackpot-zucchini': { 
+    zucchini: { 
         water: "Moderate to High", waterLevel: 4, 
         sun: "Full Sun (6-8 hours)", sunLevel: 5,
-        start: "Start indoors late April, transplant mid-May",
+        start: "Start indoors, transplant mid-May",
         spacing: "36 inches apart (gets very large!)",
-        tips: "Limit to 2-4 plants per 42 sq ft box. Harvest frequently."
+        tips: "Limit to 2-4 plants per box. Harvest frequently."
     },
-    'sunburst-squash': { 
+    squash: { 
         water: "Moderate", waterLevel: 3, 
         sun: "Full Sun (6-8 hours)", sunLevel: 5,
-        start: "Start indoors late April, transplant mid-May",
+        start: "Start indoors, transplant mid-May",
         spacing: "36 inches apart",
         tips: "Allow space to spread. Harvest when small and tender."
     },
-    // Your Greens (Direct Sow)
-    'rainbow-carrots': { 
-        water: "Moderate", waterLevel: 3, 
-        sun: "Full Sun to Part Shade", sunLevel: 4,
-        start: "Direct sow now - takes 70-80 days",
-        spacing: "2-3 inches apart after thinning",
-        tips: "Keep soil loose. Thin seedlings to prevent forked roots."
-    },
-    'super-gourmet-lettuce': { 
+    lettuce: { 
         water: "High", waterLevel: 4, 
         sun: "Partial Sun (4-6 hours)", sunLevel: 3,
-        start: "Direct sow now - ready in 30-45 days",
+        start: "Direct sow outside",
         spacing: "6-8 inches apart",
         tips: "Succession sow every 2 weeks for continuous harvest."
     },
-    'renegade-spinach': { 
+    spinach: { 
         water: "Moderate", waterLevel: 3, 
         sun: "Partial Sun", sunLevel: 3,
-        start: "Direct sow now - cool weather crop",
+        start: "Direct sow outside",
         spacing: "4-6 inches apart",
         tips: "Harvest outer leaves to extend production."
     },
-    'astro-arugula': { 
+    arugula: { 
         water: "Moderate", waterLevel: 3, 
         sun: "Partial Sun", sunLevel: 3,
-        start: "Direct sow now or scatter in gaps",
+        start: "Direct sow outside or scatter in gaps",
         spacing: "6 inches apart",
         tips: "Fast growing. Harvest before tomatoes shade it."
+    },
+    carrot: { 
+        water: "Moderate", waterLevel: 3, 
+        sun: "Full Sun to Part Shade", sunLevel: 4,
+        start: "Direct sow outside",
+        spacing: "2-3 inches apart after thinning",
+        tips: "Keep soil loose. Thin seedlings to prevent forked roots."
     }
 };
 
-// Your Actual Seed Inventory
-const YOUR_SEEDS = [
-    { name: 'Pink Bumble Bee', type: 'tomato', variety: 'pink-bumble-bee', count: 'Multiple' },
-    { name: 'Indigo Rose', type: 'tomato', variety: 'indigo-rose', count: 'Multiple' },
-    { name: 'Lebanese Beit Alpha', type: 'cucumber', variety: 'lebanese-beit-alpha', count: '5 plants' },
-    { name: 'Jackpot Zucchini', type: 'zucchini', variety: 'jackpot-zucchini', count: '4 plants' },
-    { name: 'Sunburst Squash', type: 'squash', variety: 'sunburst-squash', count: '4 plants' },
-    { name: 'Rainbow Blend', type: 'carrot', variety: 'rainbow-carrots', count: '100+ seeds' },
-    { name: 'Super Gourmet', type: 'lettuce', variety: 'super-gourmet-lettuce', count: 'Direct sow' },
-    { name: 'Renegade', type: 'spinach', variety: 'renegade-spinach', count: 'Direct sow' },
-    { name: 'Astro', type: 'arugula', variety: 'astro-arugula', count: 'Direct sow' }
+// --- Herbs Data ---
+const HERBS = [
+    { name: 'Mojito Mint', type: 'herb', notes: 'Pot 1 (Moist)' },
+    { name: 'Rosemary', type: 'herb', notes: 'Pot 2 (Dry)' },
+    { name: 'French Thyme', type: 'herb', notes: 'Pot 3 (Dry)' },
+    { name: 'Greek Oregano', type: 'herb', notes: 'Pot 3 (Dry)' },
+    { name: 'Regular Sage', type: 'herb', notes: 'Pot 4 (Dry)' },
+    { name: 'Pineapple Sage', type: 'herb', notes: 'Pot 4 (Dry)' },
+    { name: 'Basil', type: 'herb', notes: 'Pot 5 (Moist)' },
+    { name: 'Flat Parsley', type: 'herb', notes: 'Pot 5 (Moist)' },
+    { name: 'Cilantro', type: 'herb', notes: 'Pot 6 (Moist)' }
 ];
 
-// Your Garden Box Layouts
-const GARDEN_BOXES = [
-    {
-        name: "Box 1: The Vertical Box",
-        size: "6ft × 7ft (42 sq ft)",
-        plants: [
-            { name: 'Tomatoes', count: '4-6 plants', note: 'With cages' },
-            { name: 'Cucumbers', count: '4-6 plants', note: 'On trellis' },
-            { name: 'Carrots', count: '50-100 after thinning', note: 'Sow 100+ now' },
-            { name: 'Arugula', count: 'Scatter in gaps', note: 'Harvest before shade' }
-        ],
-        layout: "Trellis along back for climbing plants"
-    },
-    {
-        name: "Box 2: The Succession Box",
-        size: "6ft × 7ft (42 sq ft)",
-        plants: [
-            { name: 'Lettuce/Spinach', count: 'Rows in empty space', note: 'Plant NOW' },
-            { name: 'Zucchini', count: '1-2 plants center', note: 'Transplant mid-May' },
-            { name: 'Sunburst Squash', count: '2 plants', note: 'Transplant mid-May' }
-        ],
-        layout: "Greens harvested in 30-45 days, then squash spreads"
-    }
-];
-
-// Your Herb Pot Organization
-const HERB_POTS = [
-    { pot: 1, herbs: ['Mojito Mint'], water: 'Keep moist', note: '⚠️ MUST be alone - invasive!' },
-    { pot: 2, herbs: ['Rosemary'], water: 'Let dry between watering', note: 'Gets large and woody' },
-    { pot: 3, herbs: ['French Thyme', 'Greek Oregano'], water: 'Let dry between watering', note: 'Both Mediterranean' },
-    { pot: 4, herbs: ['Regular Sage', 'Pineapple Sage'], water: 'Let dry between watering', note: 'Similar growth habits' },
-    { pot: 5, herbs: ['Basil', 'Flat Parsley'], water: 'Keep consistently moist', note: 'Both prefer rich soil' },
-    { pot: 6, herbs: ['Cilantro'], water: 'Keep moist; afternoon shade', note: 'Bolts quickly' }
-];
-
-// Your Planting Calendar
-const PLANTING_CALENDAR = [
-    { timing: 'Late April (Now)', actions: [
-        'Start tomatoes indoors',
-        'Direct sow carrots, lettuce, spinach, arugula',
-        'Start cucumbers/squash indoors in biodegradable pots'
-    ]},
-    { timing: 'Mid-May', actions: [
-        'Transplant tomatoes, cucumbers, squash outdoors',
-        'Succession sow more lettuce/spinach',
-        'Harden off indoor seedlings first'
-    ]},
-    { timing: 'May-June', actions: [
-        'Harvest early greens (30-45 days)',
-        'Squash spreads into empty space',
-        'Install trellises for climbing plants'
-    ]},
-    { timing: 'July-August', actions: [
-        'Harvest tomatoes, cucumbers, squash',
-        'Save seeds from best fruits using fermentation',
-        'Succession plant fall crops'
-    ]}
-];
-
-// Add this function to script.js
-function renderHerbPots() {
-    const herbGrid = document.querySelector('.herb-grid');
-    if (!herbGrid) return;
+// --- Default Initial Data ---
+const DEFAULT_PLANTS = [
+    // Indoor Plants (Planted April 26)
+    { id: 1, name: 'Pink Bumble Bee 1', variety: 'Pink Bumble Bee', type: 'tomato', plantDate: '2026-04-26', location: 'indoor', notes: 'Planted in 4" pot', createdAt: new Date().toISOString() },
+    { id: 2, name: 'Pink Bumble Bee 2', variety: 'Pink Bumble Bee', type: 'tomato', plantDate: '2026-04-26', location: 'indoor', notes: 'Planted in 4" pot', createdAt: new Date().toISOString() },
+    { id: 3, name: 'Cucumber 1', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 4, name: 'Cucumber 2', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 5, name: 'Cucumber 3', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 6, name: 'Cucumber 4', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 7, name: 'Cucumber 5', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 8, name: 'Zucchini 1', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 9, name: 'Zucchini 2', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 10, name: 'Zucchini 3', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 11, name: 'Zucchini 4', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 12, name: 'Squash 1', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 13, name: 'Squash 2', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 14, name: 'Squash 3', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
+    { id: 15, name: 'Squash 4', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
     
-    herbGrid.innerHTML = HERB_POTS.map(pot => `
-        <div class="herb-pot">
-            <div class="herb-pot-header">
-                <div class="herb-pot-number">${pot.pot}</div>
-                <span class="text-muted">${pot.water}</span>
-            </div>
-            <div class="herb-names">${pot.herbs.join(' + ')}</div>
-            <div class="herb-note">${pot.note}</div>
-        </div>
-    `).join('');
-}
+    // Outdoor Greens
+    { id: 16, name: 'Lettuce Row 1', variety: 'Super Gourmet Blend', type: 'lettuce', plantDate: '2026-05-03', location: 'outdoor', notes: 'Planned for Box 2', createdAt: new Date().toISOString() },
+    { id: 17, name: 'Spinach Row 1', variety: 'Renegade', type: 'spinach', plantDate: '2026-05-03', location: 'outdoor', notes: 'Planned for Box 2', createdAt: new Date().toISOString() },
+    { id: 18, name: 'Arugula Patch', variety: 'Astro', type: 'arugula', plantDate: '2026-05-03', location: 'outdoor', notes: 'Planned for Box 1 gaps', createdAt: new Date().toISOString() },
+    { id: 19, name: 'Carrot Bed', variety: 'Rainbow Blend', type: 'carrot', plantDate: '2026-05-03', location: 'outdoor', notes: 'Planned for Box 1', createdAt: new Date().toISOString() }
+];
 
-// Call this in initializeApp()
+let cachedPlants = [];
+let cachedLogs = [];
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', function() {
+    initializeApp();
+});
+
 async function initializeApp() {
     await loadPlantsFromServer();
     await loadCareLogsFromServer();
     populatePlantDropdown();
     updateTransplantProgress();
     updateTimelineStatus();
-    renderHerbPots(); // Add this line
+}
+
+// --- Server Communication ---
+async function fetchFromServer(endpoint) {
+    try {
+        const response = await fetch(`/api/${endpoint}`);
+        if (!response.ok) throw new Error('Network error');
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching ${endpoint}:`, error);
+        return [];
+    }
+}
+
+async function saveToServer(endpoint, data) {
+    try {
+        const response = await fetch(`/api/${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error('Save failed');
+        return true;
+    } catch (error) {
+        console.error(`Error saving ${endpoint}:`, error);
+        alert('Failed to save to server.');
+        return false;
+    }
+}
+
+// --- Plant Management ---
+async function loadPlantsFromServer() {
+    let plants = await fetchFromServer('plants');
+    if (!plants || plants.length === 0) {
+        plants = DEFAULT_PLANTS;
+        await saveToServer('plants', plants);
+    }
+    cachedPlants = plants;
+    renderPlants(plants);
+}
+
+function renderPlants(plants) {
+    const plantsGrid = document.getElementById('plants-grid');
+    if (!plantsGrid) return;
+    if (plants.length === 0) {
+        plantsGrid.innerHTML = '<p class="no-plants">No plants added yet.</p>';
+        return;
+    }
+    plantsGrid.innerHTML = plants.map(plant => {
+        const daysSincePlanting = Math.floor((new Date() - new Date(plant.plantDate)) / (1000 * 60 * 60 * 24));
+        const readyToTransplant = daysSincePlanting >= 21 && plant.location === 'indoor';
+        return `
+            <div class="plant-card ${plant.location} ${readyToTransplant ? 'ready' : ''}" 
+                 onclick="showPlantDetails(${plant.id})" 
+                 data-location="${plant.location}">
+                <div class="plant-card-header">
+                    <div class="plant-card-name">${plant.name}</div>
+                    <span class="plant-badge ${readyToTransplant ? 'ready' : ''}">
+                        ${plant.location === 'indoor' ? (readyToTransplant ? '✓ Ready' : '🏠 Indoor') : '🌱 Outdoor'}
+                    </span>
+                </div>
+                <div class="plant-card-info">
+                    <p><strong>Variety:</strong> ${plant.variety || 'N/A'}</p>
+                    <p><strong>Type:</strong> ${plant.type}</p>
+                    <p><strong>Planted:</strong> ${new Date(plant.plantDate).toLocaleDateString()}</p>
+                    <p><strong>Days Growing:</strong> ${daysSincePlanting} days</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+async function addPlant(plant) {
+    if (!cachedPlants) cachedPlants = [];
+    cachedPlants.push(plant);
+    await saveToServer('plants', cachedPlants);
+    renderPlants(cachedPlants);
+    populatePlantDropdown();
+}
+
+async function deletePlant(id) {
+    event.stopPropagation();
+    if (confirm('Are you sure you want to delete this plant?')) {
+        cachedPlants = cachedPlants.filter(p => p.id !== id);
+        await saveToServer('plants', cachedPlants);
+        renderPlants(cachedPlants);
+        populatePlantDropdown();
+    }
+}
+
+function filterPlants(filter) {
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    const cards = document.querySelectorAll('.plant-card');
+    cards.forEach(card => {
+        const location = card.getAttribute('data-location');
+        const isReady = card.classList.contains('ready');
+        if (filter === 'all') card.style.display = 'block';
+        else if (filter === 'ready') card.style.display = isReady ? 'block' : 'none';
+        else card.style.display = location === filter ? 'block' : 'none';
+    });
+}
+
+// --- Plant Details Modal ---
+function showPlantDetails(id) {
+    const plant = cachedPlants.find(p => p.id === id);
+    if (!plant) return;
+    const modal = document.getElementById('plant-details-modal');
+    const careInfo = PLANT_CARE_DB[plant.type] || PLANT_CARE_DB['tomato'];
+    
+    document.getElementById('detail-water').textContent = careInfo.water;
+    document.getElementById('detail-sun').textContent = careInfo.sun;
+    document.getElementById('detail-tips').textContent = careInfo.tips;
+    document.getElementById('detail-spacing').textContent = careInfo.spacing;
+    document.getElementById('detail-start').textContent = careInfo.start;
+    
+    renderIndicator('detail-water-indicator', careInfo.waterLevel);
+    renderIndicator('detail-sun-indicator', careInfo.sunLevel);
+    modal.style.display = 'block';
+}
+
+function renderIndicator(elementId, level) {
+    const container = document.getElementById(elementId);
+    container.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+        const dot = document.createElement('div');
+        dot.className = i < level ? 'indicator-dot active' : 'indicator-dot';
+        container.appendChild(dot);
+    }
+}
+
+function closePlantDetailsModal() {
+    document.getElementById('plant-details-modal').style.display = 'none';
+}
+
+// --- Dropdown Population (Plants + Herbs) ---
+function populatePlantDropdown() {
+    const select = document.getElementById('log-plant');
+    if (!select) return;
+
+    // Clear existing options except the first one
+    select.innerHTML = '<option value="">Select plant or herb...</option>';
+    
+    // Create Plants Group
+    const plantGroup = document.createElement('optgroup');
+    plantGroup.label = "Active Plants";
+    
+    const sortedPlants = [...cachedPlants].sort((a, b) => a.name.localeCompare(b.name));
+    sortedPlants.forEach(plant => {
+        const option = document.createElement('option');
+        option.value = plant.name;
+        option.textContent = `${plant.name} (${plant.variety})`;
+        plantGroup.appendChild(option);
+    });
+    select.appendChild(plantGroup);
+
+    // Create Herbs Group
+    const herbGroup = document.createElement('optgroup');
+    herbGroup.label = "Herbs (Pots 1-6)";
+    
+    HERBS.forEach(herb => {
+        const option = document.createElement('option');
+        option.value = herb.name;
+        option.textContent = `${herb.name} ${herb.notes}`;
+        herbGroup.appendChild(option);
+    });
+    select.appendChild(herbGroup);
+}
+
+// --- Care Log Logic ---
+async function saveCareLog(event) {
+    event.preventDefault();
+    const logEntry = {
+        id: Date.now(),
+        plant: document.getElementById('log-plant').value,
+        date: document.getElementById('log-date').value,
+        type: document.getElementById('log-type').value,
+        fertilizerType: document.getElementById('fertilizer-type')?.value || '',
+        notes: document.getElementById('log-notes').value,
+        createdAt: new Date().toISOString()
+    };
+    
+    if (!cachedLogs) cachedLogs = [];
+    cachedLogs.unshift(logEntry);
+    await saveToServer('logs', cachedLogs);
+    renderLogs(cachedLogs);
+    document.getElementById('log-notes').value = '';
+    alert('Log entry saved!');
+}
+
+async function loadCareLogsFromServer() {
+    cachedLogs = await fetchFromServer('logs');
+    renderLogs(cachedLogs);
+}
+
+function renderLogs(logs) {
+    const logHistory = document.getElementById('log-history');
+    if (!logHistory) return;
+    if (!logs || logs.length === 0) {
+        logHistory.innerHTML = '<p class="no-activity">No care logs yet.</p>';
+        return;
+    }
+    logHistory.innerHTML = logs.map(log => `
+        <div class="log-entry ${log.type}">
+            <div class="log-header">
+                <span class="log-plant-name">${log.plant}</span>
+                <span class="log-date">${new Date(log.date).toLocaleDateString()}</span>
+            </div>
+            <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
+            ${log.fertilizerType ? `<p><strong>Fertilizer:</strong> ${log.fertilizerType}</p>` : ''}
+            <p>${log.notes || 'No notes'}</p>
+        </div>
+    `).join('');
+}
+
+function getLogTypeLabel(type) {
+    const labels = {
+        watering: '💧 Watering',
+        fertilizer: '🌿 Fertilizer',
+        pest: '🐛 Pest/Disease',
+        maintenance: '🔧 Maintenance',
+        observation: '👁️ Observation'
+    };
+    return labels[type] || type;
+}
+
+function toggleFields() {
+    const type = document.getElementById('log-type').value;
+    const fertilizerGroup = document.getElementById('fertilizer-type-group');
+    if (fertilizerGroup) fertilizerGroup.style.display = type === 'fertilizer' ? 'block' : 'none';
+}
+
+function clearForm() {
+    document.querySelector('form').reset();
+    document.getElementById('fertilizer-type-group').style.display = 'none';
+}
+
+// --- Visual Updates ---
+function updateTransplantProgress() {
+    const plantingDate = new Date('2026-04-26');
+    const today = new Date();
+    const daysSince = Math.max(0, Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24)));
+    const totalDays = 21; 
+    const progress = Math.min((daysSince / totalDays) * 100, 100);
+    const daysRemaining = Math.max(0, totalDays - daysSince);
+    document.querySelectorAll('.countdown-days').forEach(el => el.textContent = daysRemaining);
+    document.querySelectorAll('.progress').forEach(el => el.style.width = `${progress}%`);
+}
+
+function updateTimelineStatus() {
+    const plantingDate = new Date('2026-04-26');
+    const today = new Date();
+    const daysSince = Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24));
+    const timelineSteps = document.querySelectorAll('.timeline-step');
+    if (timelineSteps.length >= 5) {
+        timelineSteps.forEach(step => step.classList.remove('active'));
+        let currentStepIndex = 0;
+        if (daysSince > 14) currentStepIndex = 1;
+        else if (daysSince > 7) currentStepIndex = 0;
+        for (let i = 0; i <= currentStepIndex; i++) {
+            if (timelineSteps[i]) timelineSteps[i].classList.add('active');
+        }
+    }
+}
+
+// --- Modals ---
+function showAddPlantModal() { document.getElementById('add-plant-modal').style.display = 'block'; }
+function closeModal() { document.getElementById('add-plant-modal').style.display = 'none'; }
+document.getElementById('add-plant-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const plant = {
+        id: Date.now(),
+        name: document.getElementById('plant-name').value,
+        variety: document.getElementById('plant-variety').value,
+        type: document.getElementById('plant-type').value,
+        plantDate: document.getElementById('plant-date').value,
+        location: document.getElementById('location').value,
+        notes: document.getElementById('notes').value,
+        createdAt: new Date().toISOString()
+    };
+    await addPlant(plant);
+    this.reset();
+    closeModal();
+});
+window.onclick = function(event) {
+    if (event.target === document.getElementById('plant-details-modal')) closePlantDetailsModal();
+    if (event.target === document.getElementById('add-plant-modal')) closeModal();
 }
