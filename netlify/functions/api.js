@@ -1,62 +1,59 @@
 // netlify/functions/api.js
+const { getStore } = require('@netlify/blobs');
+
 exports.handler = async (event, context) => {
-  // Set CORS/JSON headers for all responses
   const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*'
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Content-Type': 'application/json'
   };
 
-  try {
-    // Safely load Netlify Blobs
-    let getStore;
-    try {
-      const blobs = require('@netlify/blobs');
-      getStore = blobs.getStore;
-    } catch (e) {
-      console.error('⚠️ @netlify/blobs not found. Function will run in demo mode.');
-      getStore = null;
-    }
+  // Handle preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
 
-    // Extract key from path safely
+  try {
+    // ✅ FIX: Pass 'context' to getStore for authentication
+    const store = getStore({ name: 'garden-db', context });
+
+    // Extract key from URL
     const match = event.path.match(/\/api\/([^\/\?]+)/);
     const key = match ? match[1] : null;
 
     if (!key) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing key in URL' }) };
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing key' }) };
     }
 
-    // GET request
+    // GET
     if (event.httpMethod === 'GET') {
-      if (getStore) {
-        const store = getStore({ name: 'garden-db', consistency: 'strong' });
-        const data = await store.get(key, { type: 'json' });
-        if (!data && key === 'plants') {
-          return { statusCode: 200, headers, body: JSON.stringify(getDefaultPlants()) };
-        }
-        return { statusCode: 200, headers, body: JSON.stringify(data || []) };
+      const data = await store.get(key, { type: 'json' });
+      if (!data && key === 'plants') {
+        return { statusCode: 200, headers, body: JSON.stringify(getDefaultPlants()) };
       }
-      // Fallback if blobs isn't available
-      return { statusCode: 200, headers, body: JSON.stringify(key === 'plants' ? getDefaultPlants() : []) };
+      return { statusCode: 200, headers, body: JSON.stringify(data || []) };
     }
 
-    // POST request
+    // POST
     if (event.httpMethod === 'POST') {
       const data = event.body ? JSON.parse(event.body) : [];
-      if (getStore) {
-        const store = getStore({ name: 'garden-db', consistency: 'strong' });
-        await store.setJSON(key, data);
-      }
+      await store.setJSON(key, data);
       return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
     }
 
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
+
   } catch (error) {
     console.error('❌ Function error:', error);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
+    return { 
+      statusCode: 500, 
+      headers, 
+      body: JSON.stringify({ error: error.message }) 
+    };
   }
 };
 
-// Default plants fallback
 function getDefaultPlants() {
   const today = new Date().toISOString().split('T')[0];
   return [
