@@ -3,21 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Garden Journal - Dashboard</title>
+    <title>Garden Journal</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <i class="fas fa-leaf"></i>
-                    <span>Garden Journal</span>
-                </div>
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>Garden Journal</span>
             </div>
-            <nav class="sidebar-nav">
+            <nav>
                 <a href="index.html" class="nav-item active">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
@@ -31,283 +29,196 @@
                     <span>Care Log</span>
                 </a>
                 <a href="timeline.html" class="nav-item">
-                    <i class="fas fa-calendar-alt"></i>
+                    <i class="fas fa-calendar"></i>
                     <span>Timeline</span>
                 </a>
             </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <i class="fas fa-user-circle"></i>
-                    <span>Gardener</span>
-                </div>
-            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Weather Banner -->
+            <!-- Header -->
+            <header class="header">
+                <h1>Dashboard</h1>
+                <p class="header-subtitle">April 26, 2026</p>
+            </header>
+
+            <!-- Weather -->
             <div class="weather-banner">
-                <div class="weather-info">
+                <div class="weather-main">
                     <i class="fas fa-sun"></i>
-                    <span class="weather-temp">18°C</span>
-                    <span class="weather-location">Hamilton, ON</span>
+                    <span>18°C Hamilton, ON</span>
                 </div>
                 <div class="weather-details">
-                    <div class="weather-item">
-                        <i class="fas fa-tint"></i>
-                        <span>Humidity: 65%</span>
-                    </div>
-                    <div class="weather-item">
-                        <i class="fas fa-wind"></i>
-                        <span>Wind: 12 km/h</span>
-                    </div>
-                    <div class="weather-item">
-                        <i class="fas fa-cloud-rain"></i>
-                        <span>Rain: 0 mm</span>
-                    </div>
-                    <div class="weather-item">
-                        <i class="fas fa-thermometer-half"></i>
-                        <span>Feels like: 17°C</span>
-                    </div>
-                </div>
-                <div class="date-display">
-                    <span class="date-text">April 26, 2026</span>
+                    <span class="weather-item"><i class="fas fa-tint"></i> 65%</span>
+                    <span class="weather-item"><i class="fas fa-wind"></i> 12 km/h</span>
                 </div>
             </div>
 
-            <div class="content-wrapper">
-                <header class="page-header">
-                    <h1>Welcome to Your Garden</h1>
-                    <p class="page-subtitle">Track and manage your garden journey</p>
-                </header>
-
-                <!-- Transplant Countdown - Full Width -->
-                <div class="card full-width-card transplant-countdown">
-                    <h3><i class="fas fa-clock"></i> Transplant Countdown</h3>
-                    <p class="countdown-subtitle">Your seedlings are growing! Here's when they'll be ready to move outdoors</p>
-                    <div class="countdown-grid">
-                        <div class="countdown-plant-card">
-                            <div class="plant-icon cucumber-icon">
-                                <i class="fas fa-leaf"></i>
-                            </div>
-                            <h4>Cucumbers</h4>
-                            <p class="plant-variety">Lebanese Beit Alpha</p>
-                            <div class="countdown-timer">
-                                <div class="time-unit">
-                                    <span class="time-value">21</span>
-                                    <span class="time-label">days</span>
-                                </div>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 25%"></div>
-                            </div>
-                            <p class="transplant-date">Ready: May 17</p>
+            <!-- Transplant Countdown -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-clock"></i>
+                    Transplant Countdown
+                </h2>
+                <div class="countdown-grid">
+                    <div class="countdown-card">
+                        <div class="countdown-icon">
+                            <i class="fas fa-leaf"></i>
                         </div>
-
-                        <div class="countdown-plant-card">
-                            <div class="plant-icon squash-icon">
-                                <i class="fas fa-leaf"></i>
-                            </div>
-                            <h4>Squash</h4>
-                            <p class="plant-variety">Sunburst</p>
-                            <div class="countdown-timer">
-                                <div class="time-unit">
-                                    <span class="time-value">21</span>
-                                    <span class="time-label">days</span>
-                                </div>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 25%"></div>
-                            </div>
-                            <p class="transplant-date">Ready: May 17</p>
+                        <h3>Cucumbers</h3>
+                        <p class="variety">Lebanese Beit Alpha</p>
+                        <div class="countdown-days">21</div>
+                        <div class="countdown-label">days remaining</div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 25%"></div>
                         </div>
+                    </div>
 
-                        <div class="countdown-plant-card">
-                            <div class="plant-icon zucchini-icon">
-                                <i class="fas fa-leaf"></i>
-                            </div>
-                            <h4>Zucchini</h4>
-                            <p class="plant-variety">Jackpot</p>
-                            <div class="countdown-timer">
-                                <div class="time-unit">
-                                    <span class="time-value">21</span>
-                                    <span class="time-label">days</span>
-                                </div>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 25%"></div>
-                            </div>
-                            <p class="transplant-date">Ready: May 17</p>
+                    <div class="countdown-card">
+                        <div class="countdown-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3>Squash</h3>
+                        <p class="variety">Sunburst</p>
+                        <div class="countdown-days">21</div>
+                        <div class="countdown-label">days remaining</div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 25%"></div>
+                        </div>
+                    </div>
+
+                    <div class="countdown-card">
+                        <div class="countdown-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3>Zucchini</h3>
+                        <p class="variety">Jackpot</p>
+                        <div class="countdown-days">21</div>
+                        <div class="countdown-label">days remaining</div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 25%"></div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Today's Tasks -->
-                <div class="card full-width-card">
-                    <h3><i class="fas fa-tasks"></i> Today's Tasks - April 26</h3>
-                    <div class="tasks-grid">
-                        <div class="task-card">
-                            <div class="task-checkbox">
-                                <input type="checkbox" id="task1">
-                                <label for="task1">
-                                    <i class="fas fa-tint"></i>
-                                    <div>
-                                        <strong>Check seedling moisture</strong>
-                                        <p>Indoor pots - ensure soil is moist but not waterlogged</p>
-                                    </div>
-                                </label>
-                            </div>
+            <!-- Today's Tasks -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-check-circle"></i>
+                    Today's Tasks
+                </h2>
+                <div class="tasks-grid">
+                    <div class="task-item">
+                        <div class="task-checkbox">
+                            <input type="checkbox" id="task1">
                         </div>
-                        <div class="task-card">
-                            <div class="task-checkbox">
-                                <input type="checkbox" id="task2">
-                                <label for="task2">
-                                    <i class="fas fa-sun"></i>
-                                    <div>
-                                        <strong>Ensure adequate light</strong>
-                                        <p>6-8 hours of light for all seedlings</p>
-                                    </div>
-                                </label>
-                            </div>
+                        <div class="task-content">
+                            <div class="task-title">Check seedling moisture</div>
+                            <div class="task-desc">Indoor pots - ensure soil is moist but not waterlogged</div>
                         </div>
-                        <div class="task-card">
-                            <div class="task-checkbox">
-                                <input type="checkbox" id="task3">
-                                <label for="task3">
-                                    <i class="fas fa-thermometer-half"></i>
-                                    <div>
-                                        <strong>Monitor temperature</strong>
-                                        <p>Keep between 70-85°F for optimal growth</p>
-                                    </div>
-                                </label>
-                            </div>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-checkbox">
+                            <input type="checkbox" id="task2">
                         </div>
-                        <div class="task-card">
-                            <div class="task-checkbox">
-                                <input type="checkbox" id="task4">
-                                <label for="task4">
-                                    <i class="fas fa-eye"></i>
-                                    <div>
-                                        <strong>Check for pests</strong>
-                                        <p>Inspect leaves for any signs of disease or pests</p>
-                                    </div>
-                                </label>
-                            </div>
+                        <div class="task-content">
+                            <div class="task-title">Ensure adequate light</div>
+                            <div class="task-desc">6-8 hours of light for all seedlings</div>
+                        </div>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-checkbox">
+                            <input type="checkbox" id="task3">
+                        </div>
+                        <div class="task-content">
+                            <div class="task-title">Monitor temperature</div>
+                            <div class="task-desc">Keep between 70-85°F for optimal growth</div>
+                        </div>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-checkbox">
+                            <input type="checkbox" id="task4">
+                        </div>
+                        <div class="task-content">
+                            <div class="task-title">Inspect for pests</div>
+                            <div class="task-desc">Check leaves for any signs of disease or pests</div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Growth Timeline -->
-                <div class="card full-width-card">
-                    <h3><i class="fas fa-route"></i> Growth Timeline</h3>
-                    <div class="horizontal-timeline">
-                        <div class="timeline-step active">
-                            <div class="step-icon">
-                                <i class="fas fa-seedling"></i>
-                            </div>
-                            <div class="step-content">
-                                <h4>Week 1-2</h4>
-                                <p>Germination & Seedling</p>
-                                <ul>
-                                    <li>Seeds sprout in 3-10 days</li>
-                                    <li>First cotyledon leaves appear</li>
-                                    <li>Keep soil moist</li>
-                                </ul>
-                            </div>
-                            <div class="step-image">
-                                <i class="fas fa-seedling"></i>
-                            </div>
+            <!-- Growth Timeline -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-route"></i>
+                    Growth Timeline
+                </h2>
+                <div class="timeline">
+                    <div class="timeline-step active">
+                        <div class="step-header">
+                            <div class="step-icon">1</div>
+                            <div class="step-title">Germination</div>
                         </div>
+                        <div class="step-period">Week 1-2</div>
+                        <ul class="step-list">
+                            <li>Seeds sprout in 3-10 days</li>
+                            <li>First leaves appear</li>
+                            <li>Keep soil moist</li>
+                        </ul>
+                    </div>
 
-                        <div class="timeline-step">
-                            <div class="step-icon">
-                                <i class="fas fa-leaf"></i>
-                            </div>
-                            <div class="step-content">
-                                <h4>Week 3</h4>
-                                <p>True Leaves Develop</p>
-                                <ul>
-                                    <li>First true leaves form</li>
-                                    <li>Begin weak fertilizer</li>
-                                    <li>Stronger stems</li>
-                                </ul>
-                            </div>
-                            <div class="step-image">
-                                <i class="fas fa-leaf"></i>
-                            </div>
+                    <div class="timeline-step">
+                        <div class="step-header">
+                            <div class="step-icon">2</div>
+                            <div class="step-title">True Leaves</div>
                         </div>
+                        <div class="step-period">Week 3</div>
+                        <ul class="step-list">
+                            <li>True leaves form</li>
+                            <li>Begin weak fertilizer</li>
+                            <li>Stronger stems</li>
+                        </ul>
+                    </div>
 
-                        <div class="timeline-step">
-                            <div class="step-icon">
-                                <i class="fas fa-home"></i>
-                            </div>
-                            <div class="step-content">
-                                <h4>Week 4</h4>
-                                <p>Transplant Ready</h4>
-                                <ul>
-                                    <li>2-3 true leaves visible</li>
-                                    <li>Strong, stocky stems</li>
-                                    <li>Move outdoors</li>
-                                </ul>
-                            </div>
-                            <div class="step-image">
-                                <i class="fas fa-home"></i>
-                            </div>
+                    <div class="timeline-step">
+                        <div class="step-header">
+                            <div class="step-icon">3</div>
+                            <div class="step-title">Transplant</div>
                         </div>
+                        <div class="step-period">Week 4</div>
+                        <ul class="step-list">
+                            <li>2-3 true leaves</li>
+                            <li>Move outdoors</li>
+                            <li>Harden off first</li>
+                        </ul>
+                    </div>
 
-                        <div class="timeline-step">
-                            <div class="step-icon">
-                                <i class="fas fa-sun"></i>
-                            </div>
-                            <div class="step-content">
-                                <h4>Week 5-6</h4>
-                                <p>Establishment</p>
-                                <ul>
-                                    <li>Adapt to outdoor conditions</li>
-                                    <li>Rapid vine growth</li>
-                                    <li>Increase watering</li>
-                                </ul>
-                            </div>
-                            <div class="step-image">
-                                <i class="fas fa-sun"></i>
-                            </div>
+                    <div class="timeline-step">
+                        <div class="step-header">
+                            <div class="step-icon">4</div>
+                            <div class="step-title">Growth</div>
                         </div>
+                        <div class="step-period">Week 5-6</div>
+                        <ul class="step-list">
+                            <li>Rapid vine growth</li>
+                            <li>Increase watering</li>
+                            <li>Add support</li>
+                        </ul>
+                    </div>
 
-                        <div class="timeline-step">
-                            <div class="step-icon">
-                                <i class="fas fa-flower"></i>
-                            </div>
-                            <div class="step-content">
-                                <h4>Week 7-8</h4>
-                                <p>Flowering</p>
-                                <ul>
-                                    <li>First flower buds appear</li>
-                                    <li>Pollinators visit</li>
-                                    <li>Consistent watering</li>
-                                </ul>
-                            </div>
-                            <div class="step-image">
-                                <i class="fas fa-flower"></i>
-                            </div>
+                    <div class="timeline-step">
+                        <div class="step-header">
+                            <div class="step-icon">5</div>
+                            <div class="step-title">Harvest</div>
                         </div>
-
-                        <div class="timeline-step">
-                            <div class="step-icon">
-                                <i class="fas fa-apple-alt"></i>
-                            </div>
-                            <div class="step-content">
-                                <h4>Week 9-10</h4>
-                                <p>First Harvest!</p>
-                                <ul>
-                                    <li>50-70 days from seed</li>
-                                    <li>Harvest when small</li>
-                                    <li>Pick regularly</li>
-                                </ul>
-                            </div>
-                            <div class="step-image">
-                                <i class="fas fa-apple-alt"></i>
-                            </div>
-                        </div>
+                        <div class="step-period">Week 9-10</div>
+                        <ul class="step-list">
+                            <li>First harvest</li>
+                            <li>Pick regularly</li>
+                            <li>Enjoy!</li>
+                        </ul>
                     </div>
                 </div>
             </div>

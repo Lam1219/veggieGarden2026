@@ -9,15 +9,13 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <i class="fas fa-leaf"></i>
-                    <span>Garden Journal</span>
-                </div>
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>Garden Journal</span>
             </div>
-            <nav class="sidebar-nav">
+            <nav>
                 <a href="index.html" class="nav-item">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
@@ -31,40 +29,157 @@
                     <span>Care Log</span>
                 </a>
                 <a href="timeline.html" class="nav-item">
-                    <i class="fas fa-calendar-alt"></i>
+                    <i class="fas fa-calendar"></i>
                     <span>Timeline</span>
                 </a>
             </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <i class="fas fa-user-circle"></i>
-                    <span>Gardener</span>
-                </div>
-            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <div class="content-wrapper">
-                <header class="page-header">
-                    <h1>My Plants</h1>
-                    <p class="page-subtitle">Manage and track your garden plants</p>
-                    <button class="btn-primary" onclick="showAddPlantModal()">
-                        <i class="fas fa-plus"></i> Add New Plant
-                    </button>
-                </header>
+            <header class="header">
+                <h1>My Plants</h1>
+                <p class="header-subtitle">Manage your garden inventory</p>
+                <button class="btn btn-primary mt-sm" onclick="showAddPlantModal()">
+                    <i class="fas fa-plus"></i> Add Plant
+                </button>
+            </header>
 
-                <!-- Filter Buttons -->
-                <div class="filter-buttons">
-                    <button class="filter-btn active" onclick="filterPlants('all')">All Plants</button>
-                    <button class="filter-btn" onclick="filterPlants('indoor')">Indoors</button>
-                    <button class="filter-btn" onclick="filterPlants('outdoor')">Outdoors</button>
-                    <button class="filter-btn" onclick="filterPlants('ready')">Ready to Transplant</button>
+            <!-- Filter -->
+            <div class="filter-group">
+                <button class="filter-btn active" onclick="filterPlants('all')">All</button>
+                <button class="filter-btn" onclick="filterPlants('indoor')">Indoor</button>
+                <button class="filter-btn" onclick="filterPlants('outdoor')">Outdoor</button>
+                <button class="filter-btn" onclick="filterPlants('ready')">Ready</button>
+            </div>
+
+            <!-- Seed Inventory -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-seedling"></i>
+                    Your Seed Inventory
+                </h2>
+                <div class="inventory-grid">
+                    <div class="inventory-category">
+                        <h3>🍅 Tomatoes</h3>
+                        <div class="inventory-item">
+                            <strong>Pink Bumble Bee</strong>
+                            <span class="text-muted">Heirloom</span>
+                        </div>
+                        <div class="inventory-item">
+                            <strong>Indigo Rose</strong>
+                            <span class="text-muted">Organic</span>
+                        </div>
+                    </div>
+                    <div class="inventory-category">
+                        <h3>🥒 Cucurbits</h3>
+                        <div class="inventory-item">
+                            <strong>Lebanese Beit Alpha</strong>
+                            <span class="text-muted">Cucumber × 5</span>
+                        </div>
+                        <div class="inventory-item">
+                            <strong>Jackpot</strong>
+                            <span class="text-muted">Zucchini × 4</span>
+                        </div>
+                        <div class="inventory-item">
+                            <strong>Sunburst</strong>
+                            <span class="text-muted">Squash × 4</span>
+                        </div>
+                    </div>
+                    <div class="inventory-category">
+                        <h3>🥬 Greens</h3>
+                        <div class="inventory-item">
+                            <strong>Super Gourmet</strong>
+                            <span class="text-muted">Lettuce</span>
+                        </div>
+                        <div class="inventory-item">
+                            <strong>Renegade</strong>
+                            <span class="text-muted">Spinach</span>
+                        </div>
+                        <div class="inventory-item">
+                            <strong>Astro</strong>
+                            <span class="text-muted">Arugula</span>
+                        </div>
+                    </div>
+                    <div class="inventory-category">
+                        <h3>🥕 Roots</h3>
+                        <div class="inventory-item">
+                            <strong>Rainbow Blend</strong>
+                            <span class="text-muted">Carrots</span>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <!-- Plants Grid -->
+            <!-- Garden Boxes -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-th-large"></i>
+                    Garden Box Layouts
+                </h2>
+                <div class="boxes-grid">
+                    <div class="box-card">
+                        <h3>Box 1: The Vertical Box</h3>
+                        <p class="text-muted">6ft × 7ft = 42 sq ft</p>
+                        <ul class="plant-list">
+                            <li><strong>Tomatoes:</strong> 4-6 plants with cages</li>
+                            <li><strong>Cucumbers:</strong> 4-6 plants on trellis</li>
+                            <li><strong>Carrots:</strong> Sow 100+, thin to 50-100</li>
+                            <li><strong>Arugula:</strong> Scatter in gaps</li>
+                        </ul>
+                        <div class="box-diagram">
+                            <pre>┌─────────────────┐
+│ ═ ═ ═  ═ ═ ═  ═ │ ← Trellis
+│  C   T   T   C  │
+│   c   c   c   c │ ← Carrots
+│   a       a    │ ← Arugula
+└─────────────────┘</pre>
+                        </div>
+                    </div>
+                    <div class="box-card">
+                        <h3>Box 2: The Succession Box</h3>
+                        <p class="text-muted">6ft × 7ft = 42 sq ft</p>
+                        <ul class="plant-list">
+                            <li><strong>Lettuce/Spinach:</strong> Plant NOW</li>
+                            <li><strong>Zucchini:</strong> 1-2 plants center</li>
+                            <li><strong>Sunburst:</strong> 2 plants</li>
+                            <li><em>Harvest greens first, then squash spreads</em></li>
+                        </ul>
+                        <div class="box-diagram">
+                            <pre>┌─────────────────┐
+│ l   l   l   l  │ ← Lettuce
+│ s   s   s   s  │ ← Spinach
+│      Z         │ ← Zucchini
+│   S       S    │ ← Sunburst
+└─────────────────┘</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Herb Pots -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-mug-hot"></i>
+                    Herb Pot Organization
+                </h2>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Critical:</strong> Mojito Mint MUST have its own pot!
+                </div>
+                <div class="herb-grid" id="herb-grid">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Plants Grid -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-list"></i>
+                    Active Plants
+                </h2>
                 <div id="plants-grid" class="plants-grid">
-                    <!-- Plants will be dynamically loaded here -->
+                    <!-- Populated by JavaScript -->
                 </div>
             </div>
         </main>
@@ -72,54 +187,37 @@
 
     <!-- Plant Details Modal -->
     <div id="plant-details-modal" class="modal">
-        <div class="modal-content plant-details-modal">
-            <span class="close" onclick="closePlantDetailsModal()">&times;</span>
-            <div class="plant-details-header">
-                <div class="plant-icon-large">
-                    <i class="fas fa-leaf"></i>
-                </div>
-                <div>
-                    <h2 id="detail-name">Plant Name</h2>
-                    <p id="detail-variety" class="plant-variety">Variety</p>
-                </div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Plant Details</h3>
+                <button class="modal-close" onclick="closePlantDetailsModal()">&times;</button>
             </div>
-            
             <div class="plant-details-grid">
-                <div class="detail-card">
-                    <h4><i class="fas fa-tint"></i> Water Requirements</h4>
-                    <p id="detail-water">Loading...</p>
+                <div class="detail-box">
+                    <div class="detail-label">Water</div>
+                    <div class="detail-value" id="detail-water">-</div>
                     <div class="water-indicator" id="detail-water-indicator"></div>
                 </div>
-
-                <div class="detail-card">
-                    <h4><i class="fas fa-sun"></i> Sun Requirements</h4>
-                    <p id="detail-sun">Loading...</p>
+                <div class="detail-box">
+                    <div class="detail-label">Sun</div>
+                    <div class="detail-value" id="detail-sun">-</div>
                     <div class="sun-indicator" id="detail-sun-indicator"></div>
                 </div>
-
-                <div class="detail-card">
-                    <h4><i class="fas fa-calendar"></i> Planting Info</h4>
-                    <p><strong>Planted:</strong> <span id="detail-planted">-</span></p>
-                    <p><strong>Days Growing:</strong> <span id="detail-days">-</span></p>
-                    <p><strong>Location:</strong> <span id="detail-location">-</span></p>
+                <div class="detail-box">
+                    <div class="detail-label">Spacing</div>
+                    <div class="detail-value" id="detail-spacing">-</div>
                 </div>
-
-                <div class="detail-card">
-                    <h4><i class="fas fa-info-circle"></i> Care Tips</h4>
-                    <p id="detail-tips">Loading...</p>
+                <div class="detail-box">
+                    <div class="detail-label">Start</div>
+                    <div class="detail-value" id="detail-start">-</div>
                 </div>
             </div>
-
-            <div class="plant-notes-section">
-                <h4><i class="fas fa-sticky-note"></i> Notes</h4>
-                <p id="detail-notes">No notes added</p>
+            <div class="detail-box">
+                <div class="detail-label">Care Tips</div>
+                <p id="detail-tips" class="mt-sm"></p>
             </div>
-
             <div class="modal-actions">
-                <button class="btn-secondary" onclick="closePlantDetailsModal()">Close</button>
-                <button class="btn-primary" onclick="editCurrentPlant()">
-                    <i class="fas fa-edit"></i> Edit Plant
-                </button>
+                <button class="btn btn-secondary" onclick="closePlantDetailsModal()">Close</button>
             </div>
         </div>
     </div>
@@ -127,53 +225,52 @@
     <!-- Add Plant Modal -->
     <div id="add-plant-modal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Add New Plant</h2>
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Plant</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
             <form id="add-plant-form">
                 <div class="form-group">
-                    <label for="plant-name">Plant Name *</label>
-                    <input type="text" id="plant-name" required placeholder="e.g., Cucumber 1">
+                    <label class="form-label" for="plant-name">Name *</label>
+                    <input type="text" id="plant-name" class="form-input" required>
                 </div>
-                
                 <div class="form-group">
-                    <label for="plant-variety">Variety</label>
-                    <input type="text" id="plant-variety" placeholder="e.g., Lebanese Beit Alpha">
+                    <label class="form-label" for="plant-variety">Variety</label>
+                    <input type="text" id="plant-variety" class="form-input">
                 </div>
-
                 <div class="form-group">
-                    <label for="plant-type">Type *</label>
-                    <select id="plant-type" required onchange="updatePlantRequirements()">
+                    <label class="form-label" for="plant-type">Type *</label>
+                    <select id="plant-type" class="form-select" required onchange="updatePlantRequirements()">
                         <option value="">Select...</option>
-                        <option value="cucumber">Cucumber</option>
-                        <option value="squash">Squash</option>
-                        <option value="zucchini">Zucchini</option>
                         <option value="tomato">Tomato</option>
-                        <option value="lettuce">Lettuce</option>
+                        <option value="cucumber">Cucumber</option>
+                        <option value="zucchini">Zucchini</option>
+                        <option value="squash">Squash</option>
                         <option value="carrot">Carrot</option>
+                        <option value="lettuce">Lettuce</option>
                         <option value="spinach">Spinach</option>
                         <option value="arugula">Arugula</option>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="plant-date">Planting Date *</label>
-                    <input type="date" id="plant-date" required>
+                    <label class="form-label" for="plant-date">Planting Date *</label>
+                    <input type="date" id="plant-date" class="form-input" required>
                 </div>
-
                 <div class="form-group">
-                    <label for="location">Location *</label>
-                    <select id="location" required>
-                        <option value="indoor">Indoors (Seed Starting)</option>
-                        <option value="outdoor">Outdoor Garden</option>
+                    <label class="form-label" for="location">Location *</label>
+                    <select id="location" class="form-select" required>
+                        <option value="indoor">Indoors</option>
+                        <option value="outdoor">Outdoors</option>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="notes">Notes</label>
-                    <textarea id="notes" rows="3" placeholder="Any special notes..."></textarea>
+                    <label class="form-label" for="notes">Notes</label>
+                    <textarea id="notes" class="form-textarea"></textarea>
                 </div>
-
-                <button type="submit" class="btn-primary">Add Plant</button>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Plant</button>
+                </div>
             </form>
         </div>
     </div>

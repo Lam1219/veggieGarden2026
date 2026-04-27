@@ -1,915 +1,911 @@
-/* Base Styles - Olive Oasis Color Palette */
+/* Minimalist Garden Journal - Based on Laws of UX */
+:root {
+    --color-bg: #fafafa;
+    --color-surface: #ffffff;
+    --color-text: #1a1a1a;
+    --color-text-secondary: #666666;
+    --color-border: #e5e5e5;
+    --color-accent: #757F64;
+    --color-accent-light: #C7CDBF;
+    --color-success: #4a7c59;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+    --radius: 8px;
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --transition: all 0.2s ease;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-:root {
-    --olive-green: #757F64;
-    --terracotta: #CB7A5C;
-    --cream: #E9E2D8;
-    --sage: #C7CDBF;
-    --dark-teal: #5C757A;
-    --white: #ffffff;
-    --shadow: rgba(0, 0, 0, 0.1);
-}
-
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #757F64 0%, #5C757A 100%);
-    min-height: 100vh;
-    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* App Layout */
+/* Layout - Occam's Razor: Simplest structure */
 .app-container {
     display: flex;
     min-height: 100vh;
 }
 
-/* Sidebar */
+/* Sidebar - Law of Proximity */
 .sidebar {
-    width: 260px;
-    background: var(--white);
-    box-shadow: 2px 0 10px var(--shadow);
-    display: flex;
-    flex-direction: column;
+    width: 240px;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    padding: var(--spacing-lg);
     position: fixed;
     height: 100vh;
-    z-index: 1000;
-}
-
-.sidebar-header {
-    padding: 2rem 1.5rem;
-    border-bottom: 2px solid var(--sage);
+    overflow-y: auto;
 }
 
 .logo {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-text);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    color: var(--dark-teal);
-    font-size: 1.5rem;
-    font-weight: bold;
+    gap: var(--spacing-xs);
 }
 
 .logo i {
-    font-size: 2rem;
-    color: var(--olive-green);
-}
-
-.sidebar-nav {
-    flex: 1;
-    padding: 1.5rem 0;
+    color: var(--color-accent);
 }
 
 .nav-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.5rem;
-    color: var(--dark-teal);
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    color: var(--color-text-secondary);
     text-decoration: none;
-    transition: all 0.3s;
-    border-left: 4px solid transparent;
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing-xs);
+    transition: var(--transition);
+    font-size: 0.9375rem;
 }
 
 .nav-item:hover,
 .nav-item.active {
-    background: var(--cream);
-    border-left-color: var(--terracotta);
-    color: var(--terracotta);
+    background: var(--color-bg);
+    color: var(--color-text);
 }
 
 .nav-item i {
-    font-size: 1.25rem;
-    width: 24px;
-}
-
-.sidebar-footer {
-    padding: 1.5rem;
-    border-top: 2px solid var(--sage);
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: var(--dark-teal);
-}
-
-.user-info i {
-    font-size: 2rem;
-    color: var(--olive-green);
+    width: 20px;
+    font-size: 1rem;
 }
 
 /* Main Content */
 .main-content {
     flex: 1;
-    margin-left: 260px;
-    padding: 2rem;
+    margin-left: 240px;
+    padding: var(--spacing-lg);
+    max-width: 1200px;
 }
 
-.content-wrapper {
-    max-width: 1400px;
-    margin: 0 auto;
+/* Header - Hick's Law: Minimal choices */
+.header {
+    margin-bottom: var(--spacing-lg);
 }
 
-/* Weather Banner */
+.header h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: -0.02em;
+}
+
+.header-subtitle {
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+}
+
+/* Weather Banner - Von Restorff Effect: Standout element */
 .weather-banner {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 1.5rem 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 12px var(--shadow);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-}
-
-.weather-info {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
 }
 
-.weather-info i {
-    font-size: 2.5rem;
-    color: #FFB347;
+.weather-main {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 1.125rem;
+    font-weight: 500;
 }
 
-.weather-temp {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--dark-teal);
-}
-
-.weather-location {
-    color: var(--olive-green);
-    font-size: 1.1rem;
+.weather-main i {
+    color: #f59e0b;
+    font-size: 1.5rem;
 }
 
 .weather-details {
     display: flex;
-    gap: 2rem;
+    gap: var(--spacing-md);
+    margin-left: auto;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
 }
 
 .weather-item {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    color: var(--dark-teal);
-}
-
-.weather-item i {
-    color: var(--terracotta);
+    gap: var(--spacing-xs);
 }
 
 .date-display {
-    text-align: right;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
 }
 
-.date-text {
-    font-size: 1.1rem;
-    color: var(--dark-teal);
-    font-weight: 500;
-}
-
-/* Page Header */
-.page-header {
-    margin-bottom: 2rem;
-}
-
-.page-header h1 {
-    color: var(--white);
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-}
-
-.page-subtitle {
-    color: var(--cream);
-    font-size: 1.1rem;
-}
-
-/* Cards */
+/* Cards - Law of Common Region */
 .card {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 12px var(--shadow);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
 }
 
-.card h3 {
-    color: var(--dark-teal);
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: var(--spacing-sm);
 }
 
-.card h3 i {
-    color: var(--terracotta);
+.card-title i {
+    color: var(--color-accent);
+    font-size: 1.125rem;
 }
 
-.full-width-card {
-    width: 100%;
-}
-
-/* Transplant Countdown */
-.transplant-countdown {
-    background: linear-gradient(135deg, var(--cream) 0%, var(--sage) 100%);
-}
-
-.countdown-subtitle {
-    color: var(--dark-teal);
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
-}
-
+/* Transplant Countdown - Goal-Gradient Effect */
 .countdown-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
 }
 
-.countdown-plant-card {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 2rem;
+.countdown-card {
+    background: var(--color-bg);
+    border-radius: var(--radius);
+    padding: var(--spacing-md);
     text-align: center;
-    box-shadow: 0 2px 8px var(--shadow);
+    border: 1px solid var(--color-border);
 }
 
-.plant-icon {
-    width: 80px;
-    height: 80px;
+.countdown-icon {
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
+    background: var(--color-accent);
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1rem;
-    font-size: 2.5rem;
+    margin: 0 auto var(--spacing-sm);
+    font-size: 1.25rem;
 }
 
-.cucumber-icon {
-    background: linear-gradient(135deg, #90EE90, #228B22);
-    color: white;
+.countdown-card h3 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
 }
 
-.squash-icon {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
+.countdown-card .variety {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-sm);
 }
 
-.zucchini-icon {
-    background: linear-gradient(135deg, #98FB98, #2E8B57);
-    color: white;
+.countdown-days {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+    margin-bottom: var(--spacing-xs);
 }
 
-.countdown-plant-card h4 {
-    color: var(--dark-teal);
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.plant-variety {
-    color: var(--olive-green);
-    font-style: italic;
-    margin-bottom: 1.5rem;
-}
-
-.countdown-timer {
-    margin-bottom: 1rem;
-}
-
-.time-unit {
-    display: inline-block;
-}
-
-.time-value {
-    font-size: 3rem;
-    font-weight: bold;
-    color: var(--terracotta);
-    display: block;
-}
-
-.time-label {
-    color: var(--dark-teal);
-    font-size: 1rem;
+.countdown-label {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .progress-bar {
-    background: var(--sage);
-    height: 8px;
-    border-radius: 4px;
+    height: 4px;
+    background: var(--color-border);
+    border-radius: 2px;
+    margin-top: var(--spacing-sm);
     overflow: hidden;
-    margin: 1rem 0;
 }
 
 .progress {
-    background: linear-gradient(90deg, var(--olive-green), var(--terracotta));
     height: 100%;
-    transition: width 0.3s;
+    background: var(--color-accent);
+    transition: width 0.3s ease;
 }
 
-.transplant-date {
-    color: var(--dark-teal);
-    font-weight: 600;
-    margin-top: 1rem;
-}
-
-/* Tasks */
+/* Tasks - Zeigarnik Effect: Incomplete tasks stand out */
 .tasks-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+    gap: var(--spacing-sm);
 }
 
-.task-card {
-    background: var(--cream);
-    border-radius: 12px;
-    padding: 1.5rem;
+.task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--color-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    transition: var(--transition);
+}
+
+.task-item:hover {
+    border-color: var(--color-accent-light);
 }
 
 .task-checkbox {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
+    margin-top: 2px;
 }
 
 .task-checkbox input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    margin-top: 0.25rem;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--color-border);
+    border-radius: 4px;
     cursor: pointer;
+    accent-color: var(--color-accent);
 }
 
-.task-checkbox label {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    cursor: pointer;
+.task-content {
     flex: 1;
 }
 
-.task-checkbox label i {
-    font-size: 1.5rem;
-    color: var(--terracotta);
-    margin-top: 0.25rem;
+.task-title {
+    font-weight: 500;
+    margin-bottom: 2px;
+    font-size: 0.9375rem;
 }
 
-.task-checkbox strong {
-    display: block;
-    color: var(--dark-teal);
-    margin-bottom: 0.25rem;
+.task-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
 }
 
-.task-checkbox p {
-    color: var(--olive-green);
-    font-size: 0.9rem;
-    margin: 0;
-}
-
-/* Horizontal Timeline */
-.horizontal-timeline {
+/* Timeline - Law of Continuation */
+.timeline {
     display: flex;
-    gap: 2rem;
+    gap: var(--spacing-md);
     overflow-x: auto;
-    padding: 2rem 0;
-    scrollbar-width: thin;
-    scrollbar-color: var(--terracotta) var(--sage);
-}
-
-.horizontal-timeline::-webkit-scrollbar {
-    height: 8px;
-}
-
-.horizontal-timeline::-webkit-scrollbar-track {
-    background: var(--sage);
-    border-radius: 4px;
-}
-
-.horizontal-timeline::-webkit-scrollbar-thumb {
-    background: var(--terracotta);
-    border-radius: 4px;
+    padding-bottom: var(--spacing-sm);
 }
 
 .timeline-step {
-    flex: 0 0 300px;
-    background: var(--cream);
-    border-radius: 12px;
-    padding: 2rem;
+    flex: 0 0 280px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--spacing-md);
     position: relative;
-    border: 3px solid transparent;
-    transition: all 0.3s;
 }
 
 .timeline-step.active {
-    border-color: var(--terracotta);
-    background: var(--white);
-    transform: translateY(-5px);
-    box-shadow: 0 6px 16px var(--shadow);
+    border-color: var(--color-accent);
+    background: var(--color-surface);
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
 }
 
 .step-icon {
-    width: 60px;
-    height: 60px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--olive-green), var(--dark-teal));
+    background: var(--color-accent);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    font-size: 0.875rem;
 }
 
-.timeline-step.active .step-icon {
-    background: linear-gradient(135deg, var(--terracotta), var(--olive-green));
-}
-
-.step-content h4 {
-    color: var(--dark-teal);
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-}
-
-.step-content p {
-    color: var(--terracotta);
+.step-title {
     font-weight: 600;
-    margin-bottom: 1rem;
+    font-size: 0.9375rem;
 }
 
-.step-content ul {
+.step-period {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.step-list {
     list-style: none;
-    padding: 0;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
 }
 
-.step-content li {
-    color: var(--olive-green);
-    padding: 0.25rem 0;
-    padding-left: 1.5rem;
+.step-list li {
+    padding: var(--spacing-xs) 0;
+    padding-left: var(--spacing-sm);
     position: relative;
 }
 
-.step-content li:before {
-    content: "✓";
+.step-list li:before {
+    content: "•";
     position: absolute;
     left: 0;
-    color: var(--terracotta);
+    color: var(--color-accent);
 }
 
-.step-image {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 4rem;
-    color: var(--sage);
-}
-
-.timeline-step.active .step-image {
-    color: var(--terracotta);
-}
-
-/* Buttons */
-.btn-primary,
-.btn-secondary {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 500;
-    transition: all 0.3s;
+/* Buttons - Fitts's Law: Adequate size */
+.btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
 }
 
 .btn-primary {
-    background: var(--terracotta);
-    color: var(--white);
+    background: var(--color-text);
+    color: white;
 }
 
 .btn-primary:hover {
-    background: #b56a4d;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px var(--shadow);
+    background: var(--color-accent);
 }
 
 .btn-secondary {
-    background: var(--olive-green);
-    color: var(--white);
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
 }
 
 .btn-secondary:hover {
-    background: #657054;
+    border-color: var(--color-text);
 }
 
-/* Filter Buttons */
-.filter-buttons {
+/* Filter Buttons - Law of Similarity */
+.filter-group {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
 }
 
 .filter-btn {
-    background: var(--white);
-    border: 2px solid var(--olive-green);
-    color: var(--olive-green);
-    padding: 0.75rem 1.5rem;
-    border-radius: 25px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8125rem;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
     cursor: pointer;
-    transition: all 0.3s;
-    font-weight: 500;
+    transition: var(--transition);
+    color: var(--color-text-secondary);
 }
 
 .filter-btn:hover,
 .filter-btn.active {
-    background: var(--olive-green);
-    color: var(--white);
+    background: var(--color-text);
+    color: white;
+    border-color: var(--color-text);
 }
 
-/* Plants Grid */
+/* Plants Grid - Law of Proximity */
 .plants-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
 }
 
 .plant-card {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px var(--shadow);
-    transition: all 0.3s;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--spacing-md);
     cursor: pointer;
-    border-left: 5px solid var(--olive-green);
+    transition: var(--transition);
 }
 
 .plant-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px var(--shadow);
-}
-
-.plant-card.indoor {
-    border-left-color: var(--terracotta);
-}
-
-.plant-card.outdoor {
-    border-left-color: var(--olive-green);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-accent-light);
 }
 
 .plant-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: start;
-    margin-bottom: 1rem;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-sm);
 }
 
-.plant-card-name {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: var(--dark-teal);
+.plant-name {
+    font-weight: 600;
+    font-size: 1rem;
 }
 
 .plant-badge {
-    background: var(--terracotta);
-    color: var(--white);
-    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    background: var(--color-bg);
     border-radius: 12px;
-    font-size: 0.8rem;
+    color: var(--color-text-secondary);
 }
 
 .plant-badge.ready {
-    background: var(--olive-green);
+    background: var(--color-success);
+    color: white;
 }
 
-.plant-card-info p {
-    color: var(--olive-green);
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
+.plant-info {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
 }
 
-/* Modal */
+.plant-info p {
+    margin-bottom: 4px;
+}
+
+/* Modal - Prägnanz: Simple and clear */
 .modal {
     display: none;
     position: fixed;
-    z-index: 2000;
-    left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(92, 117, 122, 0.8);
-    backdrop-filter: blur(4px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
 }
 
 .modal-content {
-    background: var(--white);
-    margin: 5% auto;
-    padding: 2rem;
-    border-radius: 16px;
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
     max-width: 600px;
+    width: 100%;
     max-height: 90vh;
     overflow-y: auto;
-    position: relative;
-    animation: slideIn 0.3s;
+    box-shadow: var(--shadow-md);
 }
 
-@keyframes slideIn {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.close {
-    position: absolute;
-    right: 1.5rem;
-    top: 1rem;
-    font-size: 2rem;
-    cursor: pointer;
-    color: var(--olive-green);
-    transition: color 0.3s;
-}
-
-.close:hover {
-    color: var(--terracotta);
-}
-
-/* Plant Details Modal */
-.plant-details-modal {
-    max-width: 800px;
-}
-
-.plant-details-header {
+.modal-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 2px solid var(--sage);
+    margin-bottom: var(--spacing-md);
 }
 
-.plant-icon-large {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--olive-green), var(--dark-teal));
-    color: white;
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 3rem;
+    border-radius: var(--radius);
+    transition: var(--transition);
 }
 
-.plant-details-header h2 {
-    color: var(--dark-teal);
-    font-size: 2rem;
-    margin-bottom: 0.25rem;
+.modal-close:hover {
+    background: var(--color-bg);
+    color: var(--color-text);
 }
 
+/* Forms - Miller's Law: Limit choices */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-text);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+    width: 100%;
+    padding: var(--spacing-sm);
+    font-size: 0.9375rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    transition: var(--transition);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Plant Details Modal */
 .plant-details-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
 }
 
-.detail-card {
-    background: var(--cream);
-    padding: 1.5rem;
-    border-radius: 12px;
+.detail-box {
+    background: var(--color-bg);
+    padding: var(--spacing-md);
+    border-radius: var(--radius);
 }
 
-.detail-card h4 {
-    color: var(--dark-teal);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.detail-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
 }
 
-.detail-card h4 i {
-    color: var(--terracotta);
-}
-
-.water-indicator,
-.sun-indicator {
-    margin-top: 1rem;
-    display: flex;
-    gap: 0.5rem;
-}
-
-.indicator-dot {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--sage);
-}
-
-.indicator-dot.active {
-    background: var(--terracotta);
-}
-
-.plant-notes-section {
-    background: var(--cream);
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-}
-
-.plant-notes-section h4 {
-    color: var(--dark-teal);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.modal-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-}
-
-/* Forms */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-}
-
-label {
-    display: block;
-    margin-bottom: 0.5rem;
+.detail-value {
     font-weight: 600;
-    color: var(--dark-teal);
-}
-
-input[type="text"],
-input[type="date"],
-input[type="file"],
-select,
-textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid var(--sage);
-    border-radius: 8px;
-    font-size: 1rem;
-    background: var(--white);
-    transition: border-color 0.3s;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    border-color: var(--terracotta);
-}
-
-.form-hint {
-    display: block;
-    margin-top: 0.5rem;
-    color: var(--olive-green);
-    font-size: 0.85rem;
-}
-
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 2rem;
+    font-size: 0.9375rem;
 }
 
 /* Care Log */
-.care-log-form {
-    background: var(--cream);
-    padding: 2rem;
-    border-radius: 12px;
-}
-
-.log-history {
-    max-height: 600px;
-    overflow-y: auto;
-}
-
 .log-entry {
-    background: var(--cream);
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    border-left: 5px solid var(--olive-green);
-    transition: all 0.3s;
-}
-
-.log-entry:hover {
-    transform: translateX(5px);
-    box-shadow: 0 2px 8px var(--shadow);
-}
-
-.log-entry.watering {
-    border-left-color: #2196f3;
-}
-
-.log-entry.fertilizer {
-    border-left-color: var(--olive-green);
-}
-
-.log-entry.pest {
-    border-left-color: var(--terracotta);
+    padding: var(--spacing-md);
+    background: var(--color-bg);
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing-sm);
+    border-left: 3px solid var(--color-accent);
 }
 
 .log-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--spacing-xs);
 }
 
-.log-plant-name {
-    font-weight: bold;
-    color: var(--dark-teal);
-    font-size: 1.1rem;
+.log-plant {
+    font-weight: 600;
+    font-size: 0.9375rem;
 }
 
 .log-date {
-    color: var(--olive-green);
-    font-size: 0.9rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
 }
 
-.log-type-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    margin-bottom: 0.75rem;
-    background: var(--terracotta);
-    color: var(--white);
+.log-type {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
 }
 
-/* Responsive */
+.log-notes {
+    font-size: 0.875rem;
+    color: var(--color-text);
+}
+
+/* Responsive - Tesler's Law: Complexity conserved */
 @media (max-width: 768px) {
     .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
+        transform: translateX(-100%);
+        transition: transform 0.3s;
     }
     
     .main-content {
         margin-left: 0;
     }
     
-    .weather-banner {
-        flex-direction: column;
-        text-align: center;
+    .countdown-grid {
+        grid-template-columns: 1fr;
     }
     
     .weather-details {
-        flex-wrap: wrap;
-        justify-content: center;
+        display: none;
     }
     
-    .form-row {
+    .plants-grid {
         grid-template-columns: 1fr;
     }
     
     .plant-details-grid {
         grid-template-columns: 1fr;
     }
-    
-    .horizontal-timeline {
-        flex-direction: column;
-    }
-    
-    .timeline-step {
-        flex: 1;
-    }
 }
 
-/* Utility Classes */
+/* Utilities */
+.text-muted {
+    color: var(--color-text-secondary);
+}
+
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+
 .hidden {
     display: none;
 }
 
-.text-center {
-    text-align: center;
+/* Inventory Grid */
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
 }
 
-.mt-1 { margin-top: 1rem; }
-.mt-2 { margin-top: 2rem; }
-.mb-1 { margin-bottom: 1rem; }
-.mb-2 { margin-bottom: 2rem; }
+.inventory-category h3 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text);
+}
+
+.inventory-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-xs) 0;
+    font-size: 0.875rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.inventory-item:last-child {
+    border-bottom: none;
+}
+
+/* Garden Boxes */
+.boxes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.box-card {
+    background: var(--color-bg);
+    padding: var(--spacing-md);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+}
+
+.box-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.plant-list {
+    list-style: none;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin: var(--spacing-sm) 0;
+}
+
+.plant-list li {
+    padding: var(--spacing-xs) 0;
+}
+
+.box-diagram pre {
+    font-family: monospace;
+    font-size: 0.75rem;
+    background: var(--color-surface);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius);
+    overflow-x: auto;
+    margin-top: var(--spacing-sm);
+}
+
+/* Herb Pots */
+.herb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+.herb-pot {
+    background: var(--color-bg);
+    padding: var(--spacing-md);
+    border-radius: var(--radius);
+    border-left: 3px solid var(--color-accent);
+}
+
+.herb-pot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+}
+
+.herb-pot-number {
+    background: var(--color-accent);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.herb-names {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.herb-water {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+}
+
+.herb-note {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    margin-top: var(--spacing-xs);
+    font-style: italic;
+}
+
+/* Alerts */
+.alert {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing-md);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+}
+
+.alert-warning {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    color: #92400e;
+}
+
+.alert i {
+    margin-top: 2px;
+}
+
+/* Calendar */
+.calendar-grid {
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+.calendar-item {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: var(--color-bg);
+    border-radius: var(--radius);
+}
+
+.calendar-timing {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    min-width: 120px;
+    color: var(--color-accent);
+}
+
+.calendar-actions {
+    flex: 1;
+}
+
+.calendar-actions ul {
+    list-style: none;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.calendar-actions li {
+    padding: var(--spacing-xs) 0;
+    padding-left: var(--spacing-sm);
+    position: relative;
+}
+
+.calendar-actions li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+}
+
+/* Seed Saving Section */
+.seed-saving-steps {
+    counter-reset: step;
+}
+
+.seed-step {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.seed-step:last-child {
+    border-bottom: none;
+}
+
+.seed-step-number {
+    background: var(--color-accent);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.seed-step-content h4 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.seed-step-content p {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}

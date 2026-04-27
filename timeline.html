@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline - Garden Journal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>Garden Journal</span>
+            </div>
+            <nav>
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="plants.html" class="nav-item">
+                    <i class="fas fa-seedling"></i>
+                    <span>My Plants</span>
+                </a>
+                <a href="care-log.html" class="nav-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Care Log</span>
+                </a>
+                <a href="timeline.html" class="nav-item active">
+                    <i class="fas fa-calendar"></i>
+                    <span>Timeline</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1>Planting Timeline</h1>
+                <p class="header-subtitle">Your seasonal garden schedule</p>
+            </header>
+
+            <!-- Planting Calendar -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Your Planting Calendar
+                </h2>
+                <div class="calendar-grid">
+                    <div class="calendar-item">
+                        <div class="calendar-timing">Late April<br><span class="text-muted">(Now)</span></div>
+                        <div class="calendar-actions">
+                            <ul>
+                                <li>Start tomatoes indoors</li>
+                                <li>Direct sow carrots, lettuce, spinach, arugula</li>
+                                <li>Start cucumbers/squash in biodegradable pots</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="calendar-item">
+                        <div class="calendar-timing">Mid-May</div>
+                        <div class="calendar-actions">
+                            <ul>
+                                <li>Transplant tomatoes, cucumbers, squash outdoors</li>
+                                <li>Succession sow more lettuce/spinach</li>
+                                <li>Harden off seedlings first (7-10 days)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="calendar-item">
+                        <div class="calendar-timing">May-June</div>
+                        <div class="calendar-actions">
+                            <ul>
+                                <li>Harvest early greens (30-45 days)</li>
+                                <li>Squash spreads into empty space</li>
+                                <li>Install trellises for climbing plants</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="calendar-item">
+                        <div class="calendar-timing">July-August</div>
+                        <div class="calendar-actions">
+                            <ul>
+                                <li>Harvest tomatoes, cucumbers, squash</li>
+                                <li>Save seeds from best fruits</li>
+                                <li>Succession plant fall crops</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Growth Timeline -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-route"></i>
+                    Growth Stages
+                </h2>
+                <div class="timeline">
+                    <div class="timeline-step active">
+                        <div class="step-header">
+                            <div class="step-icon">1</div>
+                            <div class="step-title">Germination</div>
+                        </div>
+                        <div class="step-period">Week 1-2</div>
+                        <ul class="step-list">
+                            <li>Seeds sprout in 3-10 days</li>
+                            <li>First leaves appear</li>
+                            <li>Keep soil moist</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-header">
+                            <div class="step-icon">2</div>
+                            <div class="step-title">True Leaves</div>
+                        </div>
+                        <div class="step-period">Week 3</div>
+                        <ul class="step-list">
+                            <li>True leaves form</li>
+                            <li>Begin weak fertilizer</li>
+                            <li>Stronger stems</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-header">
+                            <div class="step-icon">3</div>
+                            <div class="step-title">Transplant</div>
+                        </div>
+                        <div class="step-period">Week 4</div>
+                        <ul class="step-list">
+                            <li>2-3 true leaves</li>
+                            <li>Move outdoors</li>
+                            <li>Harden off first</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-header">
+                            <div class="step-icon">4</div>
+                            <div class="step-title">Growth</div>
+                        </div>
+                        <div class="step-period">Week 5-6</div>
+                        <ul class="step-list">
+                            <li>Rapid vine growth</li>
+                            <li>Increase watering</li>
+                            <li>Add support</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-header">
+                            <div class="step-icon">5</div>
+                            <div class="step-title">Harvest</div>
+                        </div>
+                        <div class="step-period">Week 9-10</div>
+                        <ul class="step-list">
+                            <li>First harvest</li>
+                            <li>Pick regularly</li>
+                            <li>Enjoy!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seed Saving Guide -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-seed"></i>
+                    Save Tomato Seeds
+                </h2>
+                <p class="text-muted mb-md">Fermentation Method</p>
+                <div class="seed-saving-steps">
+                    <div class="seed-step">
+                        <div class="seed-step-number">1</div>
+                        <div class="seed-step-content">
+                            <h4>Choose Fruit</h4>
+                            <p>Pick fully ripe, healthy tomato from vigorous plant. Only heirlooms.</p>
+                        </div>
+                    </div>
+                    <div class="seed-step">
+                        <div class="seed-step-number">2</div>
+                        <div class="seed-step-content">
+                            <h4>Extract</h4>
+                            <p>Cut tomato, squeeze seeds + pulp into jar. Label immediately.</p>
+                        </div>
+                    </div>
+                    <div class="seed-step">
+                        <div class="seed-step-number">3</div>
+                        <div class="seed-step-content">
+                            <h4>Ferment</h4>
+                            <p>Add splash of water. Cover loosely. Keep warm 3-5 days. Stir daily.</p>
+                        </div>
+                    </div>
+                    <div class="seed-step">
+                        <div class="seed-step-number">4</div>
+                        <div class="seed-step-content">
+                            <h4>Rinse</h4>
+                            <p>Viable seeds sink. Pour into strainer. Rinse thoroughly.</p>
+                        </div>
+                    </div>
+                    <div class="seed-step">
+                        <div class="seed-step-number">5</div>
+                        <div class="seed-step-content">
+                            <h4>Dry</h4>
+                            <p>Spread on paper towel. Dry 1-2 weeks. Seeds should snap, not bend.</p>
+                        </div>
+                    </div>
+                    <div class="seed-step">
+                        <div class="seed-step-number">6</div>
+                        <div class="seed-step-content">
+                            <h4>Store</h4>
+                            <p>Paper envelope, label with variety + date. Store cool, dark, dry.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
