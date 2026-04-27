@@ -121,7 +121,7 @@ async function initializeApp() {
 // --- Live Weather Fetch (Cloudflare Function Proxy) ---
 async function fetchHamiltonWeather() {
     try {
-        const response = await fetch('/functions/weather');
+        const response = await fetch('/weather');
         
         if (!response.ok) throw new Error('Weather fetch failed');
         
