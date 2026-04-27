@@ -1108,3 +1108,10 @@ optgroup {
     align-items: center;
     gap: 8px;
 }
+
+.task-plants {
+    font-size: 0.8125rem;
+    margin-top: 4px;
+    font-style: italic;
+}
+.mt-xs { margin-top: 0.25rem; }

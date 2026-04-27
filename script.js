@@ -113,8 +113,13 @@ async function initializeApp() {
     populatePlantDropdown();
     updateTransplantProgress();
     updateTimelineStatus();
+    
+    // ✅ Fetch live weather
+    fetchHamiltonWeather();
+    
+    // ✅ Update tasks based on plant status
+    updateTodaysTasks();
 }
-
 // --- Server Communication ---
 async function fetchFromServer(endpoint) {
   try {
@@ -141,6 +146,53 @@ async function saveToServer(endpoint, data) {
     // Silently fail instead of blocking UI
     return false;
   }
+}
+
+// --- Live Weather Fetch (OpenWeatherMap) ---
+async function fetchHamiltonWeather() {
+    const API_KEY = '28746c4863090b666a7491e23913a3f8'; 
+    const CITY = 'Hamilton';
+    const UNITS = 'metric'; // Celsius
+    
+    try {
+        const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?q=${CITY},CA&units=${UNITS}&appid=${API_KEY}`
+        );
+        
+        if (!response.ok) throw new Error('Weather fetch failed');
+        
+        const data = await response.json();
+        
+        // Update UI elements
+        document.getElementById('weather-temp').textContent = `${Math.round(data.main.temp)}°C`;
+        document.getElementById('weather-humidity').textContent = `${data.main.humidity}%`;
+        document.getElementById('weather-wind').textContent = `${Math.round(data.wind.speed * 3.6)} km/h`; // m/s to km/h
+        document.getElementById('weather-desc').textContent = data.weather[0].description;
+        
+        // Update icon based on weather condition
+        const iconCode = data.weather[0].icon;
+        const iconMap = {
+            '01d': 'fa-sun', '01n': 'fa-moon',
+            '02d': 'fa-cloud-sun', '02n': 'fa-cloud-moon',
+            '03d': 'fa-cloud', '03n': 'fa-cloud',
+            '04d': 'fa-cloud', '04n': 'fa-cloud',
+            '09d': 'fa-cloud-rain', '09n': 'fa-cloud-rain',
+            '10d': 'fa-cloud-showers-heavy', '10n': 'fa-cloud-rain',
+            '11d': 'fa-bolt', '11n': 'fa-bolt',
+            '13d': 'fa-snowflake', '13n': 'fa-snowflake',
+            '50d': 'fa-smog', '50n': 'fa-smog'
+        };
+        document.getElementById('weather-icon').className = `fas ${iconMap[iconCode] || 'fa-cloud'}`;
+        
+    } catch (error) {
+        console.warn('⚠️ Weather fetch failed, using fallback:', error.message);
+        // Fallback values
+        document.getElementById('weather-temp').textContent = '18°C';
+        document.getElementById('weather-humidity').textContent = '65%';
+        document.getElementById('weather-wind').textContent = '12 km/h';
+        document.getElementById('weather-desc').textContent = 'Partly cloudy';
+        document.getElementById('weather-icon').className = 'fas fa-cloud-sun';
+    }
 }
 
 // --- Plant Management ---
@@ -407,6 +459,107 @@ async function deleteLogEntry(event, id) {
         await saveToServer('logs', cachedLogs);
         renderLogs(cachedLogs);
     }
+}
+
+// --- Dynamic Task Generator Based on Plant Status ---
+function updateTodaysTasks() {
+    const container = document.getElementById('tasks-container');
+    const dateEl = document.getElementById('task-date');
+    
+    if (!container) return;
+    
+    // Set current date display
+    const today = new Date();
+    dateEl.textContent = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    
+    // Check which plants are ready to transplant (21+ days old, indoor location)
+    const plantsReady = cachedPlants.filter(p => 
+        p.location === 'indoor' && 
+        (new Date() - new Date(p.plantDate)) / (1000 * 60 * 60 * 24) >= 21
+    );
+    
+    const hasReadyPlants = plantsReady.length > 0;
+    
+    // Generate tasks based on status
+    const tasks = hasReadyPlants 
+        ? getTransplantTasks(plantsReady) 
+        : getSeedlingTasks();
+    
+    // Render tasks
+    container.innerHTML = tasks.map((task, index) => `
+        <div class="task-item">
+            <div class="task-checkbox">
+                <input type="checkbox" id="task-${index}">
+            </div>
+            <div class="task-content">
+                <div class="task-title">${task.title}</div>
+                <div class="task-desc">${task.desc}</div>
+                ${task.plants ? `<div class="task-plants text-muted mt-xs">${task.plants}</div>` : ''}
+            </div>
+        </div>
+    `).join('');
+    
+    // Add checkbox listeners to persist completion (localStorage only for UI state)
+    container.querySelectorAll('input[type="checkbox"]').forEach((checkbox, i) => {
+        const key = `task_complete_${today.toISOString().split('T')[0]}_${i}`;
+        checkbox.checked = localStorage.getItem(key) === 'true';
+        checkbox.addEventListener('change', (e) => {
+            localStorage.setItem(key, e.target.checked);
+        });
+    });
+}
+
+function getSeedlingTasks() {
+    return [
+        {
+            title: 'Check seedling moisture',
+            desc: 'Indoor pots - soil should be moist but not waterlogged'
+        },
+        {
+            title: 'Ensure adequate light',
+            desc: '6-8 hours of light for all seedlings; rotate pots for even growth'
+        },
+        {
+            title: 'Monitor temperature',
+            desc: 'Keep between 70-85°F (21-29°C) for optimal germination'
+        },
+        {
+            title: 'Inspect for damping-off',
+            desc: 'Watch for thin, weak stems or mold at soil line'
+        },
+        {
+            title: 'Thin crowded seedlings',
+            desc: 'Snip weakest at soil level; keep strongest per pot'
+        }
+    ];
+}
+
+function getTransplantTasks(readyPlants) {
+    const plantNames = readyPlants.map(p => p.name).join(', ');
+    
+    return [
+        {
+            title: '🌱 Harden off seedlings',
+            desc: 'Start with 2-3 hours outside in shade; gradually increase exposure over 7-10 days',
+            plants: `Ready: ${plantNames}`
+        },
+        {
+            title: '🌡️ Check nighttime forecast',
+            desc: 'Ensure temps stay above 50°F (10°C) for 7+ days before transplanting'
+        },
+        {
+            title: '🪴 Prepare garden boxes',
+            desc: 'Add compost, install trellises for cucumbers/tomatoes, mark planting spots'
+        },
+        {
+            title: '💧 Pre-water transplant holes',
+            desc: 'Water holes deeply before moving plants to reduce transplant shock'
+        },
+        {
+            title: '🌤️ Transplant on cloudy day',
+            desc: 'Move plants in evening or on overcast day; water deeply after planting'
+        }
+    ];
 }
 
 // --- Modals ---

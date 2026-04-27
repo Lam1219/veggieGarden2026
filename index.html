@@ -43,15 +43,20 @@
                 <p class="header-subtitle">April 26, 2026</p>
             </header>
 
-            <!-- Weather -->
+            <!-- Weather Banner - Live Data -->
             <div class="weather-banner">
                 <div class="weather-main">
-                    <i class="fas fa-sun"></i>
-                    <span>18°C Hamilton, ON</span>
+                    <i class="fas fa-sun" id="weather-icon"></i>
+                    <span class="weather-temp" id="weather-temp">--°C</span>
+                    <span class="weather-location">Hamilton, ON</span>
                 </div>
                 <div class="weather-details">
-                    <span class="weather-item"><i class="fas fa-tint"></i> 65%</span>
-                    <span class="weather-item"><i class="fas fa-wind"></i> 12 km/h</span>
+                    <span class="weather-item"><i class="fas fa-tint"></i> <span id="weather-humidity">--%</span></span>
+                    <span class="weather-item"><i class="fas fa-wind"></i> <span id="weather-wind">-- km/h</span></span>
+                    <span class="weather-item"><i class="fas fa-cloud"></i> <span id="weather-desc">Loading...</span></span>
+                </div>
+                <div class="date-display">
+                    <span class="date-text" id="current-date">April 26, 2026</span>
                 </div>
             </div>
 
@@ -103,52 +108,17 @@
                 </div>
             </div>
 
-            <!-- Today's Tasks -->
+            <!-- Today's Tasks - Dynamic -->
             <div class="card">
                 <h2 class="card-title">
                     <i class="fas fa-check-circle"></i>
-                    Today's Tasks
+                    Today's Tasks - <span id="task-date">April 26</span>
                 </h2>
-                <div class="tasks-grid">
-                    <div class="task-item">
-                        <div class="task-checkbox">
-                            <input type="checkbox" id="task1">
-                        </div>
-                        <div class="task-content">
-                            <div class="task-title">Check seedling moisture</div>
-                            <div class="task-desc">Indoor pots - ensure soil is moist but not waterlogged</div>
-                        </div>
-                    </div>
-                    <div class="task-item">
-                        <div class="task-checkbox">
-                            <input type="checkbox" id="task2">
-                        </div>
-                        <div class="task-content">
-                            <div class="task-title">Ensure adequate light</div>
-                            <div class="task-desc">6-8 hours of light for all seedlings</div>
-                        </div>
-                    </div>
-                    <div class="task-item">
-                        <div class="task-checkbox">
-                            <input type="checkbox" id="task3">
-                        </div>
-                        <div class="task-content">
-                            <div class="task-title">Monitor temperature</div>
-                            <div class="task-desc">Keep between 70-85°F for optimal growth</div>
-                        </div>
-                    </div>
-                    <div class="task-item">
-                        <div class="task-checkbox">
-                            <input type="checkbox" id="task4">
-                        </div>
-                        <div class="task-content">
-                            <div class="task-title">Inspect for pests</div>
-                            <div class="task-desc">Check leaves for any signs of disease or pests</div>
-                        </div>
-                    </div>
+                <div id="tasks-container" class="tasks-grid">
+                    <!-- Tasks populated by JavaScript -->
                 </div>
             </div>
-
+            
             <!-- Growth Timeline -->
             <div class="card">
                 <h2 class="card-title">
