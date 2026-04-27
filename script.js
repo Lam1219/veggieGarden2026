@@ -114,63 +114,29 @@ async function initializeApp() {
     updateTransplantProgress();
     updateTimelineStatus();
     
-    // ✅ Fetch live weather
+    // ✅ Fetch live weather from Netlify Function
     fetchHamiltonWeather();
     
     // ✅ Update tasks based on plant status
     updateTodaysTasks();
 }
-// --- Server Communication ---
-async function fetchFromServer(endpoint) {
-  try {
-    const response = await fetch(`/api/${endpoint}`);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return await response.json();
-  } catch (error) {
-    console.warn(`⚠️ Server fetch failed for ${endpoint}. Using local fallback.`);
-    return []; // Returns empty array so UI still loads
-  }
-}
 
-async function saveToServer(endpoint, data) {
-  try {
-    const response = await fetch(`/api/${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return true;
-  } catch (error) {
-    console.error(`❌ Failed to save ${endpoint}:`, error);
-    // Silently fail instead of blocking UI
-    return false;
-  }
-}
-
-// --- Live Weather Fetch (OpenWeatherMap) ---
+// --- Live Weather Fetch (Netlify Function Proxy) ---
 async function fetchHamiltonWeather() {
-    const API_KEY = '28746c4863090b666a7491e23913a3f8'; 
-    const CITY = 'Hamilton';
-    const UNITS = 'metric'; // Celsius
-    
     try {
-        const response = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?q=${CITY},CA&units=${UNITS}&appid=${API_KEY}`
-        );
+        const response = await fetch('/.netlify/functions/weather');
         
         if (!response.ok) throw new Error('Weather fetch failed');
         
         const data = await response.json();
         
         // Update UI elements
-        document.getElementById('weather-temp').textContent = `${Math.round(data.main.temp)}°C`;
-        document.getElementById('weather-humidity').textContent = `${data.main.humidity}%`;
-        document.getElementById('weather-wind').textContent = `${Math.round(data.wind.speed * 3.6)} km/h`; // m/s to km/h
-        document.getElementById('weather-desc').textContent = data.weather[0].description;
+        document.getElementById('weather-temp').textContent = `${data.temp}°C`;
+        document.getElementById('weather-humidity').textContent = `${data.humidity}%`;
+        document.getElementById('weather-wind').textContent = `${data.wind} km/h`;
+        document.getElementById('weather-desc').textContent = data.desc;
         
         // Update icon based on weather condition
-        const iconCode = data.weather[0].icon;
         const iconMap = {
             '01d': 'fa-sun', '01n': 'fa-moon',
             '02d': 'fa-cloud-sun', '02n': 'fa-cloud-moon',
@@ -182,7 +148,7 @@ async function fetchHamiltonWeather() {
             '13d': 'fa-snowflake', '13n': 'fa-snowflake',
             '50d': 'fa-smog', '50n': 'fa-smog'
         };
-        document.getElementById('weather-icon').className = `fas ${iconMap[iconCode] || 'fa-cloud'}`;
+        document.getElementById('weather-icon').className = `fas ${iconMap[data.icon] || 'fa-cloud'}`;
         
     } catch (error) {
         console.warn('⚠️ Weather fetch failed, using fallback:', error.message);
@@ -195,13 +161,43 @@ async function fetchHamiltonWeather() {
     }
 }
 
+// --- Server Communication ---
+async function fetchFromServer(endpoint) {
+    try {
+        const response = await fetch(`/api/${endpoint}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching ${endpoint}:`, error);
+        return [];
+    }
+}
+
+async function saveToServer(endpoint, data) {
+    try {
+        const response = await fetch(`/api/${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return true;
+    } catch (error) {
+        console.error(`Error saving ${endpoint}:`, error);
+        alert('Failed to save to server.');
+        return false;
+    }
+}
+
 // --- Plant Management ---
 async function loadPlantsFromServer() {
     let plants = await fetchFromServer('plants');
+    
     if (!plants || plants.length === 0) {
         plants = DEFAULT_PLANTS;
         await saveToServer('plants', plants);
     }
+    
     cachedPlants = plants;
     renderPlants(plants);
 }
@@ -209,13 +205,16 @@ async function loadPlantsFromServer() {
 function renderPlants(plants) {
     const plantsGrid = document.getElementById('plants-grid');
     if (!plantsGrid) return;
+    
     if (plants.length === 0) {
         plantsGrid.innerHTML = '<p class="no-plants">No plants added yet.</p>';
         return;
     }
+    
     plantsGrid.innerHTML = plants.map(plant => {
         const daysSincePlanting = Math.floor((new Date() - new Date(plant.plantDate)) / (1000 * 60 * 60 * 24));
         const readyToTransplant = daysSincePlanting >= 21 && plant.location === 'indoor';
+        
         return `
             <div class="plant-card ${plant.location} ${readyToTransplant ? 'ready' : ''}" 
                  onclick="showPlantDetails(${plant.id})" 
@@ -232,6 +231,9 @@ function renderPlants(plants) {
                     <p><strong>Planted:</strong> ${new Date(plant.plantDate).toLocaleDateString()}</p>
                     <p><strong>Days Growing:</strong> ${daysSincePlanting} days</p>
                 </div>
+                <button class="btn-delete" onclick="deletePlant(event, ${plant.id})" title="Delete plant">
+                    <i class="fas fa-trash"></i>
+                </button>
             </div>
         `;
     }).join('');
@@ -245,9 +247,13 @@ async function addPlant(plant) {
     populatePlantDropdown();
 }
 
-async function deletePlant(id) {
+async function deletePlant(event, id) {
     event.stopPropagation();
-    if (confirm('Are you sure you want to delete this plant?')) {
+    
+    const plant = cachedPlants.find(p => p.id === id);
+    if (!plant) return;
+    
+    if (confirm(`Delete "${plant.name}"? This cannot be undone.`)) {
         cachedPlants = cachedPlants.filter(p => p.id !== id);
         await saveToServer('plants', cachedPlants);
         renderPlants(cachedPlants);
@@ -259,13 +265,20 @@ function filterPlants(filter) {
     const buttons = document.querySelectorAll('.filter-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
+    
     const cards = document.querySelectorAll('.plant-card');
+    
     cards.forEach(card => {
         const location = card.getAttribute('data-location');
         const isReady = card.classList.contains('ready');
-        if (filter === 'all') card.style.display = 'block';
-        else if (filter === 'ready') card.style.display = isReady ? 'block' : 'none';
-        else card.style.display = location === filter ? 'block' : 'none';
+        
+        if (filter === 'all') {
+            card.style.display = 'block';
+        } else if (filter === 'ready') {
+            card.style.display = isReady ? 'block' : 'none';
+        } else {
+            card.style.display = location === filter ? 'block' : 'none';
+        }
     });
 }
 
@@ -273,6 +286,7 @@ function filterPlants(filter) {
 function showPlantDetails(id) {
     const plant = cachedPlants.find(p => p.id === id);
     if (!plant) return;
+
     const modal = document.getElementById('plant-details-modal');
     const careInfo = PLANT_CARE_DB[plant.type] || PLANT_CARE_DB['tomato'];
     
@@ -281,9 +295,10 @@ function showPlantDetails(id) {
     document.getElementById('detail-tips').textContent = careInfo.tips;
     document.getElementById('detail-spacing').textContent = careInfo.spacing;
     document.getElementById('detail-start').textContent = careInfo.start;
-    
+
     renderIndicator('detail-water-indicator', careInfo.waterLevel);
     renderIndicator('detail-sun-indicator', careInfo.sunLevel);
+
     modal.style.display = 'block';
 }
 
@@ -306,7 +321,6 @@ function populatePlantDropdown() {
     const select = document.getElementById('log-plant');
     if (!select) return;
 
-    // Clear existing options except the first one
     select.innerHTML = '<option value="">Select plant or herb...</option>';
     
     // Create Plants Group
@@ -335,9 +349,10 @@ function populatePlantDropdown() {
     select.appendChild(herbGroup);
 }
 
-// --- Care Log Logic ---
+// --- Care Log Management ---
 async function saveCareLog(event) {
     event.preventDefault();
+    
     const logEntry = {
         id: Date.now(),
         plant: document.getElementById('log-plant').value,
@@ -364,21 +379,39 @@ async function loadCareLogsFromServer() {
 function renderLogs(logs) {
     const logHistory = document.getElementById('log-history');
     if (!logHistory) return;
+    
     if (!logs || logs.length === 0) {
         logHistory.innerHTML = '<p class="no-activity">No care logs yet.</p>';
         return;
     }
+    
     logHistory.innerHTML = logs.map(log => `
         <div class="log-entry ${log.type}">
             <div class="log-header">
                 <span class="log-plant-name">${log.plant}</span>
                 <span class="log-date">${new Date(log.date).toLocaleDateString()}</span>
+                <button class="btn-log-delete" onclick="deleteLogEntry(event, ${log.id})" title="Delete entry">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
             ${log.fertilizerType ? `<p><strong>Fertilizer:</strong> ${log.fertilizerType}</p>` : ''}
             <p>${log.notes || 'No notes'}</p>
         </div>
     `).join('');
+}
+
+async function deleteLogEntry(event, id) {
+    event.stopPropagation();
+    
+    const entry = cachedLogs.find(l => l.id === id);
+    if (!entry) return;
+    
+    if (confirm(`Delete this log entry for "${entry.plant}"? This cannot be undone.`)) {
+        cachedLogs = cachedLogs.filter(l => l.id !== id);
+        await saveToServer('logs', cachedLogs);
+        renderLogs(cachedLogs);
+    }
 }
 
 function getLogTypeLabel(type) {
@@ -395,7 +428,9 @@ function getLogTypeLabel(type) {
 function toggleFields() {
     const type = document.getElementById('log-type').value;
     const fertilizerGroup = document.getElementById('fertilizer-type-group');
-    if (fertilizerGroup) fertilizerGroup.style.display = type === 'fertilizer' ? 'block' : 'none';
+    if (fertilizerGroup) {
+        fertilizerGroup.style.display = type === 'fertilizer' ? 'block' : 'none';
+    }
 }
 
 function clearForm() {
@@ -403,72 +438,13 @@ function clearForm() {
     document.getElementById('fertilizer-type-group').style.display = 'none';
 }
 
-// --- Visual Updates ---
-function updateTransplantProgress() {
-    const plantingDate = new Date('2026-04-26');
-    const today = new Date();
-    const daysSince = Math.max(0, Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24)));
-    const totalDays = 21; 
-    const progress = Math.min((daysSince / totalDays) * 100, 100);
-    const daysRemaining = Math.max(0, totalDays - daysSince);
-    document.querySelectorAll('.countdown-days').forEach(el => el.textContent = daysRemaining);
-    document.querySelectorAll('.progress').forEach(el => el.style.width = `${progress}%`);
-}
-
-function updateTimelineStatus() {
-    const plantingDate = new Date('2026-04-26');
-    const today = new Date();
-    const daysSince = Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24));
-    const timelineSteps = document.querySelectorAll('.timeline-step');
-    if (timelineSteps.length >= 5) {
-        timelineSteps.forEach(step => step.classList.remove('active'));
-        let currentStepIndex = 0;
-        if (daysSince > 14) currentStepIndex = 1;
-        else if (daysSince > 7) currentStepIndex = 0;
-        for (let i = 0; i <= currentStepIndex; i++) {
-            if (timelineSteps[i]) timelineSteps[i].classList.add('active');
-        }
-    }
-}
-
-
-// --- Delete Plant Function ---
-async function deletePlant(event, id) {
-    event.stopPropagation(); // Prevent opening plant details
-    
-    const plant = cachedPlants.find(p => p.id === id);
-    if (!plant) return;
-    
-    if (confirm(`Delete "${plant.name}"? This cannot be undone.`)) {
-        cachedPlants = cachedPlants.filter(p => p.id !== id);
-        await saveToServer('plants', cachedPlants);
-        renderPlants(cachedPlants);
-        populatePlantDropdown(); // Update dropdown in care log
-    }
-}
-
-// --- Delete Care Log Entry Function ---
-async function deleteLogEntry(event, id) {
-    event.stopPropagation(); // Prevent any parent click handlers
-    
-    const entry = cachedLogs.find(l => l.id === id);
-    if (!entry) return;
-    
-    if (confirm(`Delete this log entry for "${entry.plant}"? This cannot be undone.`)) {
-        cachedLogs = cachedLogs.filter(l => l.id !== id);
-        await saveToServer('logs', cachedLogs);
-        renderLogs(cachedLogs);
-    }
-}
-
-// --- Dynamic Task Generator Based on Plant Status ---
+// --- Dynamic Task Generator ---
 function updateTodaysTasks() {
     const container = document.getElementById('tasks-container');
     const dateEl = document.getElementById('task-date');
     
     if (!container) return;
     
-    // Set current date display
     const today = new Date();
     dateEl.textContent = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     
@@ -499,7 +475,7 @@ function updateTodaysTasks() {
         </div>
     `).join('');
     
-    // Add checkbox listeners to persist completion (localStorage only for UI state)
+    // Add checkbox listeners to persist completion
     container.querySelectorAll('input[type="checkbox"]').forEach((checkbox, i) => {
         const key = `task_complete_${today.toISOString().split('T')[0]}_${i}`;
         checkbox.checked = localStorage.getItem(key) === 'true';
@@ -562,11 +538,49 @@ function getTransplantTasks(readyPlants) {
     ];
 }
 
+// --- Visual Updates ---
+function updateTransplantProgress() {
+    const plantingDate = new Date('2026-04-26');
+    const today = new Date();
+    const daysSince = Math.max(0, Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24)));
+    const totalDays = 21; 
+    const progress = Math.min((daysSince / totalDays) * 100, 100);
+    const daysRemaining = Math.max(0, totalDays - daysSince);
+    
+    document.querySelectorAll('.countdown-days').forEach(el => el.textContent = daysRemaining);
+    document.querySelectorAll('.progress').forEach(el => el.style.width = `${progress}%`);
+}
+
+function updateTimelineStatus() {
+    const plantingDate = new Date('2026-04-26');
+    const today = new Date();
+    const daysSince = Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24));
+    const timelineSteps = document.querySelectorAll('.timeline-step');
+    
+    if (timelineSteps.length >= 5) {
+        timelineSteps.forEach(step => step.classList.remove('active'));
+        let currentStepIndex = 0;
+        if (daysSince > 14) currentStepIndex = 1;
+        else if (daysSince > 7) currentStepIndex = 0;
+        
+        for (let i = 0; i <= currentStepIndex; i++) {
+            if (timelineSteps[i]) timelineSteps[i].classList.add('active');
+        }
+    }
+}
+
 // --- Modals ---
-function showAddPlantModal() { document.getElementById('add-plant-modal').style.display = 'block'; }
-function closeModal() { document.getElementById('add-plant-modal').style.display = 'none'; }
+function showAddPlantModal() {
+    document.getElementById('add-plant-modal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('add-plant-modal').style.display = 'none';
+}
+
 document.getElementById('add-plant-form')?.addEventListener('submit', async function(e) {
     e.preventDefault();
+    
     const plant = {
         id: Date.now(),
         name: document.getElementById('plant-name').value,
@@ -577,10 +591,12 @@ document.getElementById('add-plant-form')?.addEventListener('submit', async func
         notes: document.getElementById('notes').value,
         createdAt: new Date().toISOString()
     };
+    
     await addPlant(plant);
     this.reset();
     closeModal();
 });
+
 window.onclick = function(event) {
     if (event.target === document.getElementById('plant-details-modal')) closePlantDetailsModal();
     if (event.target === document.getElementById('add-plant-modal')) closeModal();
