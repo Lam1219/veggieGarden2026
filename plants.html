@@ -131,6 +131,30 @@
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-list"></i> Active Plants</h2>
                 <div id="plants-grid" class="plants-grid">
+                    <!-- Inside the plant card template in renderPlants() -->
+                    <div class="plant-card ${plant.location} ${readyToTransplant ? 'ready' : ''}" 
+                         onclick="showPlantDetails(${plant.id})" 
+                         data-location="${plant.location}">
+                        
+                        <div class="plant-card-header">
+                            <div class="plant-card-name">${plant.name}</div>
+                            <span class="plant-badge ${readyToTransplant ? 'ready' : ''}">
+                                ${plant.location === 'indoor' ? (readyToTransplant ? '✓ Ready' : '🏠 Indoor') : '🌱 Outdoor'}
+                            </span>
+                        </div>
+                        
+                        <div class="plant-card-info">
+                            <p><strong>Variety:</strong> ${plant.variety || 'N/A'}</p>
+                            <p><strong>Type:</strong> ${plant.type}</p>
+                            <p><strong>Planted:</strong> ${new Date(plant.plantDate).toLocaleDateString()}</p>
+                            <p><strong>Days Growing:</strong> ${daysSincePlanting} days</p>
+                        </div>
+                        
+                        <!-- ✅ Add this delete button -->
+                        <button class="btn-delete" onclick="deletePlant(event, ${plant.id})" title="Delete plant">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                     <!-- Populated by JavaScript -->
                 </div>
             </div>

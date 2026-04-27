@@ -1065,3 +1065,46 @@ optgroup {
 .form-select {
     background-position: right 15rem center;
 }
+
+/* Delete Buttons - Minimalist Style */
+.btn-delete,
+.btn-log-delete {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: var(--transition);
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-delete {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    opacity: 0;
+}
+
+.plant-card:hover .btn-delete {
+    opacity: 1;
+}
+
+.btn-delete:hover,
+.btn-log-delete:hover {
+    color: #dc2626; /* Red on hover */
+    background: var(--color-bg);
+}
+
+.btn-log-delete {
+    margin-left: auto;
+}
+
+.log-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

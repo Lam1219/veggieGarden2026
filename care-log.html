@@ -108,6 +108,20 @@
                 </h2>
                 <div id="log-history" class="log-history">
                     <!-- Populated by JavaScript -->
+                    <!-- Inside the log entry template in renderLogs() -->
+                    <div class="log-entry ${log.type}">
+                        <div class="log-header">
+                            <span class="log-plant-name">${log.plant}</span>
+                            <span class="log-date">${new Date(log.date).toLocaleDateString()}</span>
+                            <!-- ✅ Add this delete button -->
+                            <button class="btn-log-delete" onclick="deleteLogEntry(event, ${log.id})" title="Delete entry">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
+                        ${log.fertilizerType ? `<p><strong>Fertilizer:</strong> ${log.fertilizerType}</p>` : ''}
+                        <p>${log.notes || 'No notes'}</p>
+                    </div>
                 </div>
             </div>
         </main>

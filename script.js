@@ -379,6 +379,36 @@ function updateTimelineStatus() {
     }
 }
 
+
+// --- Delete Plant Function ---
+async function deletePlant(event, id) {
+    event.stopPropagation(); // Prevent opening plant details
+    
+    const plant = cachedPlants.find(p => p.id === id);
+    if (!plant) return;
+    
+    if (confirm(`Delete "${plant.name}"? This cannot be undone.`)) {
+        cachedPlants = cachedPlants.filter(p => p.id !== id);
+        await saveToServer('plants', cachedPlants);
+        renderPlants(cachedPlants);
+        populatePlantDropdown(); // Update dropdown in care log
+    }
+}
+
+// --- Delete Care Log Entry Function ---
+async function deleteLogEntry(event, id) {
+    event.stopPropagation(); // Prevent any parent click handlers
+    
+    const entry = cachedLogs.find(l => l.id === id);
+    if (!entry) return;
+    
+    if (confirm(`Delete this log entry for "${entry.plant}"? This cannot be undone.`)) {
+        cachedLogs = cachedLogs.filter(l => l.id !== id);
+        await saveToServer('logs', cachedLogs);
+        renderLogs(cachedLogs);
+    }
+}
+
 // --- Modals ---
 function showAddPlantModal() { document.getElementById('add-plant-modal').style.display = 'block'; }
 function closeModal() { document.getElementById('add-plant-modal').style.display = 'none'; }
