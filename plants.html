@@ -8,23 +8,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-        <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+    <button class="mobile-menu-toggle" id="mobileMenuBtn" aria-label="Toggle menu">
         <i class="fas fa-bars"></i>
     </button>
+    
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <i class="fas fa-leaf"></i>
                 <span>Garden Journal</span>
             </div>
-            <nav>
-                <a href="index.html" class="nav-item">
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item active">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="plants.html" class="nav-item active">
+                <a href="plants.html" class="nav-item">
                     <i class="fas fa-seedling"></i>
                     <span>My Plants</span>
                 </a>
@@ -38,7 +39,6 @@
                 </a>
             </nav>
         </aside>
-
         <!-- Main Content -->
         <main class="main-content">
             <header class="header">

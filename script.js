@@ -535,74 +535,64 @@ function getTransplantTasks(readyPlants) {
     ];
 }
 
-// --- Mobile Sidebar Toggle ---
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.querySelector('.sidebar-overlay');
-    
-    if (!sidebar) return;
-    
-    sidebar.classList.toggle('active');
-    
-    if (overlay) {
-        overlay.classList.toggle('active');
-    }
-    
-    // Prevent body scroll when sidebar is open (mobile only)
-    if (window.innerWidth <= 768) {
-        document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
-    }
-}
+// ===== MOBILE MENU TOGGLE =====
 
-// Initialize mobile menu on DOM load
-document.addEventListener('DOMContentLoaded', function() {
-    // Create overlay element (only once)
-    if (!document.querySelector('.sidebar-overlay')) {
-        const overlay = document.createElement('div');
-        overlay.className = 'sidebar-overlay';
-        overlay.setAttribute('aria-hidden', 'true');
-        overlay.onclick = toggleSidebar;
-        document.body.appendChild(overlay);
+function initMobileMenu() {
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    // Exit if elements don't exist (not on mobile or missing HTML)
+    if (!menuBtn || !sidebar) return;
+    
+    // Toggle sidebar
+    function toggleMenu() {
+        const isActive = sidebar.classList.toggle('active');
+        overlay.classList.toggle('active', isActive);
+        document.body.classList.toggle('menu-open', isActive);
     }
     
-    // Close sidebar when clicking a nav link (mobile only)
+    // Close sidebar
+    function closeMenu() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.classList.remove('menu-open');
+    }
+    
+    // Event listeners
+    menuBtn.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', closeMenu);
+    
+    // Close when clicking a nav link (mobile only)
     document.querySelectorAll('.nav-item').forEach(link => {
         link.addEventListener('click', () => {
             if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.querySelector('.sidebar-overlay');
-                
-                if (sidebar) sidebar.classList.remove('active');
-                if (overlay) overlay.classList.remove('active');
-                document.body.style.overflow = '';
+                closeMenu();
             }
         });
     });
     
-    // Close sidebar on escape key
+    // Close on Escape key
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            
-            if (sidebar) sidebar.classList.remove('active');
-            if (overlay) overlay.classList.remove('active');
-            document.body.style.overflow = '';
+        if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+            closeMenu();
         }
     });
     
-    // Handle window resize: close sidebar if switching to desktop
+    // Close if resizing to desktop
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            
-            if (sidebar) sidebar.classList.remove('active');
-            if (overlay) overlay.classList.remove('active');
-            document.body.style.overflow = '';
+            closeMenu();
         }
     });
-});
+}
+
+// Initialize after DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileMenu);
+} else {
+    initMobileMenu();
+}
 
 // --- Dynamic Date Updater ---
 function updateCurrentDate() {
