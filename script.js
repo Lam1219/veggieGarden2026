@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
 async function initializeApp() {
     await loadPlantsFromServer();
     await loadCareLogsFromServer();
-    populatePlantDropdown();
+    populatePlantSelector();
     updateTransplantProgress();
     updateTimelineStatus();
     fetchHamiltonWeather();
@@ -241,7 +241,7 @@ async function addPlant(plant) {
     cachedPlants.push(plant);
     await saveToServer('plants', cachedPlants);
     renderPlants(cachedPlants);
-    populatePlantDropdown();
+    populatePlantSelector();
 }
 
 async function deletePlant(event, id) {
@@ -254,7 +254,7 @@ async function deletePlant(event, id) {
         cachedPlants = cachedPlants.filter(p => p.id !== id);
         await saveToServer('plants', cachedPlants);
         renderPlants(cachedPlants);
-        populatePlantDropdown();
+        populatePlantSelector();
     }
 }
 
@@ -313,47 +313,101 @@ function closePlantDetailsModal() {
     document.getElementById('plant-details-modal').style.display = 'none';
 }
 
-// --- Dropdown Population (Plants + Herbs) for Multiselect ---
-function populatePlantDropdown() {
-    const select = document.getElementById('log-plants'); // Changed ID
-    if (!select) return;
+function populatePlantSelector() {
+    const container = document.getElementById('plant-groups');
+    if (!container) return;
     
-    select.innerHTML = ''; // Clear existing options
+    const groups = {
+        'Tomatoes': cachedPlants.filter(p => p.type === 'tomato'),
+        'Cucurbits': cachedPlants.filter(p => ['cucumber', 'zucchini', 'squash'].includes(p.type)),
+        'Leafy Greens': cachedPlants.filter(p => ['lettuce', 'spinach', 'arugula'].includes(p.type)),
+        'Root Vegetables': cachedPlants.filter(p => p.type === 'carrot'),
+        'Herbs': HERBS
+    };
     
-    // Create Plants Group
-    const plantGroup = document.createElement('optgroup');
-    plantGroup.label = "Active Plants";
-    
-    const sortedPlants = [...cachedPlants].sort((a, b) => a.name.localeCompare(b.name));
-    sortedPlants.forEach(plant => {
-        const option = document.createElement('option');
-        option.value = plant.name;
-        option.textContent = `${plant.name} (${plant.variety})`;
-        plantGroup.appendChild(option);
-    });
-    select.appendChild(plantGroup);
-
-    // Create Herbs Group
-    const herbGroup = document.createElement('optgroup');
-    herbGroup.label = "Herbs (Pots 1-6)";
-    
-    HERBS.forEach(herb => {
-        const option = document.createElement('option');
-        option.value = `HERB:${herb.name}`; // Prefix to distinguish herbs
-        option.textContent = `${herb.name} ${herb.notes}`;
-        herbGroup.appendChild(option);
-    });
-    select.appendChild(herbGroup);
+    container.innerHTML = Object.entries(groups).map(([groupName, plants]) => {
+        if (plants.length === 0) return '';
+        const groupId = groupName.replace(/[^a-zA-Z0-9]/g, '');
+        
+        return `
+            <div class="plant-group" id="group-${groupId}">
+                <div class="group-header" onclick="toggleGroup('${groupId}')">
+                    <input type="checkbox" class="group-checkbox" data-group="${groupId}" onclick="event.stopPropagation(); toggleGroupSelection('${groupId}', this)">
+                    <span class="group-name">${groupName}</span>
+                    <span class="group-count">(${plants.length})</span>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="group-options">
+                    ${plants.map(plant => {
+                        const name = plant.name || plant;
+                        const variety = plant.variety || plant.notes || '';
+                        const plantId = `plant-${name.replace(/[^a-zA-Z0-9]/g, '')}`;
+                        return `
+                            <label class="plant-option" for="${plantId}">
+                                <input type="checkbox" id="${plantId}" value="${name}" class="plant-checkbox" data-group="${groupId}" onchange="updateGroupCheckbox('${groupId}')">
+                                <span>${name} ${variety ? `(${variety})` : ''}</span>
+                            </label>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
-// --- Care Log Management ---
+function toggleGroup(groupId) {
+    const group = document.getElementById(`group-${groupId}`);
+    if (group) group.classList.toggle('expanded');
+}
+
+function toggleGroupSelection(groupId, checkbox) {
+    const isChecked = checkbox.checked;
+    const checkboxes = document.querySelectorAll(`.plant-checkbox[data-group="${groupId}"]`);
+    checkboxes.forEach(cb => cb.checked = isChecked);
+    updateSelectAllCheckbox();
+}
+
+function updateGroupCheckbox(groupId) {
+    const checkboxes = document.querySelectorAll(`.plant-checkbox[data-group="${groupId}"]`);
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    const someChecked = Array.from(checkboxes).some(cb => cb.checked);
+    const groupCheckbox = document.querySelector(`.group-checkbox[data-group="${groupId}"]`);
+    
+    if (groupCheckbox) {
+        groupCheckbox.checked = allChecked;
+        groupCheckbox.indeterminate = someChecked && !allChecked;
+    }
+    updateSelectAllCheckbox();
+}
+
+function toggleAllPlants(event) {
+    if (event.target.id === 'select-all-plants' || event.target.tagName === 'LABEL') return;
+    
+    const selectAll = document.getElementById('select-all-plants');
+    selectAll.checked = !selectAll.checked;
+    
+    document.querySelectorAll('.plant-checkbox, .group-checkbox').forEach(cb => {
+        cb.checked = selectAll.checked;
+        cb.indeterminate = false;
+    });
+}
+
+function updateSelectAllCheckbox() {
+    const allCheckboxes = document.querySelectorAll('.plant-checkbox');
+    const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+    const someChecked = Array.from(allCheckboxes).some(cb => cb.checked);
+    const selectAll = document.getElementById('select-all-plants');
+    
+    selectAll.checked = allChecked;
+    selectAll.indeterminate = someChecked && !allChecked;
+}
+
 // --- Care Log Management (Multiselect Support) ---
 async function saveCareLog(event) {
     event.preventDefault();
     
-    // Get selected plants (multiselect returns array)
-    const select = document.getElementById('log-plants');
-    const selectedPlants = Array.from(select.selectedOptions).map(opt => opt.value);
+    const selectedCheckboxes = document.querySelectorAll('.plant-checkbox:checked');
+    const selectedPlants = Array.from(selectedCheckboxes).map(cb => cb.value);
     
     if (selectedPlants.length === 0) {
         alert('Please select at least one plant');
@@ -362,7 +416,7 @@ async function saveCareLog(event) {
     
     const logEntry = {
         id: Date.now(),
-        plants: selectedPlants, // Now an array instead of single string
+        plants: selectedPlants,
         date: document.getElementById('log-date').value,
         type: document.getElementById('log-type').value,
         fertilizerType: document.getElementById('fertilizer-type')?.value || '',
@@ -374,13 +428,22 @@ async function saveCareLog(event) {
     cachedLogs.unshift(logEntry);
     await saveToServer('logs', cachedLogs);
     renderLogs(cachedLogs);
-    
-    // Reset form
-    document.getElementById('log-notes').value = '';
-    select.selectedIndex = -1; // Deselect all
+    clearForm();
+    alert('Log entry saved!');
+}
+
+function clearForm() {
+    document.querySelector('form').reset();
     document.getElementById('fertilizer-type-group').style.display = 'none';
     
-    alert('Log entry saved!');
+    // Reset checkboxes
+    document.querySelectorAll('.plant-checkbox, .group-checkbox, #select-all-plants').forEach(cb => {
+        cb.checked = false;
+        cb.indeterminate = false;
+    });
+    
+    // Collapse all groups
+    document.querySelectorAll('.plant-group').forEach(g => g.classList.remove('expanded'));
 }
 
 async function loadCareLogsFromServer() {
@@ -455,11 +518,6 @@ function toggleFields() {
     if (fertilizerGroup) {
         fertilizerGroup.style.display = type === 'fertilizer' ? 'block' : 'none';
     }
-}
-
-function clearForm() {
-    document.querySelector('form').reset();
-    document.getElementById('fertilizer-type-group').style.display = 'none';
 }
 
 // --- Dynamic Task Generator ---
