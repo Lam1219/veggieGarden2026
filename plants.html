@@ -78,20 +78,109 @@
                 </div>
             </div>
 
-            <!-- Other sections remain below -->
+            <!-- ✅ Seed Inventory (Restored) -->
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-box-open"></i> Seed Inventory</h2>
-                <!-- Inventory content -->
+                <div class="inventory-grid">
+                    <div class="inventory-category">
+                        <h3>🍅 Tomatoes</h3>
+                        <div class="inventory-item"><span>Pink Bumble Bee</span><span>2 Plants (Indoor)</span></div>
+                        <div class="inventory-item"><span>Indigo Rose</span><span>🍅 To Save Seeds</span></div>
+                    </div>
+                    <div class="inventory-category">
+                        <h3>🥒 Cucurbits</h3>
+                        <div class="inventory-item"><span>Lebanese Beit Alpha</span><span>5 Plants (Indoor)</span></div>
+                        <div class="inventory-item"><span>Jackpot</span><span>Zucchini × 4 (Indoor)</span></div>
+                        <div class="inventory-item"><span>Sunburst</span><span>Squash × 4 (Indoor)</span></div>
+                    </div>
+                    <div class="inventory-category">
+                        <h3>🥬 Greens (Outdoor)</h3>
+                        <div class="inventory-item"><span>Super Gourmet</span><span>Lettuce</span></div>
+                        <div class="inventory-item"><span>Renegade</span><span>Spinach</span></div>
+                        <div class="inventory-item"><span>Astro</span><span>Arugula</span></div>
+                        <div class="inventory-item"><span>Rainbow Blend</span><span>Carrots</span></div>
+                    </div>
+                </div>
             </div>
 
+            <!-- ✅ Garden Box Layouts (Restored) -->
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-th-large"></i> Garden Box Layouts</h2>
-                <!-- Layout content -->
+                <div class="boxes-grid">
+                    <div class="box-card">
+                        <h3>📦 Box 1: The Vertical Box</h3>
+                        <p>6ft × 7ft = 42 sq ft</p>
+                        <div class="emoji-layout">
+                            <div class="layout-row">🌿🍅</div>
+                            <div class="layout-label">Trellis: Tomatoes & Cucumbers climbing</div>
+                            <div class="layout-row">🥕🥕🥕</div>
+                            <div class="layout-label">Rows of Carrots</div>
+                            <div class="layout-row">🌱   🌱   🌱</div>
+                            <div class="layout-label">Arugula (scattered in gaps)</div>
+                        </div>
+                        <ul class="plant-list">
+                            <li>🍅 Tomatoes: 4-6 plants with cages</li>
+                            <li>🌿 Cucumbers: 4-6 plants on trellis</li>
+                            <li>🥕 Carrots: Sow 100+, thin to 50-100</li>
+                            <li>🌱 Arugula: Scatter in gaps; harvest before shade</li>
+                        </ul>
+                    </div>
+                    <div class="box-card">
+                        <h3>📦 Box 2: The Succession Box</h3>
+                        <p>6ft × 7ft = 42 sq ft</p>
+                        <div class="emoji-layout">
+                            <div class="layout-row">🥬🥬🥬 🌿🌿</div>
+                            <div class="layout-label">Lettuce & Spinach rows (Plant next week)</div>
+                            <div class="layout-row">🎃                      🎃</div>
+                            <div class="layout-label">Zucchini & Squash (Transplant Mid-May)</div>
+                        </div>
+                        <ul class="plant-list">
+                            <li>🥬 Lettuce/Spinach: Fill empty space next week</li>
+                            <li>🎃 Zucchini: 1-2 plants center (Transplant mid-May)</li>
+                            <li>🎃 Sunburst Squash: 2 plants (Transplant mid-May)</li>
+                            <li>💡 Strategy: Harvest greens in 30-45 days, then squash spreads</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- Add Plant Modal (unchanged) -->
+    <!-- Plant Details Modal -->
+    <div id="plant-details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Plant Details</h3>
+                <button class="modal-close" onclick="closePlantDetailsModal()">&times;</button>
+            </div>
+            <div class="plant-details-grid">
+                <div class="detail-box">
+                    <div class="detail-label">Water</div>
+                    <div class="detail-value" id="detail-water">-</div>
+                    <div class="water-indicator" id="detail-water-indicator"></div>
+                </div>
+                <div class="detail-box">
+                    <div class="detail-label">Sun</div>
+                    <div class="detail-value" id="detail-sun">-</div>
+                    <div class="sun-indicator" id="detail-sun-indicator"></div>
+                </div>
+                <div class="detail-box">
+                    <div class="detail-label">Spacing</div>
+                    <div class="detail-value" id="detail-spacing">-</div>
+                </div>
+                <div class="detail-box">
+                    <div class="detail-label">Start</div>
+                    <div class="detail-value" id="detail-start">-</div>
+                </div>
+            </div>
+            <div class="detail-box" style="margin-bottom: 0;">
+                <div class="detail-label">Care Tips</div>
+                <div class="detail-value" id="detail-tips" style="font-weight: normal; font-size: 0.875rem; line-height: 1.5;">-</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Plant Modal -->
     <div id="add-plant-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
