@@ -4,66 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Care Log - Garden Journal</title>
-    
-    <!-- ✅ CRITICAL: This line connects the HTML to your CSS styles -->
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
     <button class="mobile-menu-toggle" id="mobileMenuBtn" aria-label="Toggle menu">
         <i class="fas fa-bars"></i>
     </button>
-    
-    <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="app-container">
-        <!-- Sidebar Navigation -->
         <aside class="sidebar" id="sidebar">
-            <div class="logo">
-                <i class="fas fa-leaf"></i>
-                <span>Garden Journal</span>
-            </div>
+            <div class="logo"><i class="fas fa-leaf"></i><span>Garden Journal</span></div>
             <nav class="sidebar-nav">
-                <a href="index.html" class="nav-item">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="plants.html" class="nav-item">
-                    <i class="fas fa-seedling"></i>
-                    <span>My Plants</span>
-                </a>
-                <!-- Active class here because we are on the Care Log page -->
-                <a href="care-log.html" class="nav-item active">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Care Log</span>
-                </a>
-                <a href="timeline.html" class="nav-item">
-                    <i class="fas fa-calendar"></i>
-                    <span>Timeline</span>
-                </a>
+                <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+                <a href="plants.html" class="nav-item"><i class="fas fa-seedling"></i><span>My Plants</span></a>
+                <a href="care-log.html" class="nav-item active"><i class="fas fa-clipboard-list"></i><span>Care Log</span></a>
+                <a href="timeline.html" class="nav-item"><i class="fas fa-calendar"></i><span>Timeline</span></a>
             </nav>
         </aside>
 
-        <!-- Main Content Area -->
         <main class="main-content">
             <header class="header">
                 <h1>Care Log</h1>
                 <p class="header-subtitle">Track watering, fertilizing, and observations</p>
             </header>
 
-            <!-- ✅ Add Log Form (Checkbox Tree Version) -->
             <div class="card">
-                <h2 class="card-title">
-                    <i class="fas fa-plus-circle"></i>
-                    New Entry
-                </h2>
+                <h2 class="card-title"><i class="fas fa-plus-circle"></i> New Entry</h2>
                 <form onsubmit="saveCareLog(event)" class="care-log-form">
-                    
-                    <!-- Plants Selection (Checkbox Tree) -->
                     <div class="form-group">
                         <label class="form-label">Plants / Herbs *</label>
                         <div class="plant-selector">
@@ -71,23 +40,19 @@
                                 <input type="checkbox" id="select-all-plants" onclick="event.stopPropagation()">
                                 <label for="select-all-plants" class="check-label" onclick="event.stopPropagation()">Select All</label>
                             </div>
-                            <div class="plant-groups" id="plant-groups">
-                                <!-- Dynamically populated by JavaScript -->
-                            </div>
+                            <div class="plant-groups" id="plant-groups"></div>
                         </div>
                         <small class="form-hint">Tap groups to expand. Select individual plants or use group checkboxes.</small>
                     </div>
 
-                    <!-- Date Field (Responsive) -->
                     <div class="form-group">
                         <label class="form-label" for="log-date">Date *</label>
                         <input type="date" id="log-date" class="form-input form-input-date" required>
                     </div>
 
-                    <!-- Activity Type -->
                     <div class="form-group">
                         <label class="form-label" for="log-type">Activity *</label>
-                        <select id="log-type" class="form-select form-right-spacer" required onchange="toggleFields()">
+                        <select id="log-type" class="form-select" required onchange="toggleFields()">
                             <option value="">Select activity...</option>
                             <option value="watering">💧 Watering</option>
                             <option value="fertilizer">🌿 Fertilizer</option>
@@ -97,7 +62,6 @@
                         </select>
                     </div>
 
-                    <!-- Fertilizer Type (Conditional) -->
                     <div class="form-group" id="fertilizer-type-group" style="display:none;">
                         <label class="form-label" for="fertilizer-type">Fertilizer Type</label>
                         <select id="fertilizer-type" class="form-select">
@@ -109,7 +73,6 @@
                         </select>
                     </div>
 
-                    <!-- Notes -->
                     <div class="form-group">
                         <label class="form-label" for="log-notes">Notes</label>
                         <textarea id="log-notes" class="form-textarea" placeholder="Describe what you did or observed..."></textarea>
@@ -122,19 +85,12 @@
                 </form>
             </div>
 
-            <!-- Log History -->
             <div class="card">
-                <h2 class="card-title">
-                    <i class="fas fa-history"></i>
-                    Recent Entries
-                </h2>
-                <div id="log-history" class="log-history">
-                    <!-- Populated by JavaScript -->
-                </div>
+                <h2 class="card-title"><i class="fas fa-history"></i> Recent Entries</h2>
+                <div id="log-history" class="log-history"></div>
             </div>
         </main>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
