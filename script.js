@@ -109,12 +109,36 @@ document.addEventListener('DOMContentLoaded', function() {
 async function initializeApp() {
     await loadPlantsFromServer();
     await loadCareLogsFromServer();
-    populatePlantSelector(); // ✅ Updated for Checkbox Tree
+    await loadTaskStatusFromServer();
+    populatePlantSelector(); 
     updateTransplantProgress();
     updateTimelineStatus();
     fetchHamiltonWeather();
     updateTodaysTasks();
     updateCurrentDate();
+}
+
+// Global cache for daily task completion
+let cachedTaskStatus = {}; 
+
+// Load task status from server
+async function loadTaskStatusFromServer() {
+    try {
+        const data = await fetchFromServer('task_status');
+        cachedTaskStatus = data || {};
+    } catch (error) {
+        console.warn('⚠️ Failed to load task status, starting fresh:', error);
+        cachedTaskStatus = {};
+    }
+}
+
+// Save a single task toggle to server
+async function saveTaskStatus(dateKey, taskSlug, isChecked) {
+    if (!cachedTaskStatus[dateKey]) {
+        cachedTaskStatus[dateKey] = {};
+    }
+    cachedTaskStatus[dateKey][taskSlug] = isChecked;
+    await saveToServer('task_status', cachedTaskStatus);
 }
 
 // --- Live Weather Fetch (Cloudflare Function Proxy) ---
@@ -528,48 +552,65 @@ function clearForm() {
     });
 }
 
-// --- Dynamic Task Generator ---
+// --- Dynamic Task Generator (Server-Synced) ---
 function updateTodaysTasks() {
     const container = document.getElementById('tasks-container');
     const dateEl = document.getElementById('task-date');
     if (!container) return;
-    
+
     const today = new Date();
+    const todayStr = today.toISOString().split('T')[0]; // e.g., "2026-04-26"
     dateEl.textContent = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    
+
     // Check which plants are ready to transplant (21+ days old, indoor location)
     const plantsReady = cachedPlants.filter(p => 
         p.location === 'indoor' && 
         (new Date() - new Date(p.plantDate)) / (1000 * 60 * 60 * 24) >= 21
     );
-    
+
     const hasReadyPlants = plantsReady.length > 0;
-    
-    // Generate tasks based on status
-    const tasks = hasReadyPlants 
-        ? getTransplantTasks(plantsReady) 
-        : getSeedlingTasks();
-    
-    // Render tasks
-    container.innerHTML = tasks.map((task, index) => `
-        <div class="task-item">
-            <div class="task-checkbox">
-                <input type="checkbox" id="task-${index}">
+    const tasks = hasReadyPlants ? getTransplantTasks(plantsReady) : getSeedlingTasks();
+
+    // Get today's cached status from server
+    const todayTasksStatus = cachedTaskStatus[todayStr] || {};
+
+    container.innerHTML = tasks.map((task) => {
+        // Create a stable slug for server storage
+        const taskSlug = task.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+        const isChecked = todayTasksStatus[taskSlug] === true;
+
+        return `
+            <div class="task-item ${isChecked ? 'completed' : ''}">
+                <div class="task-checkbox">
+                    <input type="checkbox" data-task-slug="${taskSlug}">
+                </div>
+                <div class="task-content">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-desc">${task.desc}</div>
+                    ${task.plants ? `<div class="task-plants text-muted mt-xs">${task.plants}</div>` : ''}
+                </div>
             </div>
-            <div class="task-content">
-                <div class="task-title">${task.title}</div>
-                <div class="task-desc">${task.desc}</div>
-                ${task.plants ? `<div class="task-plants text-muted mt-xs">${task.plants}</div>` : ''}
-            </div>
-        </div>
-    `).join('');
-    
-    // Add checkbox listeners to persist completion
-    container.querySelectorAll('input[type="checkbox"]').forEach((checkbox, i) => {
-        const key = `task_complete_${today.toISOString().split('T')[0]}_${i}`;
-        checkbox.checked = localStorage.getItem(key) === 'true';
-        checkbox.addEventListener('change', (e) => {
-            localStorage.setItem(key, e.target.checked);
+        `;
+    }).join('');
+
+    // Attach event listeners for server sync
+    container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = todayTasksStatus[checkbox.dataset.taskSlug] === true;
+        
+        checkbox.addEventListener('change', async (e) => {
+            const slug = e.target.dataset.taskSlug;
+            const isChecked = e.target.checked;
+            
+            // 💾 Save to server immediately
+            await saveTaskStatus(todayStr, slug, isChecked);
+            
+            // 🎨 Update UI styling
+            const taskItem = e.target.closest('.task-item');
+            if (isChecked) {
+                taskItem.classList.add('completed');
+            } else {
+                taskItem.classList.remove('completed');
+            }
         });
     });
 }

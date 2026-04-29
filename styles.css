@@ -928,6 +928,18 @@ body {
     line-height: 1.5;
 }
 
+/* Task Completion Styles */
+.task-item.completed {
+    opacity: 0.6;
+    background: var(--color-bg);
+    border-color: var(--color-border);
+}
+
+.task-item.completed .task-title {
+    text-decoration: line-through;
+    color: var(--color-text-secondary);
+}
+
 /* Watering Groups */
 .watering-groups {
     margin-top: var(--spacing-lg);
