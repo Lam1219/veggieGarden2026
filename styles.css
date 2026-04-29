@@ -18,6 +18,7 @@
     --transition: all 0.2s ease;
 }
 
+/* ✅ FIX: Added missing * selector */
 * {
     margin: 0;
     padding: 0;
@@ -62,13 +63,6 @@ body {
 
 .mobile-menu-toggle:hover {
     background: var(--color-accent);
-}
-
-/* Only show on mobile */
-@media (max-width: 768px) {
-  .mobile-menu-toggle {
-    display: flex;
-  }
 }
 
 /* Sidebar Overlay */
@@ -485,6 +479,19 @@ body {
     border-color: var(--color-text);
 }
 
+/* Page Actions - Add Plant Button (Fitts's Law + Jakob's Law) */
+.page-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--spacing-md);
+    margin-top: var(--spacing-sm);
+}
+
+.page-actions .btn {
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+}
+
 /* Filter Buttons - Law of Similarity */
 .filter-group {
     display: flex;
@@ -714,14 +721,6 @@ body {
     margin-right: 20px;
 }
 
-.form-hint {
-    display: block;
-    margin-top: 4px;
-    font-size: 0.75rem;
-    color: var(--color-text-secondary);
-    font-style: italic;
-}
-
 /* Plant Details Modal */
 .plant-details-grid {
     display: grid;
@@ -935,18 +934,6 @@ body {
     line-height: 1.5;
 }
 
-/* Task Completion Styles */
-.task-item.completed {
-    opacity: 0.6;
-    background: var(--color-bg);
-    border-color: var(--color-border);
-}
-
-.task-item.completed .task-title {
-    text-decoration: line-through;
-    color: var(--color-text-secondary);
-}
-
 /* Watering Groups */
 .watering-groups {
     margin-top: var(--spacing-lg);
@@ -1148,7 +1135,7 @@ body {
     padding: 4px;
 }
 
-/* ===== Checkbox Tree Selector Styles ===== */
+/* Checkbox Tree Selector Styles */
 .plant-selector {
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
@@ -1243,6 +1230,12 @@ body {
     width: 16px;
     height: 16px;
     cursor: pointer;
+}
+
+/* Animation */
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 /* ===== Mobile Responsiveness ===== */
@@ -1350,6 +1343,22 @@ body {
         width: 100%;
         justify-content: center;
     }
+    
+    /* Page Actions & Active Plants Mobile Adjustments */
+    .page-actions {
+        justify-content: center;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .page-actions .btn {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .active-plants-section .filter-group {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 }
 
 @media (min-width: 769px) {
@@ -1365,10 +1374,4 @@ body {
     .sidebar-overlay {
         display: none !important;
     }
-}
-
-/* Animation */
-@keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
 }
