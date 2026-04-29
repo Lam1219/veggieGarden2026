@@ -337,47 +337,52 @@ function closePlantDetailsModal() {
 
 // --- Checkbox Tree Selector Population ---
 function populatePlantSelector() {
-    const container = document.getElementById('plant-groups');
-    if (!container) return;
+  const container = document.getElementById('plant-groups');
+  if (!container) return;
+
+  // Show loading state if data isn't ready yet
+  if (!cachedPlants || cachedPlants.length === 0) {
+    container.innerHTML = '<div style="padding: 1rem; color: var(--color-text-secondary); text-align: center;">Loading plants...</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  const groups = {
+    'Tomatoes': cachedPlants.filter(p => p.type === 'tomato'),
+    'Cucurbits': cachedPlants.filter(p => ['cucumber', 'zucchini', 'squash'].includes(p.type)),
+    'Leafy Greens': cachedPlants.filter(p => ['lettuce', 'spinach', 'arugula'].includes(p.type)),
+    'Root Vegetables': cachedPlants.filter(p => p.type === 'carrot'),
+    'Herbs': HERBS
+  };
+
+  container.innerHTML = Object.entries(groups).map(([groupName, plants], index) => {
+    if (plants.length === 0) return '';
+    const groupId = groupName.replace(/[^a-zA-Z0-9]/g, '');
     
-    container.innerHTML = '';
-    
-    const groups = {
-        'Tomatoes': cachedPlants.filter(p => p.type === 'tomato'),
-        'Cucurbits': cachedPlants.filter(p => ['cucumber', 'zucchini', 'squash'].includes(p.type)),
-        'Leafy Greens': cachedPlants.filter(p => ['lettuce', 'spinach', 'arugula'].includes(p.type)),
-        'Root Vegetables': cachedPlants.filter(p => p.type === 'carrot'),
-        'Herbs': HERBS
-    };
-    
-    container.innerHTML = Object.entries(groups).map(([groupName, plants], index) => {
-        if (plants.length === 0) return '';
-        const groupId = groupName.replace(/[^a-zA-Z0-9]/g, '');
-        
-        return `
-            <div class="plant-group ${index === 0 ? 'expanded' : ''}" id="group-${groupId}">
-                <div class="group-header" onclick="toggleGroup('${groupId}')">
-                    <input type="checkbox" class="group-checkbox" data-group="${groupId}" onclick="event.stopPropagation(); toggleGroupSelection('${groupId}', this)">
-                    <span class="group-name">${groupName}</span>
-                    <span class="group-count">(${plants.length})</span>
-                    <i class="fas fa-chevron-down toggle-icon" style="transform: ${index === 0 ? 'rotate(0)' : 'rotate(-90deg)'}"></i>
-                </div>
-                <div class="group-options">
-                    ${plants.map(plant => {
-                        const name = plant.name || plant;
-                        const variety = plant.variety || plant.notes || '';
-                        const plantId = `plant-${name.replace(/[^a-zA-Z0-9]/g, '')}`;
-                        return `
-                            <label class="plant-option" for="${plantId}">
-                                <input type="checkbox" id="${plantId}" value="${name}" class="plant-checkbox" data-group="${groupId}" onchange="updateGroupCheckbox('${groupId}')">
-                                <span>${name} ${variety ? `(${variety})` : ''}</span>
-                            </label>
-                        `;
-                    }).join('')}
-                </div>
-            </div>
-        `;
-    }).join('');
+    return `
+      <div class="plant-group ${index === 0 ? 'expanded' : ''}" id="group-${groupId}">
+        <div class="group-header" onclick="toggleGroup('${groupId}')">
+          <input type="checkbox" class="group-checkbox" data-group="${groupId}" onclick="event.stopPropagation(); toggleGroupSelection('${groupId}', this)">
+          <span class="group-name">${groupName}</span>
+          <span class="group-count">(${plants.length})</span>
+          <i class="fas fa-chevron-down toggle-icon" style="transform: ${index === 0 ? 'rotate(0)' : 'rotate(-90deg)'}"></i>
+        </div>
+        <div class="group-options">
+          ${plants.map(plant => {
+            const name = plant.name || plant;
+            const variety = plant.variety || plant.notes || '';
+            const plantId = `plant-${name.replace(/[^a-zA-Z0-9]/g, '')}`;
+            return `
+              <label class="plant-option" for="${plantId}">
+                <input type="checkbox" id="${plantId}" value="${name}" class="plant-checkbox" data-group="${groupId}" onchange="updateGroupCheckbox('${groupId}')">
+                <span>${name} ${variety ? `(${variety})` : ''}</span>
+              </label>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 // --- Checkbox Tree Control Functions ---

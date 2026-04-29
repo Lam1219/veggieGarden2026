@@ -64,6 +64,13 @@ body {
     background: var(--color-accent);
 }
 
+/* Only show on mobile */
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: flex;
+  }
+}
+
 /* Sidebar Overlay */
 .sidebar-overlay {
     display: none;
