@@ -313,12 +313,12 @@ function closePlantDetailsModal() {
     document.getElementById('plant-details-modal').style.display = 'none';
 }
 
-// --- Dropdown Population (Plants + Herbs) ---
+// --- Dropdown Population (Plants + Herbs) for Multiselect ---
 function populatePlantDropdown() {
-    const select = document.getElementById('log-plant');
+    const select = document.getElementById('log-plants'); // Changed ID
     if (!select) return;
-
-    select.innerHTML = '<option value="">Select plant or herb...</option>';
+    
+    select.innerHTML = ''; // Clear existing options
     
     // Create Plants Group
     const plantGroup = document.createElement('optgroup');
@@ -339,7 +339,7 @@ function populatePlantDropdown() {
     
     HERBS.forEach(herb => {
         const option = document.createElement('option');
-        option.value = herb.name;
+        option.value = `HERB:${herb.name}`; // Prefix to distinguish herbs
         option.textContent = `${herb.name} ${herb.notes}`;
         herbGroup.appendChild(option);
     });
@@ -347,12 +347,22 @@ function populatePlantDropdown() {
 }
 
 // --- Care Log Management ---
+// --- Care Log Management (Multiselect Support) ---
 async function saveCareLog(event) {
     event.preventDefault();
     
+    // Get selected plants (multiselect returns array)
+    const select = document.getElementById('log-plants');
+    const selectedPlants = Array.from(select.selectedOptions).map(opt => opt.value);
+    
+    if (selectedPlants.length === 0) {
+        alert('Please select at least one plant');
+        return;
+    }
+    
     const logEntry = {
         id: Date.now(),
-        plant: document.getElementById('log-plant').value,
+        plants: selectedPlants, // Now an array instead of single string
         date: document.getElementById('log-date').value,
         type: document.getElementById('log-type').value,
         fertilizerType: document.getElementById('fertilizer-type')?.value || '',
@@ -364,7 +374,12 @@ async function saveCareLog(event) {
     cachedLogs.unshift(logEntry);
     await saveToServer('logs', cachedLogs);
     renderLogs(cachedLogs);
+    
+    // Reset form
     document.getElementById('log-notes').value = '';
+    select.selectedIndex = -1; // Deselect all
+    document.getElementById('fertilizer-type-group').style.display = 'none';
+    
     alert('Log entry saved!');
 }
 
@@ -382,20 +397,27 @@ function renderLogs(logs) {
         return;
     }
     
-    logHistory.innerHTML = logs.map(log => `
-        <div class="log-entry ${log.type}">
-            <div class="log-header">
-                <span class="log-plant-name">${log.plant}</span>
-                <span class="log-date">${new Date(log.date).toLocaleDateString()}</span>
-                <button class="btn-log-delete" onclick="deleteLogEntry(event, ${log.id})" title="Delete entry">
-                    <i class="fas fa-times"></i>
-                </button>
+    logHistory.innerHTML = logs.map(log => {
+        // Handle both old single-plant and new multi-plant logs
+        const plantNames = Array.isArray(log.plants) 
+            ? log.plants.map(p => p.replace('HERB:', '')).join(', ')
+            : log.plant || 'Unknown';
+        
+        return `
+            <div class="log-entry ${log.type}">
+                <div class="log-header">
+                    <span class="log-plant-name">${plantNames}</span>
+                    <span class="log-date">${new Date(log.date).toLocaleDateString()}</span>
+                    <button class="btn-log-delete" onclick="deleteLogEntry(event, ${log.id})" title="Delete entry">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
+                ${log.fertilizerType ? `<p><strong>Fertilizer:</strong> ${log.fertilizerType}</p>` : ''}
+                <p>${log.notes || 'No notes'}</p>
             </div>
-            <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
-            ${log.fertilizerType ? `<p><strong>Fertilizer:</strong> ${log.fertilizerType}</p>` : ''}
-            <p>${log.notes || 'No notes'}</p>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 async function deleteLogEntry(event, id) {
@@ -404,7 +426,12 @@ async function deleteLogEntry(event, id) {
     const entry = cachedLogs.find(l => l.id === id);
     if (!entry) return;
     
-    if (confirm(`Delete this log entry for "${entry.plant}"? This cannot be undone.`)) {
+    // Handle both old and new log format for display
+    const plantNames = Array.isArray(entry.plants) 
+        ? entry.plants.join(', ') 
+        : entry.plant || 'this entry';
+    
+    if (confirm(`Delete this log entry for "${plantNames}"? This cannot be undone.`)) {
         cachedLogs = cachedLogs.filter(l => l.id !== id);
         await saveToServer('logs', cachedLogs);
         renderLogs(cachedLogs);

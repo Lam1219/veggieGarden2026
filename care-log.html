@@ -1,137 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Care Log - Garden Journal</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <button class="mobile-menu-toggle" id="mobileMenuBtn" aria-label="Toggle menu">
-        <i class="fas fa-bars"></i>
-    </button>
-    
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <div class="app-container">
-        <aside class="sidebar" id="sidebar">
-            <div class="logo">
-                <i class="fas fa-leaf"></i>
-                <span>Garden Journal</span>
+<!-- Add Log Form -->
+<div class="card">
+    <h2 class="card-title">
+        <i class="fas fa-plus-circle"></i>
+        New Entry
+    </h2>
+    <form onsubmit="saveCareLog(event)" class="care-log-form">
+        <!-- Plants Selection (Multiselect) -->
+        <div class="form-group">
+            <label class="form-label" for="log-plants">Plants / Herbs *</label>
+            <div class="multiselect-container">
+                <select id="log-plants" class="form-select" multiple size="4" required>
+                    <option value="">Select plants or herbs...</option>
+                </select>
+                <small class="form-hint">Hold Ctrl/Cmd to select multiple, or tap on mobile</small>
             </div>
-            <nav class="sidebar-nav">
-                <a href="index.html" class="nav-item">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="plants.html" class="nav-item">
-                    <i class="fas fa-seedling"></i>
-                    <span>My Plants</span>
-                </a>
-                <a href="care-log.html" class="nav-item active">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Care Log</span>
-                </a>
-                <a href="timeline.html" class="nav-item">
-                    <i class="fas fa-calendar"></i>
-                    <span>Timeline</span>
-                </a>
-            </nav>
-        </aside>
+        </div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="header">
-                <h1>Care Log</h1>
-                <p class="header-subtitle">Track watering, fertilizing, and observations</p>
-            </header>
+        <!-- Date Field (Responsive) -->
+        <div class="form-group">
+            <label class="form-label" for="log-date">Date *</label>
+            <input type="date" id="log-date" class="form-input form-input-date" required>
+        </div>
 
-            <!-- Add Log Form -->
-            <div class="card">
-                <h2 class="card-title">
-                    <i class="fas fa-plus-circle"></i>
-                    New Entry
-                </h2>
-                <form onsubmit="saveCareLog(event)">
-                    <!-- Row 1: Plant & Date -->
-                    <div class="form-row">
-                        <div class="form-group form-right-spacer">
-                            <label class="form-label" for="log-plant">Plant / Herb *</label>
-                            <select id="log-plant" class="form-select" required>
-                                <option value="">Select plant or herb...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="log-date">Date *</label>
-                            <input type="date" id="log-date" class="form-input" required>
-                        </div>
-                    </div>
+        <!-- Activity Type -->
+        <div class="form-group">
+            <label class="form-label" for="log-type">Activity *</label>
+            <select id="log-type" class="form-select form-right-spacer" required onchange="toggleFields()">
+                <option value="">Select activity...</option>
+                <option value="watering">💧 Watering</option>
+                <option value="fertilizer">🌿 Fertilizer</option>
+                <option value="pest">🐛 Pest/Disease</option>
+                <option value="maintenance">🔧 Maintenance</option>
+                <option value="observation">👁️ Observation</option>
+            </select>
+        </div>
 
-                    <!-- Row 2: Activity & Fertilizer -->
-                    <div class="form-row">
-                        <div class="form-group form-right-spacer">
-                            <label class="form-label" for="log-type">Activity *</label>
-                            <select id="log-type" class="form-select" required onchange="toggleFields()">
-                                <option value="">Select activity...</option>
-                                <option value="watering">💧 Watering</option>
-                                <option value="fertilizer">🌿 Fertilizer</option>
-                                <option value="pest">🐛 Pest/Disease</option>
-                                <option value="maintenance">🔧 Maintenance</option>
-                                <option value="observation">👁️ Observation</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="fertilizer-type-group" style="display:none;">
-                            <label class="form-label" for="fertilizer-type">Fertilizer Type</label>
-                            <select id="fertilizer-type" class="form-select">
-                                <option value="">Select...</option>
-                                <option value="balanced">Balanced (10-10-10)</option>
-                                <option value="nitrogen">High Nitrogen</option>
-                                <option value="bloom">Bloom Booster</option>
-                                <option value="compost">Compost Tea</option>
-                            </select>
-                        </div>
-                    </div>
+        <!-- Fertilizer Type (Conditional) -->
+        <div class="form-group" id="fertilizer-type-group" style="display:none;">
+            <label class="form-label" for="fertilizer-type">Fertilizer Type</label>
+            <select id="fertilizer-type" class="form-select">
+                <option value="">Select...</option>
+                <option value="balanced">Balanced (10-10-10)</option>
+                <option value="nitrogen">High Nitrogen</option>
+                <option value="bloom">Bloom Booster</option>
+                <option value="compost">Compost Tea</option>
+            </select>
+        </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="log-notes">Notes</label>
-                        <textarea id="log-notes" class="form-textarea" placeholder="Describe what you did or observed..."></textarea>
-                    </div>
-                    
-                    <div class="modal-actions">
-                        <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear</button>
-                        <button type="submit" class="btn btn-primary">Save Entry</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Log History -->
-            <div class="card">
-                <h2 class="card-title">
-                    <i class="fas fa-history"></i>
-                    Recent Entries
-                </h2>
-                <div id="log-history" class="log-history">
-                    <!-- Populated by JavaScript -->
-                    <!-- Inside the log entry template in renderLogs() -->
-                    <div class="log-entry ${log.type}">
-                        <div class="log-header">
-                            <span class="log-plant-name">${log.plant}</span>
-                            <span class="log-date">${new Date(log.date).toLocaleDateString()}</span>
-                            <!-- ✅ Add this delete button -->
-                            <button class="btn-log-delete" onclick="deleteLogEntry(event, ${log.id})" title="Delete entry">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
-                        ${log.fertilizerType ? `<p><strong>Fertilizer:</strong> ${log.fertilizerType}</p>` : ''}
-                        <p>${log.notes || 'No notes'}</p>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+        <!-- Notes -->
+        <div class="form-group">
+            <label class="form-label" for="log-notes">Notes</label>
+            <textarea id="log-notes" class="form-textarea" placeholder="Describe what you did or observed..."></textarea>
+        </div>
+        
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear</button>
+            <button type="submit" class="btn btn-primary">Save Entry</button>
+        </div>
+    </form>
+</div>
