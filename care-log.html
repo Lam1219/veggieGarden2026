@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Care Log - Garden Journal</title>
+    
+    <!-- ✅ CRITICAL: This line connects the HTML to your CSS styles -->
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -17,7 +21,7 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="app-container">
-        <!-- Sidebar -->
+        <!-- Sidebar Navigation -->
         <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <i class="fas fa-leaf"></i>
@@ -32,6 +36,7 @@
                     <i class="fas fa-seedling"></i>
                     <span>My Plants</span>
                 </a>
+                <!-- Active class here because we are on the Care Log page -->
                 <a href="care-log.html" class="nav-item active">
                     <i class="fas fa-clipboard-list"></i>
                     <span>Care Log</span>
@@ -43,20 +48,21 @@
             </nav>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Main Content Area -->
         <main class="main-content">
             <header class="header">
                 <h1>Care Log</h1>
                 <p class="header-subtitle">Track watering, fertilizing, and observations</p>
             </header>
 
-            <!-- Add Log Form -->
+            <!-- ✅ Add Log Form (Checkbox Tree Version) -->
             <div class="card">
                 <h2 class="card-title">
                     <i class="fas fa-plus-circle"></i>
                     New Entry
                 </h2>
                 <form onsubmit="saveCareLog(event)" class="care-log-form">
+                    
                     <!-- Plants Selection (Checkbox Tree) -->
                     <div class="form-group">
                         <label class="form-label">Plants / Herbs *</label>

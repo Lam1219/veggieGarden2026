@@ -91,7 +91,6 @@ const DEFAULT_PLANTS = [
     { id: 13, name: 'Squash 2', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
     { id: 14, name: 'Squash 3', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
     { id: 15, name: 'Squash 4', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    
     // Outdoor Greens
     { id: 16, name: 'Lettuce Row 1', variety: 'Super Gourmet Blend', type: 'lettuce', plantDate: '2026-05-03', location: 'outdoor', notes: 'Planned for Box 2', createdAt: new Date().toISOString() },
     { id: 17, name: 'Spinach Row 1', variety: 'Renegade', type: 'spinach', plantDate: '2026-05-03', location: 'outdoor', notes: 'Planned for Box 2', createdAt: new Date().toISOString() },
@@ -110,12 +109,12 @@ document.addEventListener('DOMContentLoaded', function() {
 async function initializeApp() {
     await loadPlantsFromServer();
     await loadCareLogsFromServer();
-    populatePlantSelector();
+    populatePlantSelector(); // ✅ Updated for Checkbox Tree
     updateTransplantProgress();
     updateTimelineStatus();
     fetchHamiltonWeather();
     updateTodaysTasks();
-    updateCurrentDate(); 
+    updateCurrentDate();
 }
 
 // --- Live Weather Fetch (Cloudflare Function Proxy) ---
@@ -241,12 +240,11 @@ async function addPlant(plant) {
     cachedPlants.push(plant);
     await saveToServer('plants', cachedPlants);
     renderPlants(cachedPlants);
-    populatePlantSelector();
+    populatePlantSelector(); // ✅ Updated
 }
 
 async function deletePlant(event, id) {
     event.stopPropagation();
-    
     const plant = cachedPlants.find(p => p.id === id);
     if (!plant) return;
     
@@ -254,7 +252,7 @@ async function deletePlant(event, id) {
         cachedPlants = cachedPlants.filter(p => p.id !== id);
         await saveToServer('plants', cachedPlants);
         renderPlants(cachedPlants);
-        populatePlantSelector();
+        populatePlantSelector(); // ✅ Updated
     }
 }
 
@@ -283,7 +281,7 @@ function filterPlants(filter) {
 function showPlantDetails(id) {
     const plant = cachedPlants.find(p => p.id === id);
     if (!plant) return;
-
+    
     const modal = document.getElementById('plant-details-modal');
     const careInfo = PLANT_CARE_DB[plant.type] || PLANT_CARE_DB['tomato'];
     
@@ -292,10 +290,10 @@ function showPlantDetails(id) {
     document.getElementById('detail-tips').textContent = careInfo.tips;
     document.getElementById('detail-spacing').textContent = careInfo.spacing;
     document.getElementById('detail-start').textContent = careInfo.start;
-
+    
     renderIndicator('detail-water-indicator', careInfo.waterLevel);
     renderIndicator('detail-sun-indicator', careInfo.sunLevel);
-
+    
     modal.style.display = 'block';
 }
 
@@ -313,9 +311,12 @@ function closePlantDetailsModal() {
     document.getElementById('plant-details-modal').style.display = 'none';
 }
 
+// --- Checkbox Tree Selector Population ---
 function populatePlantSelector() {
     const container = document.getElementById('plant-groups');
     if (!container) return;
+    
+    container.innerHTML = '';
     
     const groups = {
         'Tomatoes': cachedPlants.filter(p => p.type === 'tomato'),
@@ -325,17 +326,17 @@ function populatePlantSelector() {
         'Herbs': HERBS
     };
     
-    container.innerHTML = Object.entries(groups).map(([groupName, plants]) => {
+    container.innerHTML = Object.entries(groups).map(([groupName, plants], index) => {
         if (plants.length === 0) return '';
         const groupId = groupName.replace(/[^a-zA-Z0-9]/g, '');
         
         return `
-            <div class="plant-group" id="group-${groupId}">
+            <div class="plant-group ${index === 0 ? 'expanded' : ''}" id="group-${groupId}">
                 <div class="group-header" onclick="toggleGroup('${groupId}')">
                     <input type="checkbox" class="group-checkbox" data-group="${groupId}" onclick="event.stopPropagation(); toggleGroupSelection('${groupId}', this)">
                     <span class="group-name">${groupName}</span>
                     <span class="group-count">(${plants.length})</span>
-                    <i class="fas fa-chevron-down toggle-icon"></i>
+                    <i class="fas fa-chevron-down toggle-icon" style="transform: ${index === 0 ? 'rotate(0)' : 'rotate(-90deg)'}"></i>
                 </div>
                 <div class="group-options">
                     ${plants.map(plant => {
@@ -355,9 +356,14 @@ function populatePlantSelector() {
     }).join('');
 }
 
+// --- Checkbox Tree Control Functions ---
 function toggleGroup(groupId) {
     const group = document.getElementById(`group-${groupId}`);
-    if (group) group.classList.toggle('expanded');
+    if (group) {
+        const isExpanded = group.classList.toggle('expanded');
+        const icon = group.querySelector('.toggle-icon');
+        icon.style.transform = isExpanded ? 'rotate(0)' : 'rotate(-90deg)';
+    }
 }
 
 function toggleGroupSelection(groupId, checkbox) {
@@ -402,10 +408,11 @@ function updateSelectAllCheckbox() {
     selectAll.indeterminate = someChecked && !allChecked;
 }
 
-// --- Care Log Management (Multiselect Support) ---
+// --- Care Log Management (Checkbox Tree Support) ---
 async function saveCareLog(event) {
     event.preventDefault();
     
+    // Get selected plants from checkboxes
     const selectedCheckboxes = document.querySelectorAll('.plant-checkbox:checked');
     const selectedPlants = Array.from(selectedCheckboxes).map(cb => cb.value);
     
@@ -432,20 +439,6 @@ async function saveCareLog(event) {
     alert('Log entry saved!');
 }
 
-function clearForm() {
-    document.querySelector('form').reset();
-    document.getElementById('fertilizer-type-group').style.display = 'none';
-    
-    // Reset checkboxes
-    document.querySelectorAll('.plant-checkbox, .group-checkbox, #select-all-plants').forEach(cb => {
-        cb.checked = false;
-        cb.indeterminate = false;
-    });
-    
-    // Collapse all groups
-    document.querySelectorAll('.plant-group').forEach(g => g.classList.remove('expanded'));
-}
-
 async function loadCareLogsFromServer() {
     cachedLogs = await fetchFromServer('logs');
     renderLogs(cachedLogs);
@@ -461,9 +454,8 @@ function renderLogs(logs) {
     }
     
     logHistory.innerHTML = logs.map(log => {
-        // Handle both old single-plant and new multi-plant logs
         const plantNames = Array.isArray(log.plants) 
-            ? log.plants.map(p => p.replace('HERB:', '')).join(', ')
+            ? log.plants.join(', ')
             : log.plant || 'Unknown';
         
         return `
@@ -485,11 +477,9 @@ function renderLogs(logs) {
 
 async function deleteLogEntry(event, id) {
     event.stopPropagation();
-    
     const entry = cachedLogs.find(l => l.id === id);
     if (!entry) return;
     
-    // Handle both old and new log format for display
     const plantNames = Array.isArray(entry.plants) 
         ? entry.plants.join(', ') 
         : entry.plant || 'this entry';
@@ -520,11 +510,28 @@ function toggleFields() {
     }
 }
 
+function clearForm() {
+    document.querySelector('form').reset();
+    document.getElementById('fertilizer-type-group').style.display = 'none';
+    
+    // Reset checkboxes
+    document.querySelectorAll('.plant-checkbox, .group-checkbox, #select-all-plants').forEach(cb => {
+        cb.checked = false;
+        cb.indeterminate = false;
+    });
+    
+    // Collapse all groups
+    document.querySelectorAll('.plant-group').forEach(g => {
+        g.classList.remove('expanded');
+        const icon = g.querySelector('.toggle-icon');
+        if (icon) icon.style.transform = 'rotate(-90deg)';
+    });
+}
+
 // --- Dynamic Task Generator ---
 function updateTodaysTasks() {
     const container = document.getElementById('tasks-container');
     const dateEl = document.getElementById('task-date');
-    
     if (!container) return;
     
     const today = new Date();
@@ -621,13 +628,12 @@ function getTransplantTasks(readyPlants) {
 }
 
 // ===== MOBILE MENU TOGGLE =====
-
 function initMobileMenu() {
     const menuBtn = document.getElementById('mobileMenuBtn');
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebarOverlay');
     
-    // Exit if elements don't exist (not on mobile or missing HTML)
+    // Exit if elements don't exist
     if (!menuBtn || !sidebar) return;
     
     // Toggle sidebar
@@ -697,7 +703,7 @@ function updateTransplantProgress() {
     const plantingDate = new Date('2026-04-26');
     const today = new Date();
     const daysSince = Math.max(0, Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24)));
-    const totalDays = 21; 
+    const totalDays = 21;
     const progress = Math.min((daysSince / totalDays) * 100, 100);
     const daysRemaining = Math.max(0, totalDays - daysSince);
     
