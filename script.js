@@ -223,42 +223,80 @@ async function loadPlantsFromServer() {
 }
 
 function renderPlants(plants) {
-    const plantsGrid = document.getElementById('plants-grid');
-    if (!plantsGrid) return;
-    
-    if (plants.length === 0) {
-        plantsGrid.innerHTML = '<p class="no-plants">No plants added yet.</p>';
-        return;
-    }
-    
-    plantsGrid.innerHTML = plants.map(plant => {
-        const daysSincePlanting = Math.floor((new Date() - new Date(plant.plantDate)) / (1000 * 60 * 60 * 24));
-        const readyToTransplant = daysSincePlanting >= 21 && plant.location === 'indoor';
-        
-        return `
-            <div class="plant-card ${plant.location} ${readyToTransplant ? 'ready' : ''}" 
-                 onclick="showPlantDetails(${plant.id})" 
-                 data-location="${plant.location}">
-                <div class="plant-card-header">
-                    <div class="plant-card-name">${plant.name}</div>
-                    <span class="plant-badge ${readyToTransplant ? 'ready' : ''}">
-                        ${plant.location === 'indoor' ? (readyToTransplant ? '✓ Ready' : '🏠 Indoor') : '🌱 Outdoor'}
-                    </span>
-                </div>
-                <div class="plant-card-info">
-                    <p><strong>Variety:</strong> ${plant.variety || 'N/A'}</p>
-                    <p><strong>Type:</strong> ${plant.type}</p>
-                    <p><strong>Planted:</strong> ${new Date(plant.plantDate).toLocaleDateString()}</p>
-                    <p><strong>Days Growing:</strong> ${daysSincePlanting} days</p>
-                </div>
-                <button class="btn-delete" onclick="deletePlant(event, ${plant.id})" title="Delete plant">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        `;
-    }).join('');
-}
+  const container = document.getElementById('plants-grid');
+  if (!container) return;
+  
+  if (!plants.length) {
+    container.innerHTML = '<p class="no-plants">No plants added yet.</p>';
+    return;
+  }
 
+  // 📦 Group by variety + location
+  const groups = {};
+  plants.forEach(p => {
+    const key = `${p.variety}_${p.location}`;
+    if (!groups[key]) {
+      groups[key] = {
+        variety: p.variety,
+        location: p.location,
+        type: p.type,
+        count: 0,
+        list: [],
+        maxDays: 0,
+        allReady: true
+      };
+    }
+    groups[key].count++;
+    groups[key].list.push(p);
+    
+    const days = Math.floor((new Date() - new Date(p.plantDate)) / 86400000);
+    if (days > groups[key].maxDays) groups[key].maxDays = days;
+    if (days < 21 || p.location !== 'indoor') groups[key].allReady = false;
+  });
+
+  const typeEmojis = {
+    tomato: '🍅', cucumber: '🥒', zucchini: '🥒', squash: '🎃',
+    lettuce: '🥬', spinach: '🥬', arugula: '🌿', carrot: '🥕'
+  };
+
+  container.innerHTML = Object.values(groups).map(group => {
+    const statusBadge = group.allReady 
+      ? `<span class="status-badge ready">✓ Ready</span>` 
+      : `<span class="status-badge growing">${group.maxDays} days</span>`;
+    
+    const locationIcon = group.location === 'indoor' ? '🏠' : '🌱';
+    const emoji = typeEmojis[group.type] || '🌱';
+
+    return `
+      <div class="plant-group-card" 
+           data-location="${group.location}" 
+           data-ready="${group.allReady}"
+           onclick="this.classList.toggle('expanded')">
+        <div class="group-header">
+          <div class="group-main">
+            <span class="group-icon">${emoji}</span>
+            <div class="group-text">
+              <h3 class="group-variety">${group.variety}</h3>
+              <span class="group-meta">${group.count} plant${group.count > 1 ? 's' : ''} • ${locationIcon} ${group.location}</span>
+            </div>
+          </div>
+          <div class="group-status">
+            ${statusBadge}
+            <i class="fas fa-chevron-down toggle-icon"></i>
+          </div>
+        </div>
+        <div class="group-details">
+          ${group.list.map(p => `
+            <div class="plant-detail-row" onclick="event.stopPropagation(); showPlantDetails(${p.id})">
+              <span class="plant-name">${p.name}</span>
+              <span class="plant-note">${p.notes || ''}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 async function addPlant(plant) {
     if (!cachedPlants) cachedPlants = [];
     cachedPlants.push(plant);
@@ -281,24 +319,17 @@ async function deletePlant(event, id) {
 }
 
 function filterPlants(filter) {
-    const buttons = document.querySelectorAll('.filter-btn');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  document.querySelectorAll('.plant-group-card').forEach(card => {
+    const location = card.dataset.location;
+    const isReady = card.dataset.ready === 'true';
     
-    const cards = document.querySelectorAll('.plant-card');
-    
-    cards.forEach(card => {
-        const location = card.getAttribute('data-location');
-        const isReady = card.classList.contains('ready');
-        
-        if (filter === 'all') {
-            card.style.display = 'block';
-        } else if (filter === 'ready') {
-            card.style.display = isReady ? 'block' : 'none';
-        } else {
-            card.style.display = location === filter ? 'block' : 'none';
-        }
-    });
+    if (filter === 'all') card.style.display = 'block';
+    else if (filter === 'ready') card.style.display = isReady ? 'block' : 'none';
+    else card.style.display = location === filter ? 'block' : 'none';
+  });
 }
 
 // --- Plant Details Modal ---
