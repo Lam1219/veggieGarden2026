@@ -1498,3 +1498,49 @@ body {
   font-size: 0.8125rem;
   text-align: right;
 }
+/* Image Upload UI */
+.image-upload-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  align-items: flex-start;
+}
+.upload-status {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  min-height: 1.2em;
+  transition: color 0.2s;
+}
+.preview-img {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  object-fit: cover;
+  margin-top: var(--spacing-xs);
+  box-shadow: var(--shadow-sm);
+}
+.btn-remove-img {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 0.8125rem;
+  transition: var(--transition);
+  align-self: flex-start;
+}
+.btn-remove-img:hover { color: #dc2626; }
+
+/* Log Entry Image Display */
+.log-entry-image {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: var(--radius);
+  margin-top: var(--spacing-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid var(--color-border);
+}
+.log-entry-image:hover { opacity: 0.9; box-shadow: var(--shadow-md); }

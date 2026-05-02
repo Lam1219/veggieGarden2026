@@ -6,6 +6,8 @@
     <title>Care Log - Garden Journal</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Client-side image compression -->
+<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.min.js"></script>
 </head>
 <body>
     <button class="mobile-menu-toggle" id="mobileMenuBtn" aria-label="Toggle menu">
@@ -76,6 +78,17 @@
                     <div class="form-group">
                         <label class="form-label" for="log-notes">Notes</label>
                         <textarea id="log-notes" class="form-textarea" placeholder="Describe what you did or observed..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                          <label class="form-label">Attach Photo (Optional)</label>
+                          <div class="image-upload-area">
+                            <button type="button" id="uploadPicBtn" class="btn btn-secondary">📷 Add Picture</button>
+                            <input type="file" id="picFileInput" accept="image/*" hidden>
+                            <div id="uploadStatus" class="upload-status"></div>
+                            <img id="previewImg" class="preview-img" style="display: none;">
+                            <button type="button" id="removePicBtn" class="btn-remove-img hidden">✕ Remove</button>
+                          </div>
                     </div>
                     
                     <div class="modal-actions">

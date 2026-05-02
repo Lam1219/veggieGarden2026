@@ -101,6 +101,70 @@ const DEFAULT_PLANTS = [
 let cachedPlants = [];
 let cachedLogs = [];
 
+// --- Image Upload & Compression State ---
+let currentImageFile = null;
+let currentImageUrl = null;
+
+// DOM Elements
+const uploadBtn = document.getElementById('uploadPicBtn');
+const fileInput = document.getElementById('picFileInput');
+const previewImg = document.getElementById('previewImg');
+const uploadStatus = document.getElementById('uploadStatus');
+const removeBtn = document.getElementById('removePicBtn');
+
+// Attach listeners when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  if (uploadBtn) uploadBtn.addEventListener('click', () => fileInput?.click());
+  if (removeBtn) removeBtn.addEventListener('click', resetImageUpload);
+  
+  if (fileInput) {
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        uploadStatus.textContent = '❌ Only image files allowed.';
+        return;
+      }
+      if (file.size > 15 * 1024 * 1024) {
+        uploadStatus.textContent = '❌ File too large (Max 15MB).';
+        return;
+      }
+
+      uploadStatus.textContent = '⏳ Compressing...';
+      try {
+        const options = {
+          maxSizeMB: 0.4,           // Target ~400KB
+          maxWidthOrHeight: 1920,   // Cap resolution
+          useWebWorker: true,       // Keeps UI responsive
+          fileType: 'image/jpeg',   // Better compression for photos
+          exifOrientation: true     // Fixes iPhone/Android rotation
+        };
+        
+        currentImageFile = await imageCompression(file, options);
+        previewImg.src = URL.createObjectURL(currentImageFile);
+        previewImg.style.display = 'block';
+        removeBtn.classList.remove('hidden');
+        uploadStatus.textContent = '✅ Ready (~400KB)';
+        uploadStatus.style.color = 'var(--color-success)';
+      } catch (err) {
+        console.error('Compression error:', err);
+        uploadStatus.textContent = '❌ Failed to compress image.';
+        uploadStatus.style.color = '#dc2626';
+      }
+    });
+  }
+});
+
+function resetImageUpload() {
+  currentImageFile = null;
+  currentImageUrl = null;
+  if (fileInput) fileInput.value = '';
+  if (previewImg) { previewImg.src = ''; previewImg.style.display = 'none'; }
+  if (removeBtn) removeBtn.classList.add('hidden');
+  if (uploadStatus) { uploadStatus.textContent = ''; uploadStatus.style.color = ''; }
+}
+
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
@@ -470,33 +534,53 @@ function updateSelectAllCheckbox() {
 
 // --- Care Log Management (Checkbox Tree Support) ---
 async function saveCareLog(event) {
-    event.preventDefault();
-    
-    // Get selected plants from checkboxes
-    const selectedCheckboxes = document.querySelectorAll('.plant-checkbox:checked');
-    const selectedPlants = Array.from(selectedCheckboxes).map(cb => cb.value);
-    
-    if (selectedPlants.length === 0) {
-        alert('Please select at least one plant');
-        return;
+  event.preventDefault();
+  const selectedCheckboxes = document.querySelectorAll('.plant-checkbox:checked');
+  const selectedPlants = Array.from(selectedCheckboxes).map(cb => cb.value);
+
+  if (selectedPlants.length === 0) {
+    alert('Please select at least one plant');
+    return;
+  }
+
+  // 📤 Upload image if present
+  let imageUrl = currentImageUrl;
+  if (currentImageFile && !currentImageUrl) {
+    uploadStatus.textContent = '⏫ Uploading...';
+    try {
+      const formData = new FormData();
+      formData.append('image', currentImageFile, 'care-log.jpg');
+      
+      // Replace with your actual upload endpoint
+      const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
+      if (!res.ok) throw new Error('Upload failed');
+      const data = await res.json();
+      imageUrl = data.url;
+      currentImageUrl = imageUrl;
+    } catch (err) {
+      console.error('Image upload error:', err);
+      alert('Image upload failed. Please try again.');
+      return;
     }
-    
-    const logEntry = {
-        id: Date.now(),
-        plants: selectedPlants,
-        date: document.getElementById('log-date').value,
-        type: document.getElementById('log-type').value,
-        fertilizerType: document.getElementById('fertilizer-type')?.value || '',
-        notes: document.getElementById('log-notes').value,
-        createdAt: new Date().toISOString()
-    };
-    
-    if (!cachedLogs) cachedLogs = [];
-    cachedLogs.unshift(logEntry);
-    await saveToServer('logs', cachedLogs);
-    renderLogs(cachedLogs);
-    clearForm();
-    alert('Log entry saved!');
+  }
+
+  const logEntry = {
+    id: Date.now(),
+    plants: selectedPlants,
+    date: document.getElementById('log-date').value,
+    type: document.getElementById('log-type').value,
+    fertilizerType: document.getElementById('fertilizer-type')?.value || '',
+    notes: document.getElementById('log-notes').value,
+    imageUrl: imageUrl || null, // ✅ Store compressed image URL
+    createdAt: new Date().toISOString()
+  };
+
+  if (!cachedLogs) cachedLogs = [];
+  cachedLogs.unshift(logEntry);
+  await saveToServer('logs', cachedLogs);
+  renderLogs(cachedLogs);
+  clearForm();
+  alert('Log entry saved!');
 }
 
 async function loadCareLogsFromServer() {
@@ -504,37 +588,55 @@ async function loadCareLogsFromServer() {
     renderLogs(cachedLogs);
 }
 
-function renderLogs(logs) {
-    const logHistory = document.getElementById('log-history');
-    if (!logHistory) return;
-    
-    if (!logs || logs.length === 0) {
-        logHistory.innerHTML = '<p class="no-activity">No care logs yet.</p>';
-        return;
-    }
-    
-    logHistory.innerHTML = logs.map(log => {
-        const plantNames = Array.isArray(log.plants) 
-            ? log.plants.join(', ')
-            : log.plant || 'Unknown';
-        
-        return `
-            <div class="log-entry ${log.type}">
-                <div class="log-header">
-                    <span class="log-plant-name">${plantNames}</span>
-                    <span class="log-date">${new Date(log.date).toLocaleDateString()}</span>
-                    <button class="btn-log-delete" onclick="deleteLogEntry(event, ${log.id})" title="Delete entry">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
-                ${log.fertilizerType ? `<p><strong>Fertilizer:</strong> ${log.fertilizerType}</p>` : ''}
-                <p>${log.notes || 'No notes'}</p>
-            </div>
-        `;
-    }).join('');
-}
+async function saveCareLog(event) {
+  event.preventDefault();
+  const selectedCheckboxes = document.querySelectorAll('.plant-checkbox:checked');
+  const selectedPlants = Array.from(selectedCheckboxes).map(cb => cb.value);
 
+  if (selectedPlants.length === 0) {
+    alert('Please select at least one plant');
+    return;
+  }
+
+  // 📤 Upload image if present
+  let imageUrl = currentImageUrl;
+  if (currentImageFile && !currentImageUrl) {
+    uploadStatus.textContent = '⏫ Uploading...';
+    try {
+      const formData = new FormData();
+      formData.append('image', currentImageFile, 'care-log.jpg');
+      
+      // Replace with your actual upload endpoint
+      const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
+      if (!res.ok) throw new Error('Upload failed');
+      const data = await res.json();
+      imageUrl = data.url;
+      currentImageUrl = imageUrl;
+    } catch (err) {
+      console.error('Image upload error:', err);
+      alert('Image upload failed. Please try again.');
+      return;
+    }
+  }
+
+  const logEntry = {
+    id: Date.now(),
+    plants: selectedPlants,
+    date: document.getElementById('log-date').value,
+    type: document.getElementById('log-type').value,
+    fertilizerType: document.getElementById('fertilizer-type')?.value || '',
+    notes: document.getElementById('log-notes').value,
+    imageUrl: imageUrl || null, // ✅ Store compressed image URL
+    createdAt: new Date().toISOString()
+  };
+
+  if (!cachedLogs) cachedLogs = [];
+  cachedLogs.unshift(logEntry);
+  await saveToServer('logs', cachedLogs);
+  renderLogs(cachedLogs);
+  clearForm();
+  alert('Log entry saved!');
+}
 async function deleteLogEntry(event, id) {
     event.stopPropagation();
     const entry = cachedLogs.find(l => l.id === id);
@@ -570,24 +672,55 @@ function toggleFields() {
     }
 }
 
-function clearForm() {
-    document.querySelector('form').reset();
-    document.getElementById('fertilizer-type-group').style.display = 'none';
-    
-    // Reset checkboxes
-    document.querySelectorAll('.plant-checkbox, .group-checkbox, #select-all-plants').forEach(cb => {
-        cb.checked = false;
-        cb.indeterminate = false;
-    });
-    
-    // Collapse all groups
-    document.querySelectorAll('.plant-group').forEach(g => {
-        g.classList.remove('expanded');
-        const icon = g.querySelector('.toggle-icon');
-        if (icon) icon.style.transform = 'rotate(-90deg)';
-    });
-}
+async function saveCareLog(event) {
+  event.preventDefault();
+  const selectedCheckboxes = document.querySelectorAll('.plant-checkbox:checked');
+  const selectedPlants = Array.from(selectedCheckboxes).map(cb => cb.value);
 
+  if (selectedPlants.length === 0) {
+    alert('Please select at least one plant');
+    return;
+  }
+
+  // 📤 Upload image if present
+  let imageUrl = currentImageUrl;
+  if (currentImageFile && !currentImageUrl) {
+    uploadStatus.textContent = '⏫ Uploading...';
+    try {
+      const formData = new FormData();
+      formData.append('image', currentImageFile, 'care-log.jpg');
+      
+      // Replace with your actual upload endpoint
+      const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
+      if (!res.ok) throw new Error('Upload failed');
+      const data = await res.json();
+      imageUrl = data.url;
+      currentImageUrl = imageUrl;
+    } catch (err) {
+      console.error('Image upload error:', err);
+      alert('Image upload failed. Please try again.');
+      return;
+    }
+  }
+
+  const logEntry = {
+    id: Date.now(),
+    plants: selectedPlants,
+    date: document.getElementById('log-date').value,
+    type: document.getElementById('log-type').value,
+    fertilizerType: document.getElementById('fertilizer-type')?.value || '',
+    notes: document.getElementById('log-notes').value,
+    imageUrl: imageUrl || null, // ✅ Store compressed image URL
+    createdAt: new Date().toISOString()
+  };
+
+  if (!cachedLogs) cachedLogs = [];
+  cachedLogs.unshift(logEntry);
+  await saveToServer('logs', cachedLogs);
+  renderLogs(cachedLogs);
+  clearForm();
+  alert('Log entry saved!');
+}
 // --- Dynamic Task Generator (Server-Synced) ---
 function updateTodaysTasks() {
     const container = document.getElementById('tasks-container');
