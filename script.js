@@ -1,973 +1,367 @@
 // script.js - Garden Journal Tracker
-
-// --- Plant Care Database ---
 const PLANT_CARE_DB = {
-    tomato: { 
-        water: "Consistent", waterLevel: 4, 
-        sun: "Full Sun (8+ hours)", sunLevel: 5,
-        start: "Start indoors 6-8 weeks before transplant",
-        spacing: "24-36 inches apart",
-        tips: "Use cages. Ferment seeds for best saving results."
-    },
-    cucumber: { 
-        water: "High (Consistently Moist)", waterLevel: 5, 
-        sun: "Full Sun (6-8 hours)", sunLevel: 5,
-        start: "Start indoors in biodegradable pots",
-        spacing: "12 inches apart on trellis",
-        tips: "Train on trellis. Harvest when small for best flavor."
-    },
-    zucchini: { 
-        water: "Moderate to High", waterLevel: 4, 
-        sun: "Full Sun (6-8 hours)", sunLevel: 5,
-        start: "Start indoors, transplant mid-May",
-        spacing: "36 inches apart (gets very large!)",
-        tips: "Limit to 2-4 plants per box. Harvest frequently."
-    },
-    squash: { 
-        water: "Moderate", waterLevel: 3, 
-        sun: "Full Sun (6-8 hours)", sunLevel: 5,
-        start: "Start indoors, transplant mid-May",
-        spacing: "36 inches apart",
-        tips: "Allow space to spread. Harvest when small and tender."
-    },
-    lettuce: { 
-        water: "High", waterLevel: 4, 
-        sun: "Partial Sun (4-6 hours)", sunLevel: 3,
-        start: "Direct sow outside",
-        spacing: "6-8 inches apart",
-        tips: "Succession sow every 2 weeks for continuous harvest."
-    },
-    spinach: { 
-        water: "Moderate", waterLevel: 3, 
-        sun: "Partial Sun", sunLevel: 3,
-        start: "Direct sow outside",
-        spacing: "4-6 inches apart",
-        tips: "Harvest outer leaves to extend production."
-    },
-    arugula: { 
-        water: "Moderate", waterLevel: 3, 
-        sun: "Partial Sun", sunLevel: 3,
-        start: "Direct sow outside or scatter in gaps",
-        spacing: "6 inches apart",
-        tips: "Fast growing. Harvest before tomatoes shade it."
-    },
-    carrot: { 
-        water: "Moderate", waterLevel: 3, 
-        sun: "Full Sun to Part Shade", sunLevel: 4,
-        start: "Direct sow outside",
-        spacing: "2-3 inches apart after thinning",
-        tips: "Keep soil loose. Thin seedlings to prevent forked roots."
-    }
+  tomato: { water: "Consistent", waterLevel: 4, sun: "Full Sun", sunLevel: 5, start: "Start indoors 6-8 weeks before", spacing: "24-36 inches", tips: "Use cages." },
+  cucumber: { water: "High", waterLevel: 5, sun: "Full Sun", sunLevel: 5, start: "Start indoors in biodegradable pots", spacing: "12 inches on trellis", tips: "Train on trellis." },
+  zucchini: { water: "Moderate to High", waterLevel: 4, sun: "Full Sun", sunLevel: 5, start: "Start indoors", spacing: "36 inches", tips: "Limit to 2-4 plants." },
+  squash: { water: "Moderate", waterLevel: 3, sun: "Full Sun", sunLevel: 5, start: "Start indoors", spacing: "36 inches", tips: "Allow space to spread." },
+  lettuce: { water: "High", waterLevel: 4, sun: "Partial Sun", sunLevel: 3, start: "Direct sow", spacing: "6-8 inches", tips: "Succession sow." },
+  spinach: { water: "Moderate", waterLevel: 3, sun: "Partial Sun", sunLevel: 3, start: "Direct sow", spacing: "4-6 inches", tips: "Harvest outer leaves." },
+  arugula: { water: "Moderate", waterLevel: 3, sun: "Partial Sun", sunLevel: 3, start: "Direct sow or scatter", spacing: "6 inches", tips: "Fast growing." },
+  carrot: { water: "Moderate", waterLevel: 3, sun: "Full Sun to Part Shade", sunLevel: 4, start: "Direct sow", spacing: "2-3 inches", tips: "Keep soil loose." }
 };
 
-// --- Herbs Data ---
 const HERBS = [
-    { name: 'Mojito Mint', type: 'herb', notes: 'Pot 1 (Moist)' },
-    { name: 'Rosemary', type: 'herb', notes: 'Pot 2 (Dry)' },
-    { name: 'French Thyme', type: 'herb', notes: 'Pot 3 (Dry)' },
-    { name: 'Greek Oregano', type: 'herb', notes: 'Pot 3 (Dry)' },
-    { name: 'Regular Sage', type: 'herb', notes: 'Pot 4 (Dry)' },
-    { name: 'Pineapple Sage', type: 'herb', notes: 'Pot 4 (Dry)' },
-    { name: 'Basil', type: 'herb', notes: 'Pot 5 (Moist)' },
-    { name: 'Flat Parsley', type: 'herb', notes: 'Pot 5 (Moist)' },
-    { name: 'Cilantro', type: 'herb', notes: 'Pot 6 (Moist)' }
+  { name: 'Mojito Mint', type: 'herb', notes: 'Pot 1' }, { name: 'Rosemary', type: 'herb', notes: 'Pot 2' },
+  { name: 'French Thyme', type: 'herb', notes: 'Pot 3' }, { name: 'Greek Oregano', type: 'herb', notes: 'Pot 3' },
+  { name: 'Regular Sage', type: 'herb', notes: 'Pot 4' }, { name: 'Pineapple Sage', type: 'herb', notes: 'Pot 4' },
+  { name: 'Basil', type: 'herb', notes: 'Pot 5' }, { name: 'Flat Parsley', type: 'herb', notes: 'Pot 5' },
+  { name: 'Cilantro', type: 'herb', notes: 'Pot 6' }
 ];
 
-// --- Default Initial Data ---
 const DEFAULT_PLANTS = [
-    // Indoor Plants (Planted April 26)
-    { id: 1, name: 'Pink Bumble Bee 1', variety: 'Pink Bumble Bee', type: 'tomato', plantDate: '2026-04-26', location: 'indoor', notes: 'Planted in 4" pot', createdAt: new Date().toISOString() },
-    { id: 2, name: 'Pink Bumble Bee 2', variety: 'Pink Bumble Bee', type: 'tomato', plantDate: '2026-04-26', location: 'indoor', notes: 'Planted in 4" pot', createdAt: new Date().toISOString() },
-    { id: 3, name: 'Cucumber 1', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 4, name: 'Cucumber 2', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 5, name: 'Cucumber 3', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 6, name: 'Cucumber 4', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 7, name: 'Cucumber 5', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 8, name: 'Zucchini 1', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 9, name: 'Zucchini 2', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 10, name: 'Zucchini 3', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 11, name: 'Zucchini 4', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 12, name: 'Squash 1', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 13, name: 'Squash 2', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 14, name: 'Squash 3', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    { id: 15, name: 'Squash 4', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Biodegradable pot', createdAt: new Date().toISOString() },
-    // Outdoor Greens
-    { id: 16, name: 'Lettuce Row 1', variety: 'Super Gourmet Blend', type: 'lettuce', plantDate: '2026-05-03', location: 'outdoor', notes: 'Planned for Box 2', createdAt: new Date().toISOString() },
-    { id: 17, name: 'Spinach Row 1', variety: 'Renegade', type: 'spinach', plantDate: '2026-05-03', location: 'outdoor', notes: 'Planned for Box 2', createdAt: new Date().toISOString() },
-    { id: 18, name: 'Arugula Patch', variety: 'Astro', type: 'arugula', plantDate: '2026-05-03', location: 'outdoor', notes: 'Planned for Box 1 gaps', createdAt: new Date().toISOString() },
-    { id: 19, name: 'Carrot Bed', variety: 'Rainbow Blend', type: 'carrot', plantDate: '2026-05-03', location: 'outdoor', notes: 'Planned for Box 1', createdAt: new Date().toISOString() }
+  { id: 1, name: 'Pink Bumble Bee 1', variety: 'Pink Bumble Bee', type: 'tomato', plantDate: '2026-04-26', location: 'indoor', notes: '4" pot', createdAt: new Date().toISOString() },
+  { id: 2, name: 'Cucumber 1', variety: 'Lebanese Beit Alpha', type: 'cucumber', plantDate: '2026-04-26', location: 'indoor', notes: 'Bio pot', createdAt: new Date().toISOString() },
+  { id: 3, name: 'Zucchini 1', variety: 'Jackpot', type: 'zucchini', plantDate: '2026-04-26', location: 'indoor', notes: 'Bio pot', createdAt: new Date().toISOString() },
+  { id: 4, name: 'Squash 1', variety: 'Sunburst', type: 'squash', plantDate: '2026-04-26', location: 'indoor', notes: 'Bio pot', createdAt: new Date().toISOString() },
+  { id: 5, name: 'Lettuce Row 1', variety: 'Super Gourmet', type: 'lettuce', plantDate: '2026-05-03', location: 'outdoor', notes: 'Box 2', createdAt: new Date().toISOString() },
+  { id: 6, name: 'Carrot Bed', variety: 'Rainbow Blend', type: 'carrot', plantDate: '2026-05-03', location: 'outdoor', notes: 'Box 1', createdAt: new Date().toISOString() }
 ];
 
 let cachedPlants = [];
 let cachedLogs = [];
+let cachedTaskStatus = {};
+let currentCompressedFile = null;
 
-// --- Image Upload & Compression State ---
-let currentImageFile = null;
-let currentImageUrl = null;
-
-// DOM Elements
-const uploadBtn = document.getElementById('uploadPicBtn');
-const fileInput = document.getElementById('picFileInput');
-const previewImg = document.getElementById('previewImg');
-const uploadStatus = document.getElementById('uploadStatus');
-const removeBtn = document.getElementById('removePicBtn');
-
-// Attach listeners when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  if (uploadBtn) uploadBtn.addEventListener('click', () => fileInput?.click());
-  if (removeBtn) removeBtn.addEventListener('click', resetImageUpload);
-  
-  if (fileInput) {
-    fileInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      if (!file.type.startsWith('image/')) {
-        uploadStatus.textContent = '❌ Only image files allowed.';
-        return;
-      }
-      if (file.size > 15 * 1024 * 1024) {
-        uploadStatus.textContent = '❌ File too large (Max 15MB).';
-        return;
-      }
-
-      uploadStatus.textContent = '⏳ Compressing...';
-      try {
-        const options = {
-          maxSizeMB: 0.4,           // Target ~400KB
-          maxWidthOrHeight: 1920,   // Cap resolution
-          useWebWorker: true,       // Keeps UI responsive
-          fileType: 'image/jpeg',   // Better compression for photos
-          exifOrientation: true     // Fixes iPhone/Android rotation
-        };
-        
-        currentImageFile = await imageCompression(file, options);
-        previewImg.src = URL.createObjectURL(currentImageFile);
-        previewImg.style.display = 'block';
-        removeBtn.classList.remove('hidden');
-        uploadStatus.textContent = '✅ Ready (~400KB)';
-        uploadStatus.style.color = 'var(--color-success)';
-      } catch (err) {
-        console.error('Compression error:', err);
-        uploadStatus.textContent = '❌ Failed to compress image.';
-        uploadStatus.style.color = '#dc2626';
-      }
-    });
-  }
-});
-
-function resetImageUpload() {
-  currentImageFile = null;
-  currentImageUrl = null;
-  if (fileInput) fileInput.value = '';
-  if (previewImg) { previewImg.src = ''; previewImg.style.display = 'none'; }
-  if (removeBtn) removeBtn.classList.add('hidden');
-  if (uploadStatus) { uploadStatus.textContent = ''; uploadStatus.style.color = ''; }
-}
-
-// --- Initialization ---
-document.addEventListener('DOMContentLoaded', function() {
-    initializeApp();
+  initializeApp();
+  initMobileMenu();
+  initImageUpload();
 });
 
 async function initializeApp() {
-    await loadPlantsFromServer();
-    await loadCareLogsFromServer();
-    await loadTaskStatusFromServer();
-    populatePlantSelector(); 
-    updateTransplantProgress();
-    updateTimelineStatus();
-    fetchHamiltonWeather();
-    updateTodaysTasks();
-    updateCurrentDate();
+  await loadPlantsFromServer();
+  await loadCareLogsFromServer();
+  await loadTaskStatusFromServer();
+  populatePlantSelector();
+  updateTransplantProgress();
+  updateTimelineStatus();
+  fetchHamiltonWeather();
+  updateTodaysTasks();
+  updateCurrentDate();
 }
 
-// Global cache for daily task completion
-let cachedTaskStatus = {}; 
+// --- Image Upload ---
+function initImageUpload() {
+  const uploadBtn = document.getElementById('uploadPicBtn');
+  const fileInput = document.getElementById('picFileInput');
+  const previewImg = document.getElementById('previewImg');
+  const uploadStatus = document.getElementById('uploadStatus');
+  const removeBtn = document.getElementById('removePicBtn');
 
-// Load task status from server
-async function loadTaskStatusFromServer() {
-    try {
-        const data = await fetchFromServer('task_status');
-        cachedTaskStatus = data || {};
-    } catch (error) {
-        console.warn('⚠️ Failed to load task status, starting fresh:', error);
-        cachedTaskStatus = {};
-    }
+  if (uploadBtn && fileInput) {
+    uploadBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        updateUploadStatus('❌ Only images allowed', 'error'); return;
+      }
+      updateUploadStatus('⏳ Compressing...', '');
+      try {
+        currentCompressedFile = await imageCompression(file, {
+          maxSizeMB: 0.4, maxWidthOrHeight: 1920, useWebWorker: true, fileType: 'image/jpeg', exifOrientation: true
+        });
+        previewImg.src = URL.createObjectURL(currentCompressedFile);
+        previewImg.style.display = 'block';
+        removeBtn.classList.remove('hidden');
+        updateUploadStatus('✅ Ready (~400KB)', 'success');
+      } catch (err) {
+        console.error(err);
+        updateUploadStatus('❌ Compression failed', 'error');
+      }
+    });
+  }
+  if (removeBtn) {
+    removeBtn.addEventListener('click', () => {
+      currentCompressedFile = null;
+      if (fileInput) fileInput.value = '';
+      previewImg.style.display = 'none';
+      removeBtn.classList.add('hidden');
+      updateUploadStatus('', '');
+    });
+  }
 }
 
-// Save a single task toggle to server
-async function saveTaskStatus(dateKey, taskSlug, isChecked) {
-    if (!cachedTaskStatus[dateKey]) {
-        cachedTaskStatus[dateKey] = {};
-    }
-    cachedTaskStatus[dateKey][taskSlug] = isChecked;
-    await saveToServer('task_status', cachedTaskStatus);
-}
-
-// --- Live Weather Fetch (Cloudflare Function Proxy) ---
-async function fetchHamiltonWeather() {
-    try {
-        const response = await fetch('/weather');
-        
-        if (!response.ok) throw new Error('Weather fetch failed');
-        
-        const data = await response.json();
-        
-        // Update UI elements
-        document.getElementById('weather-temp').textContent = `${data.temp}°C`;
-        document.getElementById('weather-humidity').textContent = `${data.humidity}%`;
-        document.getElementById('weather-wind').textContent = `${data.wind} km/h`;
-        document.getElementById('weather-desc').textContent = data.desc;
-        
-        // Update icon based on weather condition
-        const iconMap = {
-            '01d': 'fa-sun', '01n': 'fa-moon',
-            '02d': 'fa-cloud-sun', '02n': 'fa-cloud-moon',
-            '03d': 'fa-cloud', '03n': 'fa-cloud',
-            '04d': 'fa-cloud', '04n': 'fa-cloud',
-            '09d': 'fa-cloud-rain', '09n': 'fa-cloud-rain',
-            '10d': 'fa-cloud-showers-heavy', '10n': 'fa-cloud-rain',
-            '11d': 'fa-bolt', '11n': 'fa-bolt',
-            '13d': 'fa-snowflake', '13n': 'fa-snowflake',
-            '50d': 'fa-smog', '50n': 'fa-smog'
-        };
-        document.getElementById('weather-icon').className = `fas ${iconMap[data.icon] || 'fa-cloud'}`;
-        
-    } catch (error) {
-        console.warn('⚠️ Weather fetch failed, using fallback:', error.message);
-        // Fallback values
-        document.getElementById('weather-temp').textContent = '18°C';
-        document.getElementById('weather-humidity').textContent = '65%';
-        document.getElementById('weather-wind').textContent = '12 km/h';
-        document.getElementById('weather-desc').textContent = 'Partly cloudy';
-        document.getElementById('weather-icon').className = 'fas fa-cloud-sun';
-    }
+function updateUploadStatus(msg, type) {
+  const status = document.getElementById('uploadStatus');
+  if (status) { status.textContent = msg; status.className = `upload-status ${type}`; }
 }
 
 // --- Server Communication ---
 async function fetchFromServer(endpoint) {
-    try {
-        const response = await fetch(`/api/${endpoint}`);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return await response.json();
-    } catch (error) {
-        console.error(`Error fetching ${endpoint}:`, error);
-        return [];
-    }
+  try {
+    const res = await fetch(`/api/${endpoint}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (e) { console.warn(`Fetch ${endpoint} failed`, e); return null; }
 }
 
 async function saveToServer(endpoint, data) {
-    try {
-        const response = await fetch(`/api/${endpoint}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return true;
-    } catch (error) {
-        console.error(`Error saving ${endpoint}:`, error);
-        alert('Failed to save to server.');
-        return false;
-    }
+  try {
+    const res = await fetch(`/api/${endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return true;
+  } catch (e) { console.error(`Save ${endpoint} failed`, e); return false; }
 }
 
 // --- Plant Management ---
 async function loadPlantsFromServer() {
-    let plants = await fetchFromServer('plants');
-    
-    if (!plants || plants.length === 0) {
-        plants = DEFAULT_PLANTS;
-        await saveToServer('plants', plants);
-    }
-    
-    cachedPlants = plants;
-    renderPlants(plants);
+  const data = await fetchFromServer('plants');
+  cachedPlants = data || DEFAULT_PLANTS;
+  renderPlants(cachedPlants);
 }
 
 function renderPlants(plants) {
   const container = document.getElementById('plants-grid');
   if (!container) return;
+  if (!plants.length) { container.innerHTML = '<p class="no-plants">No plants added.</p>'; return; }
   
-  if (!plants.length) {
-    container.innerHTML = '<p class="no-plants">No plants added yet.</p>';
-    return;
-  }
-
-  // 📦 Group by variety + location
   const groups = {};
   plants.forEach(p => {
     const key = `${p.variety}_${p.location}`;
-    if (!groups[key]) {
-      groups[key] = {
-        variety: p.variety,
-        location: p.location,
-        type: p.type,
-        count: 0,
-        list: [],
-        maxDays: 0,
-        allReady: true
-      };
-    }
-    groups[key].count++;
-    groups[key].list.push(p);
-    
-    const days = Math.floor((new Date() - new Date(p.plantDate)) / 86400000);
-    if (days > groups[key].maxDays) groups[key].maxDays = days;
-    if (days < 21 || p.location !== 'indoor') groups[key].allReady = false;
+    if (!groups[key]) groups[key] = { variety: p.variety, location: p.location, type: p.type, count: 0, list: [] };
+    groups[key].count++; groups[key].list.push(p);
   });
-
-  const typeEmojis = {
-    tomato: '🍅', cucumber: '🥒', zucchini: '🥒', squash: '🎃',
-    lettuce: '🥬', spinach: '🥬', arugula: '🌿', carrot: '🥕'
-  };
 
   container.innerHTML = Object.values(groups).map(group => {
-    const statusBadge = group.allReady 
-      ? `<span class="status-badge ready">✓ Ready</span>` 
-      : `<span class="status-badge growing">${group.maxDays} days</span>`;
-    
-    const locationIcon = group.location === 'indoor' ? '🏠' : '🌱';
-    const emoji = typeEmojis[group.type] || '🌱';
-
+    const emoji = {tomato:'🍅', cucumber:'🥒', zucchini:'🥒', squash:'🎃', lettuce:'🥬', spinach:'🥬', arugula:'🌿', carrot:'🥕'}[group.type] || '🌱';
     return `
-      <div class="plant-group-card" 
-           data-location="${group.location}" 
-           data-ready="${group.allReady}"
-           onclick="this.classList.toggle('expanded')">
+      <div class="plant-group-card" onclick="this.classList.toggle('expanded')">
         <div class="group-header">
-          <div class="group-main">
-            <span class="group-icon">${emoji}</span>
-            <div class="group-text">
-              <h3 class="group-variety">${group.variety}</h3>
-              <span class="group-meta">${group.count} plant${group.count > 1 ? 's' : ''} • ${locationIcon} ${group.location}</span>
-            </div>
-          </div>
-          <div class="group-status">
-            ${statusBadge}
-            <i class="fas fa-chevron-down toggle-icon"></i>
-          </div>
+          <div class="group-main"><span class="group-icon">${emoji}</span><div><h3 class="group-variety">${group.variety}</h3><span class="group-meta">${group.count} plants • ${group.location}</span></div></div>
+          <div class="group-status"><i class="fas fa-chevron-down toggle-icon"></i></div>
         </div>
-        <div class="group-details">
-          ${group.list.map(p => `
-            <div class="plant-detail-row" onclick="event.stopPropagation(); showPlantDetails(${p.id})">
-              <span class="plant-name">${p.name}</span>
-              <span class="plant-note">${p.notes || ''}</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
+        <div class="group-details">${group.list.map(p => `<div class="plant-detail-row"><span class="plant-name">${p.name}</span><span class="plant-note">${p.notes||''}</span></div>`).join('')}</div>
+      </div>`;
   }).join('');
 }
-async function addPlant(plant) {
-    if (!cachedPlants) cachedPlants = [];
-    cachedPlants.push(plant);
-    await saveToServer('plants', cachedPlants);
-    renderPlants(cachedPlants);
-    populatePlantSelector(); // ✅ Updated
-}
 
-async function deletePlant(event, id) {
-    event.stopPropagation();
-    const plant = cachedPlants.find(p => p.id === id);
-    if (!plant) return;
-    
-    if (confirm(`Delete "${plant.name}"? This cannot be undone.`)) {
-        cachedPlants = cachedPlants.filter(p => p.id !== id);
-        await saveToServer('plants', cachedPlants);
-        renderPlants(cachedPlants);
-        populatePlantSelector(); // ✅ Updated
-    }
-}
-
-function filterPlants(filter) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-  
-  document.querySelectorAll('.plant-group-card').forEach(card => {
-    const location = card.dataset.location;
-    const isReady = card.dataset.ready === 'true';
-    
-    if (filter === 'all') card.style.display = 'block';
-    else if (filter === 'ready') card.style.display = isReady ? 'block' : 'none';
-    else card.style.display = location === filter ? 'block' : 'none';
-  });
-}
-
-// --- Plant Details Modal ---
-function showPlantDetails(id) {
-    const plant = cachedPlants.find(p => p.id === id);
-    if (!plant) return;
-    
-    const modal = document.getElementById('plant-details-modal');
-    const careInfo = PLANT_CARE_DB[plant.type] || PLANT_CARE_DB['tomato'];
-    
-    document.getElementById('detail-water').textContent = careInfo.water;
-    document.getElementById('detail-sun').textContent = careInfo.sun;
-    document.getElementById('detail-tips').textContent = careInfo.tips;
-    document.getElementById('detail-spacing').textContent = careInfo.spacing;
-    document.getElementById('detail-start').textContent = careInfo.start;
-    
-    renderIndicator('detail-water-indicator', careInfo.waterLevel);
-    renderIndicator('detail-sun-indicator', careInfo.sunLevel);
-    
-    modal.style.display = 'block';
-}
-
-function renderIndicator(elementId, level) {
-    const container = document.getElementById(elementId);
-    container.innerHTML = '';
-    for (let i = 0; i < 5; i++) {
-        const dot = document.createElement('div');
-        dot.className = i < level ? 'indicator-dot active' : 'indicator-dot';
-        container.appendChild(dot);
-    }
-}
-
-function closePlantDetailsModal() {
-    document.getElementById('plant-details-modal').style.display = 'none';
-}
-
-// --- Checkbox Tree Selector Population ---
+// --- Care Log & Selector ---
 function populatePlantSelector() {
   const container = document.getElementById('plant-groups');
   if (!container) return;
-
-  // Show loading state if data isn't ready yet
-  if (!cachedPlants || cachedPlants.length === 0) {
-    container.innerHTML = '<div style="padding: 1rem; color: var(--color-text-secondary); text-align: center;">Loading plants...</div>';
-    return;
-  }
-
-  container.innerHTML = '';
+  if (!cachedPlants?.length) { container.innerHTML = '<div style="padding:1rem;color:var(--color-text-secondary);text-align:center;">Loading plants...</div>'; return; }
+  
   const groups = {
     'Tomatoes': cachedPlants.filter(p => p.type === 'tomato'),
-    'Cucurbits': cachedPlants.filter(p => ['cucumber', 'zucchini', 'squash'].includes(p.type)),
-    'Leafy Greens': cachedPlants.filter(p => ['lettuce', 'spinach', 'arugula'].includes(p.type)),
+    'Cucurbits': cachedPlants.filter(p => ['cucumber','zucchini','squash'].includes(p.type)),
+    'Leafy Greens': cachedPlants.filter(p => ['lettuce','spinach','arugula'].includes(p.type)),
     'Root Vegetables': cachedPlants.filter(p => p.type === 'carrot'),
     'Herbs': HERBS
   };
 
-  container.innerHTML = Object.entries(groups).map(([groupName, plants], index) => {
-    if (plants.length === 0) return '';
-    const groupId = groupName.replace(/[^a-zA-Z0-9]/g, '');
-    
-    return `
-      <div class="plant-group ${index === 0 ? 'expanded' : ''}" id="group-${groupId}">
-        <div class="group-header" onclick="toggleGroup('${groupId}')">
-          <input type="checkbox" class="group-checkbox" data-group="${groupId}" onclick="event.stopPropagation(); toggleGroupSelection('${groupId}', this)">
-          <span class="group-name">${groupName}</span>
-          <span class="group-count">(${plants.length})</span>
-          <i class="fas fa-chevron-down toggle-icon" style="transform: ${index === 0 ? 'rotate(0)' : 'rotate(-90deg)'}"></i>
-        </div>
-        <div class="group-options">
-          ${plants.map(plant => {
-            const name = plant.name || plant;
-            const variety = plant.variety || plant.notes || '';
-            const plantId = `plant-${name.replace(/[^a-zA-Z0-9]/g, '')}`;
-            return `
-              <label class="plant-option" for="${plantId}">
-                <input type="checkbox" id="${plantId}" value="${name}" class="plant-checkbox" data-group="${groupId}" onchange="updateGroupCheckbox('${groupId}')">
-                <span>${name} ${variety ? `(${variety})` : ''}</span>
-              </label>
-            `;
-          }).join('')}
-        </div>
+  container.innerHTML = Object.entries(groups).map(([name, items], i) => {
+    if (!items.length) return '';
+    const gid = name.replace(/\W/g,'');
+    return `<div class="plant-group ${i===0?'expanded':''}" id="group-${gid}">
+      <div class="group-header" onclick="toggleGroup('${gid}')">
+        <input type="checkbox" class="group-checkbox" data-group="${gid}" onclick="event.stopPropagation(); toggleGroupSelection('${gid}', this)">
+        <span class="group-name">${name}</span><span class="group-count">(${items.length})</span>
+        <i class="fas fa-chevron-down toggle-icon" style="transform:${i===0?'rotate(0)':'rotate(-90deg)'}"></i>
       </div>
-    `;
+      <div class="group-options">${items.map(p => {
+        const n = p.name || p;
+        const v = p.variety || p.notes || '';
+        const id = `plant-${n.replace(/\W/g,'')}`;
+        return `<label class="plant-option" for="${id}"><input type="checkbox" id="${id}" value="${n}" class="plant-checkbox" data-group="${gid}" onchange="updateGroupCheckbox('${gid}')"><span>${n} ${v?`(${v})`:''}</span></label>`;
+      }).join('')}</div>
+    </div>`;
   }).join('');
 }
 
-// --- Checkbox Tree Control Functions ---
-function toggleGroup(groupId) {
-    const group = document.getElementById(`group-${groupId}`);
-    if (group) {
-        const isExpanded = group.classList.toggle('expanded');
-        const icon = group.querySelector('.toggle-icon');
-        icon.style.transform = isExpanded ? 'rotate(0)' : 'rotate(-90deg)';
-    }
+function toggleGroup(gid) {
+  const g = document.getElementById(`group-${gid}`);
+  if (!g) return;
+  const exp = g.classList.toggle('expanded');
+  g.querySelector('.toggle-icon').style.transform = exp ? 'rotate(0)' : 'rotate(-90deg)';
 }
-
-function toggleGroupSelection(groupId, checkbox) {
-    const isChecked = checkbox.checked;
-    const checkboxes = document.querySelectorAll(`.plant-checkbox[data-group="${groupId}"]`);
-    checkboxes.forEach(cb => cb.checked = isChecked);
-    updateSelectAllCheckbox();
+function toggleGroupSelection(gid, cb) {
+  document.querySelectorAll(`.plant-checkbox[data-group="${gid}"]`).forEach(c => c.checked = cb.checked);
+  updateSelectAllCheckbox();
 }
-
-function updateGroupCheckbox(groupId) {
-    const checkboxes = document.querySelectorAll(`.plant-checkbox[data-group="${groupId}"]`);
-    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-    const someChecked = Array.from(checkboxes).some(cb => cb.checked);
-    const groupCheckbox = document.querySelector(`.group-checkbox[data-group="${groupId}"]`);
-    
-    if (groupCheckbox) {
-        groupCheckbox.checked = allChecked;
-        groupCheckbox.indeterminate = someChecked && !allChecked;
-    }
-    updateSelectAllCheckbox();
+function updateGroupCheckbox(gid) {
+  const cbs = document.querySelectorAll(`.plant-checkbox[data-group="${gid}"]`);
+  const gc = document.querySelector(`.group-checkbox[data-group="${gid}"]`);
+  if (gc) { gc.checked = Array.from(cbs).every(c => c.checked); gc.indeterminate = cbs.length && !gc.checked; }
+  updateSelectAllCheckbox();
 }
-
-function toggleAllPlants(event) {
-    if (event.target.id === 'select-all-plants' || event.target.tagName === 'LABEL') return;
-    
-    const selectAll = document.getElementById('select-all-plants');
-    selectAll.checked = !selectAll.checked;
-    
-    document.querySelectorAll('.plant-checkbox, .group-checkbox').forEach(cb => {
-        cb.checked = selectAll.checked;
-        cb.indeterminate = false;
-    });
+function toggleAllPlants(e) {
+  if (e.target.id !== 'select-all-plants') {
+    const sa = document.getElementById('select-all-plants');
+    sa.checked = !sa.checked;
+  }
+  const val = document.getElementById('select-all-plants').checked;
+  document.querySelectorAll('.plant-checkbox, .group-checkbox').forEach(c => { c.checked = val; c.indeterminate = false; });
 }
-
 function updateSelectAllCheckbox() {
-    const allCheckboxes = document.querySelectorAll('.plant-checkbox');
-    const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
-    const someChecked = Array.from(allCheckboxes).some(cb => cb.checked);
-    const selectAll = document.getElementById('select-all-plants');
-    
-    selectAll.checked = allChecked;
-    selectAll.indeterminate = someChecked && !allChecked;
+  const all = document.querySelectorAll('.plant-checkbox');
+  const sa = document.getElementById('select-all-plants');
+  if (!all.length || !sa) return;
+  sa.checked = Array.from(all).every(c => c.checked);
+  sa.indeterminate = all.length && !sa.checked;
 }
 
-// --- Care Log Management (Checkbox Tree Support) ---
-async function saveCareLog(event) {
-  event.preventDefault();
-  const selectedCheckboxes = document.querySelectorAll('.plant-checkbox:checked');
-  const selectedPlants = Array.from(selectedCheckboxes).map(cb => cb.value);
-
-  if (selectedPlants.length === 0) {
-    alert('Please select at least one plant');
-    return;
-  }
-
-  // 📤 Upload image if present
-  let imageUrl = currentImageUrl;
-  if (currentImageFile && !currentImageUrl) {
-    uploadStatus.textContent = '⏫ Uploading...';
+async function saveCareLog(e) {
+  e.preventDefault();
+  const saveBtn = document.getElementById('saveBtn');
+  const selected = Array.from(document.querySelectorAll('.plant-checkbox:checked')).map(c => c.value);
+  if (!selected.length) { alert('Select at least one plant'); return; }
+  
+  saveBtn.disabled = true; saveBtn.textContent = 'Saving...';
+  let imageUrl = null;
+  
+  if (currentCompressedFile) {
+    updateUploadStatus('⏫ Uploading...', '');
     try {
-      const formData = new FormData();
-      formData.append('image', currentImageFile, 'care-log.jpg');
-      
-      // Replace with your actual upload endpoint
-      const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
+      const fd = new FormData();
+      fd.append('image', currentCompressedFile, 'care-log.jpg');
+      const res = await fetch('/api/upload-image', { method: 'POST', body: fd });
       if (!res.ok) throw new Error('Upload failed');
-      const data = await res.json();
-      imageUrl = data.url;
-      currentImageUrl = imageUrl;
-    } catch (err) {
-      console.error('Image upload error:', err);
-      alert('Image upload failed. Please try again.');
-      return;
-    }
+      imageUrl = (await res.json()).url;
+    } catch (err) { console.warn('Image upload skipped', err); updateUploadStatus('⚠️ Saved without photo', 'error'); }
   }
 
-  const logEntry = {
-    id: Date.now(),
-    plants: selectedPlants,
-    date: document.getElementById('log-date').value,
-    type: document.getElementById('log-type').value,
-    fertilizerType: document.getElementById('fertilizer-type')?.value || '',
-    notes: document.getElementById('log-notes').value,
-    imageUrl: imageUrl || null, // ✅ Store compressed image URL
-    createdAt: new Date().toISOString()
-  };
-
-  if (!cachedLogs) cachedLogs = [];
-  cachedLogs.unshift(logEntry);
-  await saveToServer('logs', cachedLogs);
-  renderLogs(cachedLogs);
-  clearForm();
-  alert('Log entry saved!');
+  const log = { id: Date.now(), plants: selected, date: document.getElementById('log-date').value, type: document.getElementById('log-type').value, fertilizerType: document.getElementById('fertilizer-type')?.value || '', notes: document.getElementById('log-notes').value, imageUrl, createdAt: new Date().toISOString() };
+  cachedLogs = cachedLogs || [];
+  cachedLogs.unshift(log);
+  
+  if (await saveToServer('logs', cachedLogs)) {
+    renderLogs(cachedLogs); clearForm();
+    updateUploadStatus('✅ Saved', 'success');
+  } else { alert('Failed to save'); }
+  
+  saveBtn.disabled = false; saveBtn.textContent = 'Save Entry';
 }
 
 async function loadCareLogsFromServer() {
-    cachedLogs = await fetchFromServer('logs');
-    renderLogs(cachedLogs);
+  cachedLogs = await fetchFromServer('logs') || [];
+  renderLogs(cachedLogs);
 }
 
-async function saveCareLog(event) {
-  event.preventDefault();
-  const selectedCheckboxes = document.querySelectorAll('.plant-checkbox:checked');
-  const selectedPlants = Array.from(selectedCheckboxes).map(cb => cb.value);
-
-  if (selectedPlants.length === 0) {
-    alert('Please select at least one plant');
-    return;
-  }
-
-  // 📤 Upload image if present
-  let imageUrl = currentImageUrl;
-  if (currentImageFile && !currentImageUrl) {
-    uploadStatus.textContent = '⏫ Uploading...';
-    try {
-      const formData = new FormData();
-      formData.append('image', currentImageFile, 'care-log.jpg');
-      
-      // Replace with your actual upload endpoint
-      const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
-      if (!res.ok) throw new Error('Upload failed');
-      const data = await res.json();
-      imageUrl = data.url;
-      currentImageUrl = imageUrl;
-    } catch (err) {
-      console.error('Image upload error:', err);
-      alert('Image upload failed. Please try again.');
-      return;
-    }
-  }
-
-  const logEntry = {
-    id: Date.now(),
-    plants: selectedPlants,
-    date: document.getElementById('log-date').value,
-    type: document.getElementById('log-type').value,
-    fertilizerType: document.getElementById('fertilizer-type')?.value || '',
-    notes: document.getElementById('log-notes').value,
-    imageUrl: imageUrl || null, // ✅ Store compressed image URL
-    createdAt: new Date().toISOString()
-  };
-
-  if (!cachedLogs) cachedLogs = [];
-  cachedLogs.unshift(logEntry);
+function renderLogs(logs) {
+  const el = document.getElementById('log-history');
+  if (!el) return;
+  if (!logs?.length) { el.innerHTML = '<p class="no-activity">No logs yet.</p>'; return; }
+  
+  el.innerHTML = logs.map(l => {
+    const names = Array.isArray(l.plants) ? l.plants.join(', ') : (l.plant || 'Unknown');
+    const img = l.imageUrl ? `<img src="${l.imageUrl}" class="log-entry-image" onclick="window.open('${l.imageUrl}')" alt="Log photo">` : '';
+    return `<div class="log-entry ${l.type}"><div class="log-header"><span class="log-plant-name">${names}</span><span class="log-date">${new Date(l.date).toLocaleDateString()}</span><button class="btn-log-delete" onclick="deleteLogEntry(${l.id})"><i class="fas fa-times"></i></button></div><span class="log-type-badge">${l.type}</span><p>${l.notes||''}</p>${img}</div>`;
+  }).join('');
+}
+async function deleteLogEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  cachedLogs = cachedLogs.filter(l => l.id !== id);
   await saveToServer('logs', cachedLogs);
   renderLogs(cachedLogs);
-  clearForm();
-  alert('Log entry saved!');
-}
-async function deleteLogEntry(event, id) {
-    event.stopPropagation();
-    const entry = cachedLogs.find(l => l.id === id);
-    if (!entry) return;
-    
-    const plantNames = Array.isArray(entry.plants) 
-        ? entry.plants.join(', ') 
-        : entry.plant || 'this entry';
-    
-    if (confirm(`Delete this log entry for "${plantNames}"? This cannot be undone.`)) {
-        cachedLogs = cachedLogs.filter(l => l.id !== id);
-        await saveToServer('logs', cachedLogs);
-        renderLogs(cachedLogs);
-    }
 }
 
-function getLogTypeLabel(type) {
-    const labels = {
-        watering: '💧 Watering',
-        fertilizer: '🌿 Fertilizer',
-        pest: '🐛 Pest/Disease',
-        maintenance: '🔧 Maintenance',
-        observation: '👁️ Observation'
-    };
-    return labels[type] || type;
+function clearForm() {
+  document.getElementById('care-log-form').reset();
+  document.getElementById('fertilizer-type-group').style.display = 'none';
+  document.querySelectorAll('.plant-checkbox, .group-checkbox, #select-all-plants').forEach(c => { c.checked = false; c.indeterminate = false; });
+  document.querySelectorAll('.plant-group').forEach(g => { g.classList.remove('expanded'); g.querySelector('.toggle-icon').style.transform = 'rotate(-90deg)'; });
+  updateUploadStatus('', '');
+  document.getElementById('previewImg').style.display = 'none';
+  document.getElementById('removePicBtn').classList.add('hidden');
+  currentCompressedFile = null;
 }
-
 function toggleFields() {
-    const type = document.getElementById('log-type').value;
-    const fertilizerGroup = document.getElementById('fertilizer-type-group');
-    if (fertilizerGroup) {
-        fertilizerGroup.style.display = type === 'fertilizer' ? 'block' : 'none';
-    }
+  document.getElementById('fertilizer-type-group').style.display = document.getElementById('log-type').value === 'fertilizer' ? 'block' : 'none';
 }
 
-async function saveCareLog(event) {
-  event.preventDefault();
-  const selectedCheckboxes = document.querySelectorAll('.plant-checkbox:checked');
-  const selectedPlants = Array.from(selectedCheckboxes).map(cb => cb.value);
-
-  if (selectedPlants.length === 0) {
-    alert('Please select at least one plant');
-    return;
-  }
-
-  // 📤 Upload image if present
-  let imageUrl = currentImageUrl;
-  if (currentImageFile && !currentImageUrl) {
-    uploadStatus.textContent = '⏫ Uploading...';
-    try {
-      const formData = new FormData();
-      formData.append('image', currentImageFile, 'care-log.jpg');
-      
-      // Replace with your actual upload endpoint
-      const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
-      if (!res.ok) throw new Error('Upload failed');
-      const data = await res.json();
-      imageUrl = data.url;
-      currentImageUrl = imageUrl;
-    } catch (err) {
-      console.error('Image upload error:', err);
-      alert('Image upload failed. Please try again.');
-      return;
-    }
-  }
-
-  const logEntry = {
-    id: Date.now(),
-    plants: selectedPlants,
-    date: document.getElementById('log-date').value,
-    type: document.getElementById('log-type').value,
-    fertilizerType: document.getElementById('fertilizer-type')?.value || '',
-    notes: document.getElementById('log-notes').value,
-    imageUrl: imageUrl || null, // ✅ Store compressed image URL
-    createdAt: new Date().toISOString()
-  };
-
-  if (!cachedLogs) cachedLogs = [];
-  cachedLogs.unshift(logEntry);
-  await saveToServer('logs', cachedLogs);
-  renderLogs(cachedLogs);
-  clearForm();
-  alert('Log entry saved!');
+// --- Tasks & Weather ---
+async function loadTaskStatusFromServer() { cachedTaskStatus = await fetchFromServer('task_status') || {}; }
+async function saveTaskStatus(date, slug, val) {
+  if (!cachedTaskStatus[date]) cachedTaskStatus[date] = {};
+  cachedTaskStatus[date][slug] = val;
+  await saveToServer('task_status', cachedTaskStatus);
 }
-// --- Dynamic Task Generator (Server-Synced) ---
+
+async function fetchHamiltonWeather() {
+  try {
+    const res = await fetch('/weather');
+    if (!res.ok) throw new Error('Weather API error');
+    const d = await res.json();
+    document.getElementById('weather-temp').textContent = `${Math.round(d.temp)}°C`;
+    document.getElementById('weather-humidity').textContent = `${d.humidity}%`;
+    document.getElementById('weather-wind').textContent = `${d.wind} km/h`;
+    document.getElementById('weather-desc').textContent = d.desc;
+  } catch (e) {
+    console.warn('Weather fetch failed', e);
+    document.getElementById('weather-temp').textContent = '18°C';
+    document.getElementById('weather-humidity').textContent = '65%';
+    document.getElementById('weather-wind').textContent = '12 km/h';
+    document.getElementById('weather-desc').textContent = 'Partly cloudy';
+  }
+}
+
 function updateTodaysTasks() {
-    const container = document.getElementById('tasks-container');
-    const dateEl = document.getElementById('task-date');
-    if (!container) return;
+  const el = document.getElementById('tasks-container');
+  if (!el) return;
+  const today = new Date().toISOString().split('T')[0];
+  const plantsReady = cachedPlants.filter(p => p.location === 'indoor' && (new Date() - new Date(p.plantDate)) / 86400000 >= 21);
+  const tasks = plantsReady.length ? getTransplantTasks(plantsReady) : getSeedlingTasks();
+  const status = cachedTaskStatus[today] || {};
 
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0]; // e.g., "2026-04-26"
-    dateEl.textContent = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  el.innerHTML = tasks.map(t => {
+    const slug = t.title.replace(/\W/g, '_').toLowerCase();
+    const checked = status[slug] === true;
+    return `<div class="task-item ${checked?'completed':''}"><div class="task-checkbox"><input type="checkbox" data-slug="${slug}" ${checked?'checked':''}></div><div class="task-content"><div class="task-title">${t.title}</div><div class="task-desc">${t.desc}</div>${t.plants?`<div class="task-plants mt-xs text-muted">${t.plants}</div>`:''}</div></div>`;
+  }).join('');
 
-    // Check which plants are ready to transplant (21+ days old, indoor location)
-    const plantsReady = cachedPlants.filter(p => 
-        p.location === 'indoor' && 
-        (new Date() - new Date(p.plantDate)) / (1000 * 60 * 60 * 24) >= 21
-    );
-
-    const hasReadyPlants = plantsReady.length > 0;
-    const tasks = hasReadyPlants ? getTransplantTasks(plantsReady) : getSeedlingTasks();
-
-    // Get today's cached status from server
-    const todayTasksStatus = cachedTaskStatus[todayStr] || {};
-
-    container.innerHTML = tasks.map((task) => {
-        // Create a stable slug for server storage
-        const taskSlug = task.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-        const isChecked = todayTasksStatus[taskSlug] === true;
-
-        return `
-            <div class="task-item ${isChecked ? 'completed' : ''}">
-                <div class="task-checkbox">
-                    <input type="checkbox" data-task-slug="${taskSlug}">
-                </div>
-                <div class="task-content">
-                    <div class="task-title">${task.title}</div>
-                    <div class="task-desc">${task.desc}</div>
-                    ${task.plants ? `<div class="task-plants text-muted mt-xs">${task.plants}</div>` : ''}
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    // Attach event listeners for server sync
-    container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        checkbox.checked = todayTasksStatus[checkbox.dataset.taskSlug] === true;
-        
-        checkbox.addEventListener('change', async (e) => {
-            const slug = e.target.dataset.taskSlug;
-            const isChecked = e.target.checked;
-            
-            // 💾 Save to server immediately
-            await saveTaskStatus(todayStr, slug, isChecked);
-            
-            // 🎨 Update UI styling
-            const taskItem = e.target.closest('.task-item');
-            if (isChecked) {
-                taskItem.classList.add('completed');
-            } else {
-                taskItem.classList.remove('completed');
-            }
-        });
-    });
-}
-
-function getSeedlingTasks() {
-    return [
-        {
-            title: 'Check seedling moisture',
-            desc: 'Indoor pots - soil should be moist but not waterlogged'
-        },
-        {
-            title: 'Ensure adequate light',
-            desc: '6-8 hours of light for all seedlings; rotate pots for even growth'
-        },
-        {
-            title: 'Monitor temperature',
-            desc: 'Keep between 70-85°F (21-29°C) for optimal germination'
-        },
-        {
-            title: 'Inspect for damping-off',
-            desc: 'Watch for thin, weak stems or mold at soil line'
-        },
-        {
-            title: 'Thin crowded seedlings',
-            desc: 'Snip weakest at soil level; keep strongest per pot'
-        }
-    ];
-}
-
-function getTransplantTasks(readyPlants) {
-    const plantNames = readyPlants.map(p => p.name).join(', ');
-    
-    return [
-        {
-            title: '🌱 Harden off seedlings',
-            desc: 'Start with 2-3 hours outside in shade; gradually increase exposure over 7-10 days',
-            plants: `Ready: ${plantNames}`
-        },
-        {
-            title: '🌡️ Check nighttime forecast',
-            desc: 'Ensure temps stay above 50°F (10°C) for 7+ days before transplanting'
-        },
-        {
-            title: '🪴 Prepare garden boxes',
-            desc: 'Add compost, install trellises for cucumbers/tomatoes, mark planting spots'
-        },
-        {
-            title: '💧 Pre-water transplant holes',
-            desc: 'Water holes deeply before moving plants to reduce transplant shock'
-        },
-        {
-            title: '🌤️ Transplant on cloudy day',
-            desc: 'Move plants in evening or on overcast day; water deeply after planting'
-        }
-    ];
-}
-
-// ===== MOBILE MENU TOGGLE =====
-function initMobileMenu() {
-    const menuBtn = document.getElementById('mobileMenuBtn');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    // Exit if elements don't exist
-    if (!menuBtn || !sidebar) return;
-    
-    // Toggle sidebar
-    function toggleMenu() {
-        const isActive = sidebar.classList.toggle('active');
-        overlay.classList.toggle('active', isActive);
-        document.body.classList.toggle('menu-open', isActive);
-    }
-    
-    // Close sidebar
-    function closeMenu() {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-        document.body.classList.remove('menu-open');
-    }
-    
-    // Event listeners
-    menuBtn.addEventListener('click', toggleMenu);
-    overlay.addEventListener('click', closeMenu);
-    
-    // Close when clicking a nav link (mobile only)
-    document.querySelectorAll('.nav-item').forEach(link => {
-        link.addEventListener('click', () => {
-            if (window.innerWidth <= 768) {
-                closeMenu();
-            }
-        });
-    });
-    
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && sidebar.classList.contains('active')) {
-            closeMenu();
-        }
-    });
-    
-    // Close if resizing to desktop
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
-            closeMenu();
-        }
-    });
-}
-
-// Initialize after DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMobileMenu);
-} else {
-    initMobileMenu();
-}
-
-// --- Dynamic Date Updater ---
-function updateCurrentDate() {
-    // Format: "Monday, April 26, 2026"
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const today = new Date().toLocaleDateString('en-US', options);
-    
-    const headerDate = document.getElementById('header-date');
-    const currentDatespan = document.getElementById('current-date');
-    
-    if (headerDate) headerDate.textContent = today;
-    if (currentDatespan) currentDatespan.textContent = today;
-}
-
-// --- Visual Updates ---
-function updateTransplantProgress() {
-    const plantingDate = new Date('2026-04-26');
-    const today = new Date();
-    const daysSince = Math.max(0, Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24)));
-    const totalDays = 21;
-    const progress = Math.min((daysSince / totalDays) * 100, 100);
-    const daysRemaining = Math.max(0, totalDays - daysSince);
-    
-    document.querySelectorAll('.countdown-days').forEach(el => el.textContent = daysRemaining);
-    document.querySelectorAll('.progress').forEach(el => el.style.width = `${progress}%`);
-}
-
-function updateTimelineStatus() {
-    const plantingDate = new Date('2026-04-26');
-    const today = new Date();
-    const daysSince = Math.floor((today - plantingDate) / (1000 * 60 * 60 * 24));
-    const timelineSteps = document.querySelectorAll('.timeline-step');
-    
-    if (timelineSteps.length >= 5) {
-        timelineSteps.forEach(step => step.classList.remove('active'));
-        let currentStepIndex = 0;
-        if (daysSince > 14) currentStepIndex = 1;
-        else if (daysSince > 7) currentStepIndex = 0;
-        
-        for (let i = 0; i <= currentStepIndex; i++) {
-            if (timelineSteps[i]) timelineSteps[i].classList.add('active');
-        }
-    }
-}
-
-// --- Modals ---
-function showAddPlantModal() {
-    document.getElementById('add-plant-modal').style.display = 'block';
-}
-
-function closeModal() {
-    document.getElementById('add-plant-modal').style.display = 'none';
-}
-
-document.getElementById('add-plant-form')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const plant = {
-        id: Date.now(),
-        name: document.getElementById('plant-name').value,
-        variety: document.getElementById('plant-variety').value,
-        type: document.getElementById('plant-type').value,
-        plantDate: document.getElementById('plant-date').value,
-        location: document.getElementById('location').value,
-        notes: document.getElementById('notes').value,
-        createdAt: new Date().toISOString()
+  el.querySelectorAll('input').forEach(cb => {
+    cb.onchange = async (e) => {
+      await saveTaskStatus(today, e.target.dataset.slug, e.target.checked);
+      e.target.closest('.task-item').classList.toggle('completed', e.target.checked);
     };
-    
-    await addPlant(plant);
-    this.reset();
-    closeModal();
-});
+  });
+}
+function getSeedlingTasks() {
+  return [
+    { title: 'Check moisture', desc: 'Keep soil moist' }, { title: 'Ensure light', desc: '6-8 hours of light' },
+    { title: 'Monitor temp', desc: '70-85°F ideal' }, { title: 'Thin seedlings', desc: 'Keep strongest per pot' }
+  ];
+}
+function getTransplantTasks(plants) {
+  return [
+    { title: '🌱 Harden off', desc: 'Start with 2-3 hrs outside' },
+    { title: '🌡️ Check forecast', desc: 'Ensure >50°F for 7 days' },
+    { title: '🪴 Prepare beds', desc: 'Add compost & trellises' },
+    { title: '🌤️ Transplant', desc: 'Move on cloudy day/evening' }
+  ];
+}
 
-window.onclick = function(event) {
-    if (event.target === document.getElementById('plant-details-modal')) closePlantDetailsModal();
-    if (event.target === document.getElementById('add-plant-modal')) closeModal();
+function initMobileMenu() {
+  const btn = document.getElementById('mobileMenuBtn'), sb = document.getElementById('sidebar'), ov = document.getElementById('sidebarOverlay');
+  if (!btn || !sb) return;
+  const toggle = () => { sb.classList.toggle('active'); ov.classList.toggle('active'); };
+  btn.onclick = toggle;
+  ov.onclick = () => { sb.classList.remove('active'); ov.classList.remove('active'); };
+}
+
+function updateTransplantProgress() {
+  const days = Math.floor((new Date() - new Date('2026-04-26')) / 86400000);
+  const rem = Math.max(0, 21 - days);
+  document.querySelectorAll('.countdown-days').forEach(e => e.textContent = `${rem} days`);
+  document.querySelectorAll('.progress').forEach(e => e.style.width = `${Math.min(100, (days/21)*100)}%`);
+}
+function updateTimelineStatus() {
+  const days = Math.floor((new Date() - new Date('2026-04-26')) / 86400000);
+  document.querySelectorAll('.timeline-step').forEach((s, i) => s.classList.toggle('active', i <= (days > 14 ? 1 : 0)));
+}
+function updateCurrentDate() {
+  const d = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  if (document.getElementById('header-date')) document.getElementById('header-date').textContent = d;
+  if (document.getElementById('current-date')) document.getElementById('current-date').textContent = d;
 }

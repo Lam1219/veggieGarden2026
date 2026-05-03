@@ -1,109 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Care Log - Garden Journal</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Client-side image compression -->
-<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Care Log - Garden Journal</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Image Compression Library -->
+  <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.min.js"></script>
 </head>
 <body>
-    <button class="mobile-menu-toggle" id="mobileMenuBtn" aria-label="Toggle menu">
-        <i class="fas fa-bars"></i>
-    </button>
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="logo"><i class="fas fa-leaf"></i> Garden Journal</div>
+      <nav>
+        <a href="index.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="plants.html" class="nav-item"><i class="fas fa-seedling"></i> My Plants</a>
+        <a href="care-log.html" class="nav-item active"><i class="fas fa-clipboard-check"></i> Care Log</a>
+        <a href="timeline.html" class="nav-item"><i class="fas fa-history"></i> Timeline</a>
+      </nav>
+    </aside>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-    <div class="app-container">
-        <aside class="sidebar" id="sidebar">
-            <div class="logo"><i class="fas fa-leaf"></i><span>Garden Journal</span></div>
-            <nav class="sidebar-nav">
-                <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
-                <a href="plants.html" class="nav-item"><i class="fas fa-seedling"></i><span>My Plants</span></a>
-                <a href="care-log.html" class="nav-item active"><i class="fas fa-clipboard-list"></i><span>Care Log</span></a>
-                <a href="timeline.html" class="nav-item"><i class="fas fa-calendar"></i><span>Timeline</span></a>
-            </nav>
-        </aside>
+    <!-- Main Content -->
+    <main class="main-content">
+      <div id="mobileMenuBtn" class="mobile-menu-toggle"><i class="fas fa-bars"></i></div>
+      
+      <header class="header">
+        <h1>Care Log</h1>
+        <p class="header-subtitle">Track watering, fertilizing, and observations</p>
+      </header>
 
-        <main class="main-content">
-            <header class="header">
-                <h1>Care Log</h1>
-                <p class="header-subtitle">Track watering, fertilizing, and observations</p>
-            </header>
-
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-plus-circle"></i> New Entry</h2>
-                <form onsubmit="saveCareLog(event)" class="care-log-form">
-                    <div class="form-group">
-                        <label class="form-label">Plants / Herbs *</label>
-                        <div class="plant-selector">
-                            <div class="selector-header" onclick="toggleAllPlants(event)">
-                                <input type="checkbox" id="select-all-plants" onclick="event.stopPropagation()">
-                                <label for="select-all-plants" class="check-label" onclick="event.stopPropagation()">Select All</label>
-                            </div>
-                            <div class="plant-groups" id="plant-groups"></div>
-                        </div>
-                        <small class="form-hint">Tap groups to expand. Select individual plants or use group checkboxes.</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="log-date">Date *</label>
-                        <input type="date" id="log-date" class="form-input form-input-date" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="log-type">Activity *</label>
-                        <select id="log-type" class="form-select" required onchange="toggleFields()">
-                            <option value="">Select activity...</option>
-                            <option value="watering">💧 Watering</option>
-                            <option value="fertilizer">🌿 Fertilizer</option>
-                            <option value="pest">🐛 Pest/Disease</option>
-                            <option value="maintenance">🔧 Maintenance</option>
-                            <option value="observation">👁️ Observation</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" id="fertilizer-type-group" style="display:none;">
-                        <label class="form-label" for="fertilizer-type">Fertilizer Type</label>
-                        <select id="fertilizer-type" class="form-select">
-                            <option value="">Select...</option>
-                            <option value="balanced">Balanced (10-10-10)</option>
-                            <option value="nitrogen">High Nitrogen</option>
-                            <option value="bloom">Bloom Booster</option>
-                            <option value="compost">Compost Tea</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="log-notes">Notes</label>
-                        <textarea id="log-notes" class="form-textarea" placeholder="Describe what you did or observed..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                          <label class="form-label">Attach Photo (Optional)</label>
-                          <div class="image-upload-area">
-                            <button type="button" id="uploadPicBtn" class="btn btn-secondary">📷 Add Picture</button>
-                            <input type="file" id="picFileInput" accept="image/*" hidden>
-                            <div id="uploadStatus" class="upload-status"></div>
-                            <img id="previewImg" class="preview-img" style="display: none;">
-                            <button type="button" id="removePicBtn" class="btn-remove-img hidden">✕ Remove</button>
-                          </div>
-                    </div>
-                    
-                    <div class="modal-actions">
-                        <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear</button>
-                        <button type="submit" class="btn btn-primary">Save Entry</button>
-                    </div>
-                </form>
+      <form id="care-log-form" onsubmit="saveCareLog(event)" class="care-log-form">
+        <!-- Plant Selector -->
+        <div class="form-group">
+          <label class="form-label">Plants / Herbs *</label>
+          <div class="plant-selector">
+            <div id="select-all-header" class="selector-header" onclick="toggleAllPlants(event)">
+              <input type="checkbox" id="select-all-plants">
+              <label class="check-label" for="select-all-plants">Select All</label>
             </div>
+            <div id="plant-groups"></div>
+          </div>
+          <p class="text-muted mt-xs" style="font-size: 0.8125rem;">Tap groups to expand. Select individual plants or use group checkboxes.</p>
+        </div>
 
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-history"></i> Recent Entries</h2>
-                <div id="log-history" class="log-history"></div>
-            </div>
-        </main>
-    </div>
-    <script src="script.js"></script>
+        <!-- Date -->
+        <div class="form-group">
+          <label class="form-label">Date *</label>
+          <input type="date" id="log-date" class="form-input form-input-date" required>
+        </div>
+
+        <!-- Activity Dropdown -->
+        <div class="form-group">
+          <label class="form-label">Activity *</label>
+          <select id="log-type" class="form-select" onchange="toggleFields()" required>
+            <option value="">Select activity...</option>
+            <option value="watering">💧 Watering</option>
+            <option value="fertilizer">🌿 Fertilizer</option>
+            <option value="pest">🐛 Pest/Disease</option>
+            <option value="maintenance">🔧 Maintenance</option>
+            <option value="observation">👁️ Observation</option>
+          </select>
+        </div>
+
+        <!-- Fertilizer Type (Hidden by default) -->
+        <div class="form-group hidden" id="fertilizer-type-group">
+          <label class="form-label">Fertilizer Type</label>
+          <select id="fertilizer-type" class="form-select">
+            <option value="">Select...</option>
+            <option value="Balanced (10-10-10)">Balanced (10-10-10)</option>
+            <option value="High Nitrogen">High Nitrogen</option>
+            <option value="Bloom Booster">Bloom Booster</option>
+            <option value="Compost Tea">Compost Tea</option>
+          </select>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea id="log-notes" class="form-textarea" rows="3" placeholder="Add observations or instructions..."></textarea>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="form-group">
+          <label class="form-label">Attach Photo (Optional)</label>
+          <div class="image-upload-area">
+            <button type="button" id="uploadPicBtn" class="btn btn-secondary">📷 Add Picture</button>
+            <input type="file" id="picFileInput" accept="image/*" hidden>
+            <div id="uploadStatus" class="upload-status"></div>
+            <img id="previewImg" class="preview-img" style="display: none;">
+            <button type="button" id="removePicBtn" class="btn-remove-img hidden">✕ Remove</button>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear</button>
+          <button type="submit" id="saveBtn" class="btn btn-primary">Save Entry</button>
+        </div>
+      </form>
+
+      <!-- Log History -->
+      <div class="card mt-md">
+        <div class="card-title"><i class="fas fa-history"></i> Recent Entries</div>
+        <div id="log-history">
+          <p class="no-activity">No care logs yet.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
