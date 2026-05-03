@@ -1547,3 +1547,30 @@ body {
   border: 1px solid var(--color-border);
 }
 .log-entry-image:hover { opacity: 0.9; box-shadow: var(--shadow-md); }
+
+/* Clickable log entries */
+.log-entry { cursor: pointer; transition: var(--transition); position: relative; }
+.log-entry:hover { background: var(--color-bg); box-shadow: var(--shadow-sm); }
+
+/* Detail Modal Layout */
+.log-detail-modal { max-width: 520px; }
+.log-detail-body { padding: var(--spacing-md) 0; }
+.log-detail-row {
+  display: flex; gap: var(--spacing-sm); padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--color-border); font-size: 0.9375rem;
+}
+.log-detail-row:last-child { border-bottom: none; }
+.log-detail-label {
+  min-width: 110px; font-weight: 500; color: var(--color-text-secondary);
+}
+.log-detail-value { flex: 1; color: var(--color-text); line-height: 1.5; }
+.log-detail-value.empty { color: var(--color-text-secondary); font-style: italic; }
+.log-detail-image {
+  width: 100%; max-height: 320px; object-fit: cover; border-radius: var(--radius);
+  margin-top: var(--spacing-md); cursor: pointer; border: 1px solid var(--color-border);
+  transition: var(--transition);
+}
+.log-detail-image:hover { opacity: 0.9; box-shadow: var(--shadow-md); }
+
+/* Ensure modal centers correctly */
+#log-detail-modal { display: none; }

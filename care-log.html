@@ -111,7 +111,15 @@
       </div>
     </main>
   </div>
-
   <script src="script.js"></script>
+  <div id="log-detail-modal" class="modal" onclick="if(event.target===this) closeLogDetailModal()">
+  <div class="modal-content log-detail-modal">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-clipboard-check"></i> Care Log Details</h2>
+      <button class="modal-close" onclick="closeLogDetailModal()">&times;</button>
+    </div>
+    <div id="log-detail-body" class="log-detail-body"></div>
+  </div>
+</div>
 </body>
 </html>

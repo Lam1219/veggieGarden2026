@@ -249,16 +249,67 @@ async function loadCareLogsFromServer() {
 }
 
 function renderLogs(logs) {
-  const el = document.getElementById('log-history');
-  if (!el) return;
-  if (!logs?.length) { el.innerHTML = '<p class="no-activity">No logs yet.</p>'; return; }
-  
-  el.innerHTML = logs.map(l => {
-    const names = Array.isArray(l.plants) ? l.plants.join(', ') : (l.plant || 'Unknown');
-    const img = l.imageUrl ? `<img src="${l.imageUrl}" class="log-entry-image" onclick="window.open('${l.imageUrl}')" alt="Log photo">` : '';
-    return `<div class="log-entry ${l.type}"><div class="log-header"><span class="log-plant-name">${names}</span><span class="log-date">${new Date(l.date).toLocaleDateString()}</span><button class="btn-log-delete" onclick="deleteLogEntry(${l.id})"><i class="fas fa-times"></i></button></div><span class="log-type-badge">${l.type}</span><p>${l.notes||''}</p>${img}</div>`;
+  const logHistory = document.getElementById('log-history');
+  if (!logHistory) return;
+  if (!logs || logs.length === 0) {
+    logHistory.innerHTML = '<p class="no-activity">No care logs yet.</p>';
+    return;
+  }
+
+  logHistory.innerHTML = logs.map(log => {
+    const plantNames = Array.isArray(log.plants) ? log.plants.join(', ') : log.plant || 'Unknown';
+    const imageHtml = log.imageUrl 
+      ? `<img src="${log.imageUrl}" class="log-entry-image" onclick="event.stopPropagation(); window.open('${log.imageUrl}', '_blank')" alt="Care log photo">` 
+      : '';
+
+    return `
+      <div class="log-entry ${log.type}" onclick="openLogDetailModal(${log.id})">
+        <div class="log-header">
+          <span class="log-plant-name">${plantNames}</span>
+          <span class="log-date">${new Date(log.date).toLocaleDateString()}</span>
+          <button class="btn-log-delete" onclick="event.stopPropagation(); deleteLogEntry(event, ${log.id})" title="Delete entry">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
+        ${log.fertilizerType ? `<p><strong>Fertilizer:</strong> ${log.fertilizerType}</p>` : ''}
+        <p>${log.notes || 'No notes'}</p>
+        ${imageHtml}
+      </div>
+    `;
   }).join('');
 }
+
+function openLogDetailModal(logId) {
+  const log = cachedLogs.find(l => l.id === logId);
+  if (!log) return;
+
+  const plants = Array.isArray(log.plants) ? log.plants.join(', ') : (log.plant || 'Unknown');
+  const date = new Date(log.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const type = getLogTypeLabel(log.type);
+
+  const body = document.getElementById('log-detail-body');
+  body.innerHTML = `
+    <div class="log-detail-row"><span class="log-detail-label">Date</span><span class="log-detail-value">${date}</span></div>
+    <div class="log-detail-row"><span class="log-detail-label">Activity</span><span class="log-detail-value">${type}</span></div>
+    <div class="log-detail-row"><span class="log-detail-label">Plants</span><span class="log-detail-value">${plants}</span></div>
+    ${log.fertilizerType ? `<div class="log-detail-row"><span class="log-detail-label">Fertilizer</span><span class="log-detail-value">${log.fertilizerType}</span></div>` : ''}
+    <div class="log-detail-row"><span class="log-detail-label">Notes</span><span class="log-detail-value ${!log.notes ? 'empty' : ''}">${log.notes || 'No notes added'}</span></div>
+    ${log.imageUrl ? `<img src="${log.imageUrl}" class="log-detail-image" onclick="window.open('${log.imageUrl}', '_blank')" alt="Care log photo">` : ''}
+  `;
+
+  document.getElementById('log-detail-modal').style.display = 'flex';
+}
+
+function closeLogDetailModal() {
+  document.getElementById('log-detail-modal').style.display = 'none';
+}
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLogDetailModal();
+});
+
 async function deleteLogEntry(id) {
   if (!confirm('Delete this entry?')) return;
   cachedLogs = cachedLogs.filter(l => l.id !== id);
