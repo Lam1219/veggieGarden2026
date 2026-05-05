@@ -282,21 +282,28 @@ function renderLogs(logs) {
     logHistory.innerHTML = '<p class="no-activity">No care logs yet.</p>';
     return;
   }
+
   logHistory.innerHTML = logs.map(log => {
-    const plantNames = Array.isArray(log.plants) ? log.plants.join(', ') : (log.plant || 'Unknown');
-    const imageHtml = log.imageUrl ? `<img src="${log.imageUrl}" class="log-entry-image" onclick="event.stopPropagation(); window.open('${log.imageUrl}', '_blank')" alt="Log photo">` : '';
+    const plantNames = Array.isArray(log.plants) ? log.plants.join(', ') : log.plant || 'Unknown';
+    const thumbHtml = log.imageUrl 
+      ? `<img src="${log.imageUrl}" class="log-entry-image" alt="Log thumbnail">` 
+      : '';
+
     return `
       <div class="log-entry ${log.type}" onclick="openLogDetailModal(${log.id})">
         <div class="log-header">
           <span class="log-plant-name">${plantNames}</span>
           <span class="log-date">${new Date(log.date).toLocaleDateString()}</span>
-          <button class="btn-log-delete" onclick="event.stopPropagation(); deleteLogEntry(${log.id})" title="Delete entry"><i class="fas fa-times"></i></button>
+          <button class="btn-log-delete" onclick="event.stopPropagation(); deleteLogEntry(event, ${log.id})" title="Delete entry">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
         <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
         ${log.fertilizerType ? `<p><strong>Fertilizer:</strong> ${log.fertilizerType}</p>` : ''}
         <p>${log.notes || 'No notes'}</p>
-        ${imageHtml}
-      </div>`;
+        ${thumbHtml}
+      </div>
+    `;
   }).join('');
 }
 
