@@ -284,27 +284,49 @@ function renderLogs(logs) {
   }
 
   logHistory.innerHTML = logs.map(log => {
-    const plantNames = Array.isArray(log.plants) ? log.plants.join(', ') : log.plant || 'Unknown';
-    const thumbHtml = log.imageUrl 
-      ? `<img src="${log.imageUrl}" class="log-entry-image" alt="Log thumbnail">` 
-      : '';
+    const plants = Array.isArray(log.plants) ? log.plants : [log.plant].filter(Boolean);
+    const count = plants.length;
+
+    // 🌱 Ultra Compact: Show only count
+    const plantsHtml = `
+      <div class="plant-count-badge">
+        <i class="fas fa-seedling"></i>
+        <span>${count} plant${count !== 1 ? 's' : ''}</span>
+      </div>
+    `;
+
+    const date = new Date(log.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const typeLabel = getLogTypeLabel(log.type);
+    const thumbHtml = log.imageUrl ? `<img src="${log.imageUrl}" class="log-thumbnail" alt="Photo">` : '';
+    const notesPreview = log.notes ? `<div class="log-notes-preview">${escapeHtml(log.notes)}</div>` : '';
 
     return `
       <div class="log-entry ${log.type}" onclick="openLogDetailModal(${log.id})">
-        <div class="log-header">
-          <span class="log-plant-name">${plantNames}</span>
-          <span class="log-date">${new Date(log.date).toLocaleDateString()}</span>
-          <button class="btn-log-delete" onclick="event.stopPropagation(); deleteLogEntry(event, ${log.id})" title="Delete entry">
+        <div class="log-compact-header">
+          <div style="flex: 1; min-width: 0;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              ${plantsHtml}
+              <div class="log-meta">
+                <span class="log-type-badge">${typeLabel}</span>
+                <span><i class="far fa-calendar"></i> ${date}</span>
+              </div>
+            </div>
+            ${notesPreview}
+          </div>
+          <button class="btn-log-delete" onclick="event.stopPropagation(); deleteLogEntry(event, ${log.id})" title="Delete">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <span class="log-type-badge">${getLogTypeLabel(log.type)}</span>
-        ${log.fertilizerType ? `<p><strong>Fertilizer:</strong> ${log.fertilizerType}</p>` : ''}
-        <p>${log.notes || 'No notes'}</p>
         ${thumbHtml}
       </div>
     `;
   }).join('');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 async function saveCareLog(event) {
@@ -354,7 +376,9 @@ async function saveCareLog(event) {
   saveBtn.disabled = false; saveBtn.textContent = 'Save Entry';
 }
 
-async function deleteLogEntry(id) {
+// --- Safe Delete ---
+async function deleteLogEntry(event, id) {
+  event.stopPropagation();
   if (!confirm('Delete this log entry?')) return;
   cachedLogs = cachedLogs.filter(l => l.id !== id);
   await saveToServer('logs', cachedLogs);
@@ -382,19 +406,20 @@ function clearForm() {
   if (uploadStatus) { uploadStatus.textContent = ''; uploadStatus.className = 'upload-status'; }
 }
 
-// --- Log Detail Modal (UX Optimized) ---
+// --- Detail Modal (Progressive Disclosure) ---
 function openLogDetailModal(logId) {
   const log = cachedLogs.find(l => l.id === logId);
   if (!log) return;
   const plants = Array.isArray(log.plants) ? log.plants.join(', ') : (log.plant || 'Unknown');
   const date = new Date(log.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  
   document.getElementById('log-detail-body').innerHTML = `
     <div class="log-detail-row"><span class="log-detail-label">Date</span><span class="log-detail-value">${date}</span></div>
     <div class="log-detail-row"><span class="log-detail-label">Activity</span><span class="log-detail-value">${getLogTypeLabel(log.type)}</span></div>
-    <div class="log-detail-row"><span class="log-detail-label">Plants</span><span class="log-detail-value">${plants}</span></div>
-    ${log.fertilizerType ? `<div class="log-detail-row"><span class="log-detail-label">Fertilizer</span><span class="log-detail-value">${log.fertilizerType}</span></div>` : ''}
-    <div class="log-detail-row"><span class="log-detail-label">Notes</span><span class="log-detail-value ${!log.notes ? 'empty' : ''}">${log.notes || 'No notes added'}</span></div>
-    ${log.imageUrl ? `<img src="${log.imageUrl}" class="log-detail-image" onclick="window.open('${log.imageUrl}', '_blank')" alt="Care log photo">` : ''}
+    <div class="log-detail-row"><span class="log-detail-label">Plants</span><span class="log-detail-value">${escapeHtml(plants)}</span></div>
+    ${log.fertilizerType ? `<div class="log-detail-row"><span class="log-detail-label">Fertilizer</span><span class="log-detail-value">${escapeHtml(log.fertilizerType)}</span></div>` : ''}
+    <div class="log-detail-row"><span class="log-detail-label">Notes</span><span class="log-detail-value ${!log.notes ? 'empty' : ''}">${log.notes ? escapeHtml(log.notes) : 'No notes added'}</span></div>
+    ${log.imageUrl ? `<img src="${log.imageUrl}" class="log-detail-image" onclick="window.open('${log.imageUrl}', '_blank')" alt="Full size photo">` : ''}
   `;
   document.getElementById('log-detail-modal').style.display = 'flex';
 }
